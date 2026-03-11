@@ -1,0 +1,6 @@
+<div class="row g-3">
+    <div class="col-md-3"><label class="form-label">Code <span class="text-danger">*</span></label><input type="text" name="technician_code" class="form-control @error('technician_code') is-invalid @enderror" value="{{ old('technician_code', $technician->technician_code ?? '') }}" required style="border-radius:10px;">@error('technician_code')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+    <div class="col-md-4"><label class="form-label">Name <span class="text-danger">*</span></label><input type="text" name="technician_name" class="form-control @error('technician_name') is-invalid @enderror" value="{{ old('technician_name', $technician->technician_name ?? '') }}" required style="border-radius:10px;">@error('technician_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+    <div class="col-md-3"><label class="form-label">Skill</label><input type="text" name="skill" class="form-control" value="{{ old('skill', $technician->skill ?? '') }}" style="border-radius:10px;"></div>
+    <div class="col-md-2"><label class="form-label">Phone</label><input type="text" name="phone" class="form-control" value="{{ old('phone', $technician->phone ?? '') }}" style="border-radius:10px;"></div>
+</div>

@@ -2,69 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
+use App\Models\Unit;
+use App\Models\PurchaseRequest;
+use App\Models\PurchaseOrder;
+use App\Models\WorkOrder;
+use App\Models\RepairCostSummary;
+use App\Models\UnitAvailabilityLog;
+use App\Models\Sparepart;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index()
     {
-        $summary = [
-            'units_total' => 48,
-            'units_available' => 41,
-            'units_repair' => 7,
-            'availability_percent' => 85.4,
-            'open_pr' => 12,
-            'open_po' => 6,
-            'monthly_repair_cost' => 285750000,
-            'monthly_procurement_cost' => 467300000,
-        ];
+        $totalUnits = Unit::active()->count();
+        $available = Unit::active()->status('available')->count();
+        $underRepair = Unit::active()->status('under_repair')->count();
+        $standby = Unit::active()->status('standby')->count();
 
-        $recentActivities = [
-            [
-                'code' => 'WO-20260310-001',
-                'title' => 'Repair hydraulic pump unit EX1201',
-                'time' => '10 Mar 2026, 08:15',
-                'status' => 'In Progress',
-            ],
-            [
-                'code' => 'PR-20260310-002',
-                'title' => 'Request filter kit for DT301',
-                'time' => '10 Mar 2026, 09:10',
-                'status' => 'Pending',
-            ],
-            [
-                'code' => 'PO-20260310-003',
-                'title' => 'Purchase order engine hose approved',
-                'time' => '10 Mar 2026, 10:00',
-                'status' => 'Approved',
-            ],
-            [
-                'code' => 'GI-20260310-004',
-                'title' => 'Sparepart issued for work order DT301',
-                'time' => '10 Mar 2026, 11:40',
-                'status' => 'Completed',
-            ],
-        ];
+        $openPR = PurchaseRequest::whereIn('status', ['draft', 'submitted'])->count();
+        $openPO = PurchaseOrder::whereIn('status', ['draft', 'issued', 'partial'])->count();
+        $openWO = WorkOrder::whereIn('status', ['open', 'in_progress', 'waiting_part'])->count();
 
-        $unitStatus = [
-            ['unit' => 'EX1201', 'model' => 'Excavator 120T', 'status' => 'Available', 'availability' => '92%', 'cost' => 18500000],
-            ['unit' => 'DT301', 'model' => 'Dump Truck 30T', 'status' => 'Under Repair', 'availability' => '71%', 'cost' => 45200000],
-            ['unit' => 'DZ110', 'model' => 'Dozer D8', 'status' => 'Standby', 'availability' => '80%', 'cost' => 12400000],
-            ['unit' => 'GR210', 'model' => 'Grader 14M', 'status' => 'Available', 'availability' => '89%', 'cost' => 9700000],
-        ];
+        $monthStart = now()->startOfMonth()->toDateString();
+        $monthEnd = now()->endOfMonth()->toDateString();
 
-        $costBreakdown = [
-            ['label' => 'Sparepart', 'value' => 165500000],
-            ['label' => 'Labor', 'value' => 48750000],
-            ['label' => 'Vendor', 'value' => 52000000],
-            ['label' => 'Consumable', 'value' => 19500000],
-        ];
+        $monthlyRepairCost = RepairCostSummary::whereBetween('created_at', [$monthStart, $monthEnd])
+            ->sum('total_cost');
 
-        return view('dashboard', compact(
-            'summary',
-            'recentActivities',
-            'unitStatus',
-            'costBreakdown'
+        // Chart: Repair cost per unit (top 10)
+        $costPerUnit = RepairCostSummary::select('unit_id', DB::raw('SUM(total_cost) as total'))
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->groupBy('unit_id')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->with('unit:id,unit_code')
+            ->get();
+
+        // Chart: Availability trend (last 30 days avg)
+        $availTrend = UnitAvailabilityLog::select(
+                'date',
+                DB::raw('AVG(availability_percent) as avg_avail')
+            )
+            ->where('date', '>=', now()->subDays(30)->toDateString())
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Recent WOs
+        $recentWOs = WorkOrder::with('unit:id,unit_code', 'technician:id,technician_name')
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        // Top sparepart cost
+        $topSpareparts = DB::table('goods_issue_items')
+            ->join('goods_issues', 'goods_issues.id', '=', 'goods_issue_items.goods_issue_id')
+            ->join('spareparts', 'spareparts.id', '=', 'goods_issue_items.sparepart_id')
+            ->where('goods_issues.status', 'posted')
+            ->whereBetween('goods_issues.issue_date', [$monthStart, $monthEnd])
+            ->select('spareparts.part_name', DB::raw('SUM(goods_issue_items.total_price) as total'))
+            ->groupBy('spareparts.part_name')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+
+        return view('dashboard.index', compact(
+            'totalUnits', 'available', 'underRepair', 'standby',
+            'openPR', 'openPO', 'openWO', 'monthlyRepairCost',
+            'costPerUnit', 'availTrend', 'recentWOs', 'topSpareparts'
         ));
     }
 }

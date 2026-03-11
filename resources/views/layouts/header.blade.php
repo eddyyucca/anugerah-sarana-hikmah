@@ -11,7 +11,15 @@
                 </button>
 
                 <div>
-                    <h1 class="page-title mb-0">{{ $pageTitle ?? 'Dashboard' }}</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1" style="font-size:.82rem;">
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                            @hasSection('breadcrumb')
+                                @yield('breadcrumb')
+                            @endif
+                        </ol>
+                    </nav>
+                    <h1 class="page-title mb-0">@yield('page-title', 'Dashboard')</h1>
                 </div>
             </div>
 
