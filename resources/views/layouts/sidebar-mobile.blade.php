@@ -1,12 +1,12 @@
 <div class="offcanvas offcanvas-start mobile-offcanvas" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
     <div class="offcanvas-header">
         <div class="d-flex align-items-center gap-3">
-    <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo-img">
-    <div>
-        <div class="sidebar-title text-white">Workshop ERP</div>
-        <div class="sidebar-subtitle">Mining Logistics</div>
-    </div>
-</div>
+            <div class="sidebar-logo">W</div>
+            <div>
+                <div class="sidebar-title text-white">Workshop ERP</div>
+                <div class="sidebar-subtitle">Mining Logistics</div>
+            </div>
+        </div>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
@@ -50,6 +50,18 @@
         <a href="{{ route('work-orders.index') }}" class="sidebar-link {{ request()->routeIs('work-orders.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-tools"></i></span>
             <span>Work Orders</span>
+        </a>
+        <a href="{{ route('operators.index') }}" class="sidebar-link {{ request()->routeIs('operators.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-person-badge"></i></span>
+            <span>Operators</span>
+        </a>
+        <a href="{{ route('p2h.index') }}" class="sidebar-link {{ request()->routeIs('p2h.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-clipboard-check"></i></span>
+            <span>P2H Check</span>
+        </a>
+        <a href="{{ route('p2h.summary') }}" class="sidebar-link {{ request()->is('p2h/summary*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-graph-up"></i></span>
+            <span>P2H Summary</span>
         </a>
         <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-bar-chart-line"></i></span>

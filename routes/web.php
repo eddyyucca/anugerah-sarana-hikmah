@@ -12,6 +12,8 @@ use App\Http\Controllers\GoodsReceiptController;
 use App\Http\Controllers\GoodsIssueController;
 use App\Http\Controllers\WorkOrderController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\OperatorController;
+use App\Http\Controllers\P2hCheckController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -49,3 +51,14 @@ Route::get('reports', [ReportController::class, 'index'])->name('reports.index')
 Route::get('reports/availability', [ReportController::class, 'availability'])->name('reports.availability');
 Route::get('reports/repair-cost', [ReportController::class, 'repairCost'])->name('reports.repair-cost');
 Route::get('reports/stock-movement', [ReportController::class, 'stockMovement'])->name('reports.stock-movement');
+
+// Operators
+Route::resource('operators', OperatorController::class);
+
+// P2H Checks
+Route::get('p2h', [P2hCheckController::class, 'index'])->name('p2h.index');
+Route::get('p2h/create', [P2hCheckController::class, 'create'])->name('p2h.create');
+Route::post('p2h', [P2hCheckController::class, 'store'])->name('p2h.store');
+Route::get('p2h/summary', [P2hCheckController::class, 'summary'])->name('p2h.summary');
+Route::get('p2h/{p2h}', [P2hCheckController::class, 'show'])->name('p2h.show');
+Route::post('p2h/{p2h}/review', [P2hCheckController::class, 'review'])->name('p2h.review');

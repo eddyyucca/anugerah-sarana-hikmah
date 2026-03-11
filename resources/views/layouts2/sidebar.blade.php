@@ -1,11 +1,11 @@
 <aside class="sidebar-desktop">
-    <div class="sidebar-brand d-flex align-items-center gap-3">
-        <div class="sidebar-logo">W</div>
-        <div>
-            <div class="sidebar-title">Workshop ERP</div>
-            <div class="sidebar-subtitle">Mining Logistics</div>
-        </div>
+   <div class="sidebar-brand d-flex align-items-center gap-3">
+    <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo-img">
+    <div>
+        <div class="sidebar-title">Workshop ERP</div>
+        <div class="sidebar-subtitle">Mining Logistics</div>
     </div>
+</div>
 
     <div class="sidebar-section">
         <div class="sidebar-section-title">Main Menu</div>
@@ -66,23 +66,6 @@
         <a href="{{ route('work-orders.index') }}" class="sidebar-link {{ request()->routeIs('work-orders.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-tools"></i></span>
             <span>Work Orders</span>
-        </a>
-
-        <div class="sidebar-section-title mt-3">Operation</div>
-
-        <a href="{{ route('operators.index') }}" class="sidebar-link {{ request()->routeIs('operators.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="bi bi-person-badge"></i></span>
-            <span>Operators</span>
-        </a>
-
-        <a href="{{ route('p2h.index') }}" class="sidebar-link {{ request()->routeIs('p2h.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="bi bi-clipboard-check"></i></span>
-            <span>P2H Check</span>
-        </a>
-
-        <a href="{{ route('p2h.summary') }}" class="sidebar-link {{ request()->is('p2h/summary*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="bi bi-graph-up"></i></span>
-            <span>P2H Summary</span>
         </a>
 
         <div class="sidebar-section-title mt-3">Reports</div>

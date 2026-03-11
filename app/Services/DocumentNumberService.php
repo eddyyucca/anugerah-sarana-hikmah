@@ -7,6 +7,7 @@ use App\Models\PurchaseOrder;
 use App\Models\GoodsReceipt;
 use App\Models\GoodsIssue;
 use App\Models\WorkOrder;
+use App\Models\P2hCheck;
 
 class DocumentNumberService
 {
@@ -33,6 +34,11 @@ class DocumentNumberService
     public static function generateWO(): string
     {
         return self::generate('WO', WorkOrder::class, 'wo_number');
+    }
+
+    public static function generateP2H(): string
+    {
+        return self::generate('P2H', P2hCheck::class, 'p2h_number');
     }
 
     private static function generate(string $prefix, string $model, string $column): string
