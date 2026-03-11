@@ -1,12 +1,4 @@
-<div class="offcanvas offcanvas-start mobile-offcanvas" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
-    <div class="offcanvas-header">
-        <div class="d-flex align-items-center gap-3">
-            <div class="sidebar-logo">W</div>
-            <div>
-                <div class="sidebar-title text-white">Workshop ERP</div>
-                <div class="sidebar-subtitle">Mining Logistics</div>
-            </div>
-        </div>
+resources/views/layouts2/sidebar-mobile.blade.php
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 

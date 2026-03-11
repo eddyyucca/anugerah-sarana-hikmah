@@ -62,3 +62,7 @@ Route::post('p2h', [P2hCheckController::class, 'store'])->name('p2h.store');
 Route::get('p2h/summary', [P2hCheckController::class, 'summary'])->name('p2h.summary');
 Route::get('p2h/{p2h}', [P2hCheckController::class, 'show'])->name('p2h.show');
 Route::post('p2h/{p2h}/review', [P2hCheckController::class, 'review'])->name('p2h.review');
+
+// P2H Standalone Form (untuk operator, tanpa login/sidebar)
+Route::get('p2h-form', [P2hCheckController::class, 'formOperator'])->name('p2h.form-operator');
+Route::post('p2h-form', [P2hCheckController::class, 'storeOperator'])->name('p2h.store-operator');

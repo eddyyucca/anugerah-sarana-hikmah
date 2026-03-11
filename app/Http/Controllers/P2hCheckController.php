@@ -148,6 +148,58 @@ class P2hCheckController extends Controller
         return redirect()->route('p2h.index')->with('success', 'P2H Check submitted successfully.');
     }
 
+    // === STANDALONE FORM (tanpa sidebar, untuk operator langsung) ===
+    public function formOperator()
+    {
+        $units = Unit::active()->status('available')->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model', 'hour_meter']);
+        $operators = Operator::active()->orderBy('operator_name')->get(['id', 'operator_code', 'operator_name']);
+        $checklist = $this->getChecklistTemplate();
+
+        return view('p2h.form-operator', compact('units', 'operators', 'checklist'));
+    }
+
+    public function storeOperator(Request $request)
+    {
+        $request->validate([
+            'unit_id' => 'required|exists:units,id',
+            'operator_id' => 'required|exists:operators,id',
+            'check_date' => 'required|date',
+            'shift' => 'required|in:day,night',
+            'hour_meter_start' => 'nullable|numeric|min:0',
+            'km_start' => 'nullable|numeric|min:0',
+            'general_notes' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.category' => 'required|string|max:50',
+            'items.*.check_item' => 'required|string|max:150',
+            'items.*.condition' => 'required|in:good,warning,bad,na',
+            'items.*.notes' => 'nullable|string|max:255',
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $hasBad = collect($request->items)->contains('condition', 'bad');
+            $hasWarning = collect($request->items)->contains('condition', 'warning');
+            $overall = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
+
+            $check = P2hCheck::create([
+                'p2h_number' => DocumentNumberService::generateP2H(),
+                'unit_id' => $request->unit_id,
+                'operator_id' => $request->operator_id,
+                'check_date' => $request->check_date,
+                'shift' => $request->shift,
+                'hour_meter_start' => $request->hour_meter_start ?? 0,
+                'km_start' => $request->km_start ?? 0,
+                'overall_status' => $overall,
+                'general_notes' => $request->general_notes,
+            ]);
+
+            foreach ($request->items as $item) {
+                $check->items()->create($item);
+            }
+        });
+
+        return redirect()->route('p2h.form-operator')->with('success', 'P2H berhasil disubmit! Terima kasih.');
+    }
+
     public function show(P2hCheck $p2h)
     {
         $p2h->load('unit.category', 'operator', 'reviewer', 'items');

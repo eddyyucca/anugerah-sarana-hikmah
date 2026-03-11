@@ -1,11 +1,12 @@
 <aside class="sidebar-desktop">
-    <div class="sidebar-brand d-flex align-items-center gap-3">
-        <div class="sidebar-logo">W</div>
-        <div>
-            <div class="sidebar-title">Workshop ERP</div>
-            <div class="sidebar-subtitle">Mining Logistics</div>
-        </div>
+   <div class="sidebar-brand d-flex align-items-center gap-3">
+    <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo-img">
+    <div>
+        <div class="sidebar-title">Workshop ERP</div>
+        <div class="sidebar-subtitle">Mining Logistics</div>
     </div>
+</div>
+
 
     <div class="sidebar-section">
         <div class="sidebar-section-title">Main Menu</div>
