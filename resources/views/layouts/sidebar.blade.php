@@ -1,12 +1,11 @@
 <aside class="sidebar-desktop">
-   <div class="sidebar-brand d-flex align-items-center gap-3">
-    <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo-img">
-    <div>
-        <div class="sidebar-title">Workshop ERP</div>
-        <div class="sidebar-subtitle">Mining Logistics</div>
+    <div class="sidebar-brand d-flex align-items-center gap-3">
+        <div class="sidebar-logo">W</div>
+        <div>
+            <div class="sidebar-title">Workshop ERP</div>
+            <div class="sidebar-subtitle">Mining Logistics</div>
+        </div>
     </div>
-</div>
-
 
     <div class="sidebar-section">
         <div class="sidebar-section-title">Main Menu</div>
@@ -45,6 +44,11 @@
             <span>Purchase Request</span>
         </a>
 
+        <a href="{{ route('consumable-pr.index') }}" class="sidebar-link {{ request()->routeIs('consumable-pr.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-droplet"></i></span>
+            <span>Consumable PR</span>
+        </a>
+
         <a href="{{ route('purchase-orders.index') }}" class="sidebar-link {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-cart-check"></i></span>
             <span>Purchase Order</span>
@@ -62,11 +66,26 @@
             <span>Goods Issue</span>
         </a>
 
+        <a href="{{ route('warehouse-transfer.index') }}" class="sidebar-link {{ request()->routeIs('warehouse-transfer.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-arrow-left-right"></i></span>
+            <span>Transfer</span>
+        </a>
+
+        <a href="{{ route('stock-opname.index') }}" class="sidebar-link {{ request()->routeIs('stock-opname.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-clipboard2-data"></i></span>
+            <span>Stock Opname</span>
+        </a>
+
         <div class="sidebar-section-title mt-3">Maintenance</div>
 
         <a href="{{ route('work-orders.index') }}" class="sidebar-link {{ request()->routeIs('work-orders.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-tools"></i></span>
             <span>Work Orders</span>
+        </a>
+
+        <a href="{{ route('downtime.index') }}" class="sidebar-link {{ request()->routeIs('downtime.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-speedometer2"></i></span>
+            <span>Downtime Analysis</span>
         </a>
 
         <div class="sidebar-section-title mt-3">Operation</div>
@@ -91,6 +110,13 @@
         <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-bar-chart-line"></i></span>
             <span>Reports</span>
+        </a>
+
+        <div class="sidebar-section-title mt-3">Settings</div>
+
+        <a href="{{ route('approval-settings.index') }}" class="sidebar-link {{ request()->routeIs('approval-settings.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-sliders"></i></span>
+            <span>Approval Settings</span>
         </a>
     </div>
 </aside>

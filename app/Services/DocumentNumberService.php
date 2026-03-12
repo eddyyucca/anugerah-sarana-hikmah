@@ -8,6 +8,8 @@ use App\Models\GoodsReceipt;
 use App\Models\GoodsIssue;
 use App\Models\WorkOrder;
 use App\Models\P2hCheck;
+use App\Models\StockOpname;
+use App\Models\WarehouseTransfer;
 
 class DocumentNumberService
 {
@@ -39,6 +41,16 @@ class DocumentNumberService
     public static function generateP2H(): string
     {
         return self::generate('P2H', P2hCheck::class, 'p2h_number');
+    }
+
+    public static function generateSO(): string
+    {
+        return self::generate('SO', StockOpname::class, 'opname_number');
+    }
+
+    public static function generateWT(): string
+    {
+        return self::generate('WT', WarehouseTransfer::class, 'transfer_number');
     }
 
     private static function generate(string $prefix, string $model, string $column): string

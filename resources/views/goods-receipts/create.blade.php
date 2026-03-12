@@ -26,28 +26,39 @@
     </div>
 
     <div class="erp-card mb-3">
-        <div class="erp-card-header"><div class="section-title">Items</div></div>
+        <div class="erp-card-header">
+            <div class="section-title">Items to Receive</div>
+            <div class="section-subtitle">Only items with outstanding qty shown. Enter qty received (can be partial).</div>
+        </div>
         <div class="erp-card-body">
             <table class="table table-modern mb-0" id="itemsTable">
-                <thead><tr><th>Sparepart</th><th>Warehouse Location</th><th style="width:120px;">Qty Received</th></tr></thead>
+                <thead><tr><th>Part Number</th><th>Part Name</th><th class="text-center">Ordered</th><th class="text-center">Already Received</th><th class="text-center" style="color:#dc2626;">Outstanding</th><th>Location</th><th style="width:130px;">Qty to Receive</th></tr></thead>
                 <tbody>
-                    @if($po && count($poItems) > 0)
+                    @if($po && $poItems->count() > 0)
                         @foreach($poItems as $i => $item)
                         <tr>
-                            <td>{{ $item->sparepart->part_number }} - {{ $item->sparepart->part_name }}
+                            <td>
+                                <strong>{{ $item->sparepart->part_number }}</strong>
                                 <input type="hidden" name="items[{{ $i }}][sparepart_id]" value="{{ $item->sparepart_id }}">
+                                <input type="hidden" name="items[{{ $i }}][po_item_id]" value="{{ $item->id }}">
                             </td>
+                            <td>{{ $item->sparepart->part_name }}</td>
+                            <td class="text-center">{{ $item->qty }}</td>
+                            <td class="text-center text-success fw-bold">{{ $item->qty_received }}</td>
+                            <td class="text-center text-danger fw-bold">{{ $item->qty_remaining }}</td>
                             <td>
                                 <select name="items[{{ $i }}][warehouse_location_id]" class="form-select form-select-sm" style="border-radius:10px;">
                                     <option value="">-- Default --</option>
                                     @foreach($locations as $loc)<option value="{{ $loc->id }}">{{ $loc->name }}</option>@endforeach
                                 </select>
                             </td>
-                            <td><input type="number" name="items[{{ $i }}][qty_received]" class="form-control form-control-sm" value="{{ $item->qty }}" min="1" required style="border-radius:10px;"></td>
+                            <td>
+                                <input type="number" name="items[{{ $i }}][qty_received]" class="form-control form-control-sm" value="{{ $item->qty_remaining }}" min="0" max="{{ $item->qty_remaining }}" required style="border-radius:10px;">
+                            </td>
                         </tr>
                         @endforeach
                     @else
-                        <tr><td colspan="3" class="text-center text-muted py-3">Select a PO first, or add items manually.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-3">Select a PO to see outstanding items.</td></tr>
                     @endif
                 </tbody>
             </table>

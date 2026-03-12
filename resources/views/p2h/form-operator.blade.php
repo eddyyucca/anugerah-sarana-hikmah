@@ -97,20 +97,11 @@
 <div class="p2h-header">
     <div class="p2h-container p-0">
         <div class="d-flex align-items-center gap-3">
-            
-            <img src="{{ asset('assets/images/logo.png') }}" 
-                 alt="P2H Logo"
-                 style="height:48px;width:auto;">
-
+            <div class="p2h-logo">P2H</div>
             <div>
-                <div style="font-weight:700;font-size:1.05rem;">
-                    Pemeriksaan Harian (P2H)
-                </div>
-                <div style="font-size:.78rem;color:rgba(255,255,255,.6);">
-                    Workshop ERP - Mining Logistics
-                </div>
+                <div style="font-weight:700;font-size:1.05rem;">Pemeriksaan Harian (P2H)</div>
+                <div style="font-size:.78rem;color:rgba(255,255,255,.6);">Workshop ERP - Mining Logistics</div>
             </div>
-
         </div>
     </div>
 </div>

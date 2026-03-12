@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GoodsReceipt;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 use App\Models\WarehouseLocation;
 use App\Services\DocumentNumberService;
 use App\Services\StockService;
@@ -17,18 +18,10 @@ class GoodsReceiptController extends Controller
         $query = GoodsReceipt::with('purchaseOrder:id,po_number')
             ->withCount('items');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('search')) {
-            $query->where('gr_number', 'like', "%{$request->search}%");
-        }
-        if ($request->filled('date_from')) {
-            $query->where('receipt_date', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->where('receipt_date', '<=', $request->date_to);
-        }
+        if ($request->filled('status')) $query->where('status', $request->status);
+        if ($request->filled('search')) $query->where('gr_number', 'like', "%{$request->search}%");
+        if ($request->filled('date_from')) $query->where('receipt_date', '>=', $request->date_from);
+        if ($request->filled('date_to')) $query->where('receipt_date', '<=', $request->date_to);
 
         $grs = $query->latest()->paginate(25)->withQueryString();
         return view('goods-receipts.index', compact('grs'));
@@ -41,10 +34,14 @@ class GoodsReceiptController extends Controller
 
         $poId = $request->query('po_id');
         $po = null;
-        $poItems = [];
+        $poItems = collect();
+
         if ($poId) {
             $po = PurchaseOrder::with('items.sparepart')->find($poId);
-            if ($po) $poItems = $po->items;
+            if ($po) {
+                // Only show items that still have outstanding qty
+                $poItems = $po->items->filter(fn($item) => $item->qty_remaining > 0);
+            }
         }
 
         $openPOs = PurchaseOrder::whereIn('status', ['issued', 'partial'])
@@ -61,9 +58,21 @@ class GoodsReceiptController extends Controller
             'remarks' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.sparepart_id' => 'required|exists:spareparts,id',
+            'items.*.po_item_id' => 'nullable|exists:purchase_order_items,id',
             'items.*.warehouse_location_id' => 'nullable|exists:warehouse_locations,id',
             'items.*.qty_received' => 'required|integer|min:1',
         ]);
+
+        // Validate qty doesn't exceed outstanding
+        $po = PurchaseOrder::with('items')->findOrFail($request->purchase_order_id);
+        foreach ($request->items as $item) {
+            if (!empty($item['po_item_id'])) {
+                $poItem = $po->items->find($item['po_item_id']);
+                if ($poItem && $item['qty_received'] > $poItem->qty_remaining) {
+                    return back()->withErrors(['items' => "Qty received for {$poItem->sparepart->part_number ?? 'item'} exceeds outstanding qty ({$poItem->qty_remaining})."])->withInput();
+                }
+            }
+        }
 
         DB::transaction(function () use ($request) {
             $gr = GoodsReceipt::create([
@@ -75,16 +84,22 @@ class GoodsReceiptController extends Controller
             ]);
 
             foreach ($request->items as $item) {
-                $gr->items()->create($item);
+                if ($item['qty_received'] > 0) {
+                    $gr->items()->create([
+                        'sparepart_id' => $item['sparepart_id'],
+                        'warehouse_location_id' => $item['warehouse_location_id'] ?? null,
+                        'qty_received' => $item['qty_received'],
+                    ]);
+                }
             }
         });
 
-        return redirect()->route('goods-receipts.index')->with('success', 'Goods Receipt created successfully.');
+        return redirect()->route('goods-receipts.index')->with('success', 'Goods Receipt created.');
     }
 
     public function show(GoodsReceipt $goodsReceipt)
     {
-        $goodsReceipt->load('items.sparepart', 'items.warehouseLocation', 'purchaseOrder', 'postedByUser');
+        $goodsReceipt->load('items.sparepart', 'items.warehouseLocation', 'purchaseOrder.items.sparepart', 'postedByUser');
         return view('goods-receipts.show', compact('goodsReceipt'));
     }
 
@@ -103,6 +118,17 @@ class GoodsReceiptController extends Controller
                     $goodsReceipt->id,
                     $item->warehouse_location_id
                 );
+
+                // Update PO item qty_received
+                $poItem = PurchaseOrderItem::where('purchase_order_id', $goodsReceipt->purchase_order_id)
+                    ->where('sparepart_id', $item->sparepart_id)
+                    ->first();
+
+                if ($poItem) {
+                    $poItem->qty_received += $item->qty_received;
+                    $poItem->qty_outstanding = max(0, $poItem->qty - $poItem->qty_received);
+                    $poItem->save();
+                }
             }
 
             $goodsReceipt->update([
@@ -111,13 +137,20 @@ class GoodsReceiptController extends Controller
                 'posted_at' => now(),
             ]);
 
-            // Update PO status
+            // Update PO status based on all items
             $po = $goodsReceipt->purchaseOrder;
             if ($po) {
-                $po->update(['status' => 'partial']);
+                $allReceived = $po->items()->where('qty_outstanding', '>', 0)->doesntExist();
+                $anyReceived = $po->items()->where('qty_received', '>', 0)->exists();
+
+                if ($allReceived) {
+                    $po->update(['status' => 'completed']);
+                } elseif ($anyReceived) {
+                    $po->update(['status' => 'partial']);
+                }
             }
         });
 
-        return back()->with('success', 'Goods Receipt posted. Stock updated.');
+        return back()->with('success', 'GR posted. Stock updated. PO qty tracked.');
     }
 }
