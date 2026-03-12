@@ -16,6 +16,9 @@ $colors = [
     'available' => 'badge-soft-success',
     'under_repair' => 'badge-soft-danger',
     'standby' => 'badge-soft-warning',
+    'sent' => 'badge-soft-warning',
+    'received' => 'badge-soft-success',
+    'in_progress' => 'badge-soft-warning',
 ];
 $class = $colors[$status] ?? 'badge-soft-info';
 @endphp

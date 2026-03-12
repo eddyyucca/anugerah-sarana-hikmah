@@ -9,7 +9,11 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $fillable = ['name', 'email', 'password', 'role', 'is_active'];
+    protected $fillable = [
+        'name', 'email', 'password', 'role', 'department',
+        'warehouse_location_id', 'is_active',
+    ];
+
     protected $hidden = ['password', 'remember_token'];
 
     protected function casts(): array
@@ -21,8 +25,29 @@ class User extends Authenticatable
         ];
     }
 
+    public function warehouseLocation()
+    {
+        return $this->belongsTo(WarehouseLocation::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function canAccess(string $menuKey, string $action = 'can_view'): bool
+    {
+        if ($this->role === 'admin') return true;
+        return MenuPermission::hasAccess($this->role, $menuKey, $action);
+    }
+
+    public function allowedMenus(): array
+    {
+        return MenuPermission::getMenusForRole($this->role);
     }
 }

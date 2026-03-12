@@ -2,13 +2,19 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        // Disable FK checks so we can safely drop tables in any order
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
         // Approval Settings - configurable approval levels & budget thresholds
+        Schema::dropIfExists('approval_logs');
+        Schema::dropIfExists('approval_settings');
         Schema::create('approval_settings', function (Blueprint $table) {
             $table->id();
             $table->string('document_type', 30); // pr, po, wo, gi
@@ -27,6 +33,7 @@ return new class extends Migration
         });
 
         // Approval Logs - track multi-level approvals
+        Schema::dropIfExists('approval_logs');
         Schema::create('approval_logs', function (Blueprint $table) {
             $table->id();
             $table->string('document_type', 30);
@@ -47,6 +54,7 @@ return new class extends Migration
         });
 
         // Notifications
+        Schema::dropIfExists('notifications');
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
@@ -65,6 +73,8 @@ return new class extends Migration
         });
 
         // Stock Opname
+        Schema::dropIfExists('stock_opname_items');
+        Schema::dropIfExists('stock_opnames');
         Schema::create('stock_opnames', function (Blueprint $table) {
             $table->id();
             $table->string('opname_number', 30)->unique();
@@ -100,6 +110,8 @@ return new class extends Migration
         });
 
         // Warehouse Transfers
+        Schema::dropIfExists('warehouse_transfer_items');
+        Schema::dropIfExists('warehouse_transfers');
         Schema::create('warehouse_transfers', function (Blueprint $table) {
             $table->id();
             $table->string('transfer_number', 30)->unique();
@@ -130,24 +142,35 @@ return new class extends Migration
 
             $table->foreign('warehouse_transfer_id')->references('id')->on('warehouse_transfers')->cascadeOnDelete();
             $table->foreign('sparepart_id')->references('id')->on('spareparts');
-            $table->index(['warehouse_transfer_id', 'sparepart_id']);
+            $table->index(['warehouse_transfer_id', 'sparepart_id'], 'wti_transfer_sparepart_idx');
         });
 
         // Add is_consumable flag to spareparts
-        Schema::table('spareparts', function (Blueprint $table) {
-            $table->boolean('is_consumable')->default(false)->after('uom');
-        });
+        if (!Schema::hasColumn('spareparts', 'is_consumable')) {
+            Schema::table('spareparts', function (Blueprint $table) {
+                $table->boolean('is_consumable')->default(false)->after('uom');
+            });
+        }
 
         // Add qty_received tracking to purchase_order_items (for partial GR)
         Schema::table('purchase_order_items', function (Blueprint $table) {
-            $table->integer('qty_received')->default(0)->after('total_price');
-            $table->integer('qty_outstanding')->default(0)->after('qty_received');
+            if (!Schema::hasColumn('purchase_order_items', 'qty_received')) {
+                $table->integer('qty_received')->default(0)->after('total_price');
+            }
+            if (!Schema::hasColumn('purchase_order_items', 'qty_outstanding')) {
+                $table->integer('qty_outstanding')->default(0)->after('qty_received');
+            }
         });
 
         // Add total_amount to purchase_requests (for budget-based approval)
-        Schema::table('purchase_requests', function (Blueprint $table) {
-            $table->decimal('estimated_total', 18, 2)->default(0)->after('remarks');
-        });
+        if (!Schema::hasColumn('purchase_requests', 'estimated_total')) {
+            Schema::table('purchase_requests', function (Blueprint $table) {
+                $table->decimal('estimated_total', 18, 2)->default(0)->after('remarks');
+            });
+        }
+
+        // Re-enable FK checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 
     public function down(): void

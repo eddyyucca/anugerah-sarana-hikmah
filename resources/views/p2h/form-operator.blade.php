@@ -20,13 +20,19 @@
             top: 0;
             z-index: 100;
         }
-        .p2h-logo {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), #ef4444);
-            display: grid; place-items: center;
-            font-weight: 800; font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(220,38,38,.3);
-        }
+        .p2h-logo{
+    height: 38px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    display: block;
+}
         .p2h-container { max-width: 800px; margin: 0 auto; padding: 1rem; }
 
         .p2h-card {
@@ -97,7 +103,7 @@
 <div class="p2h-header">
     <div class="p2h-container p-0">
         <div class="d-flex align-items-center gap-3">
-            <div class="p2h-logo">P2H</div>
+        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="p2h-logo">
             <div>
                 <div style="font-weight:700;font-size:1.05rem;">Pemeriksaan Harian (P2H)</div>
                 <div style="font-size:.78rem;color:rgba(255,255,255,.6);">Workshop ERP - Mining Logistics</div>

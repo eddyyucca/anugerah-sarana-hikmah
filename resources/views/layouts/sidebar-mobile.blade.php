@@ -1,7 +1,7 @@
 <div class="offcanvas offcanvas-start mobile-offcanvas" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
     <div class="offcanvas-header">
         <div class="d-flex align-items-center gap-3">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo-img">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo">
             <div>
                 <div class="sidebar-title text-white">Workshop ERP</div>
                 <div class="sidebar-subtitle">Mining Logistics</div>

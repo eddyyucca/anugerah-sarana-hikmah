@@ -15,8 +15,7 @@ class GoodsReceiptController extends Controller
 {
     public function index(Request $request)
     {
-        $query = GoodsReceipt::with('purchaseOrder:id,po_number')
-            ->withCount('items');
+        $query = GoodsReceipt::with('purchaseOrder:id,po_number')->withCount('items');
 
         if ($request->filled('status')) $query->where('status', $request->status);
         if ($request->filled('search')) $query->where('gr_number', 'like', "%{$request->search}%");
@@ -39,7 +38,6 @@ class GoodsReceiptController extends Controller
         if ($poId) {
             $po = PurchaseOrder::with('items.sparepart')->find($poId);
             if ($po) {
-                // Only show items that still have outstanding qty
                 $poItems = $po->items->filter(fn($item) => $item->qty_remaining > 0);
             }
         }
@@ -64,12 +62,16 @@ class GoodsReceiptController extends Controller
         ]);
 
         // Validate qty doesn't exceed outstanding
-        $po = PurchaseOrder::with('items')->findOrFail($request->purchase_order_id);
+        $po = PurchaseOrder::with('items.sparepart')->findOrFail($request->purchase_order_id);
         foreach ($request->items as $item) {
             if (!empty($item['po_item_id'])) {
                 $poItem = $po->items->find($item['po_item_id']);
                 if ($poItem && $item['qty_received'] > $poItem->qty_remaining) {
-                    return back()->withErrors(['items' => "Qty received for {$poItem->sparepart->part_number ?? 'item'} exceeds outstanding qty ({$poItem->qty_remaining})."])->withInput();
+                    $partName = $poItem->sparepart ? $poItem->sparepart->part_number : 'item';
+                    $remaining = $poItem->qty_remaining;
+                    return back()->withErrors([
+                        'items' => "Qty for {$partName} exceeds outstanding ({$remaining})."
+                    ])->withInput();
                 }
             }
         }
@@ -137,20 +139,15 @@ class GoodsReceiptController extends Controller
                 'posted_at' => now(),
             ]);
 
-            // Update PO status based on all items
+            // Update PO status
             $po = $goodsReceipt->purchaseOrder;
             if ($po) {
-                $allReceived = $po->items()->where('qty_outstanding', '>', 0)->doesntExist();
-                $anyReceived = $po->items()->where('qty_received', '>', 0)->exists();
-
-                if ($allReceived) {
-                    $po->update(['status' => 'completed']);
-                } elseif ($anyReceived) {
-                    $po->update(['status' => 'partial']);
-                }
+                $allDone = $po->items()->where('qty_outstanding', '>', 0)->doesntExist();
+                $anyDone = $po->items()->where('qty_received', '>', 0)->exists();
+                $po->update(['status' => $allDone ? 'completed' : ($anyDone ? 'partial' : $po->status)]);
             }
         });
 
-        return back()->with('success', 'GR posted. Stock updated. PO qty tracked.');
+        return back()->with('success', 'GR posted. Stock updated.');
     }
 }
