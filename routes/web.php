@@ -23,10 +23,7 @@ use App\Http\Controllers\WarehouseTransferController;
 use App\Http\Controllers\ConsumablePrController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\MenuPermissionController;
-<<<<<<< HEAD
 use App\Http\Controllers\UserController;
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
 // Auth
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
@@ -48,10 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('technicians', TechnicianController::class);
     Route::resource('operators', OperatorController::class);
-<<<<<<< HEAD
     Route::resource('users', UserController::class);
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
     // PR
     Route::resource('purchase-requests', PurchaseRequestController::class)->except(['destroy']);
@@ -107,10 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/availability', [ReportController::class, 'availability'])->name('reports.availability');
     Route::get('reports/repair-cost', [ReportController::class, 'repairCost'])->name('reports.repair-cost');
     Route::get('reports/stock-movement', [ReportController::class, 'stockMovement'])->name('reports.stock-movement');
-<<<<<<< HEAD
     Route::get('reports/complaint-analysis', [ReportController::class, 'complaintAnalysis'])->name('reports.complaint-analysis');
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
     // Notifications
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
