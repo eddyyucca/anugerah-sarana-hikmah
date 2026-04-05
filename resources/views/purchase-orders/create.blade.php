@@ -5,6 +5,7 @@
 @section('content')
 <form action="{{ route('purchase-orders.store') }}" method="POST">
     @csrf
+<<<<<<< HEAD
     <x-card class="mb-3">
         <x-slot:header>
             <div class="section-title">PO Header</div>
@@ -64,6 +65,44 @@
     </x-card>
     <x-button type="submit" variant="danger">Save PO</x-button>
     <a href="{{ route('purchase-orders.index') }}" class="btn btn-light">Cancel</a>
+=======
+    <div class="erp-card mb-3">
+        <div class="erp-card-header"><div class="section-title">PO Header</div></div>
+        <div class="erp-card-body">
+            <div class="row g-3">
+                <div class="col-md-2"><label class="form-label">PO Number</label><input type="text" class="form-control" value="{{ $poNumber }}" readonly style="border-radius:10px;background:#f8f9fa;"></div>
+                <div class="col-md-3">
+                    <label class="form-label">Source PR</label>
+                    <select name="purchase_request_id" class="form-select" style="border-radius:10px;">
+                        <option value="">-- None --</option>
+                        @foreach($approvedPRs as $apr)<option value="{{ $apr->id }}" {{ ($pr && $pr->id == $apr->id)?'selected':'' }}>{{ $apr->pr_number }}</option>@endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Supplier <span class="text-danger">*</span></label>
+                    <select name="supplier_id" class="form-select" required style="border-radius:10px;">
+                        <option value="">-- Select --</option>
+                        @foreach($suppliers as $sup)<option value="{{ $sup->id }}">{{ $sup->supplier_code }} - {{ $sup->supplier_name }}</option>@endforeach
+                    </select>
+                </div>
+                <div class="col-md-2"><label class="form-label">PO Date <span class="text-danger">*</span></label><input type="date" name="po_date" class="form-control" value="{{ date('Y-m-d') }}" required style="border-radius:10px;"></div>
+                <div class="col-md-2"><label class="form-label">Expected Date</label><input type="date" name="expected_date" class="form-control" style="border-radius:10px;"></div>
+                <div class="col-md-12"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control" style="border-radius:10px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="erp-card mb-3">
+        <div class="erp-card-header d-flex justify-content-between align-items-center">
+            <div class="section-title">Items</div>
+            <button type="button" class="btn btn-sm btn-outline-danger" style="border-radius:10px;" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </div>
+        <div class="erp-card-body">
+            <table class="table table-modern mb-0" id="itemsTable"><thead><tr><th>Sparepart</th><th style="width:100px;">Qty</th><th style="width:150px;">Unit Price</th><th style="width:150px;">Total</th><th style="width:50px;"></th></tr></thead><tbody></tbody></table>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-danger" style="border-radius:12px;">Save PO</button>
+    <a href="{{ route('purchase-orders.index') }}" class="btn btn-light" style="border-radius:12px;">Cancel</a>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </form>
 @endsection
 
@@ -76,11 +115,19 @@ function addItem(spId = '', qty = 1, price = 0) {
     const opts = spareparts.map(sp => `<option value="${sp.id}" data-price="${sp.unit_price}" ${sp.id == spId ? 'selected' : ''}>${sp.part_number} - ${sp.part_name}</option>`).join('');
     const idx = rowIdx;
     tbody.insertAdjacentHTML('beforeend', `<tr>
+<<<<<<< HEAD
         <td><select name="items[${idx}][sparepart_id]" class="form-select form-select-sm sp-select tom-select" data-row="${idx}" required><option value="">-- Select --</option>${opts}</select></td>
         <td><input type="number" name="items[${idx}][qty]" class="form-control form-control-sm qty-input" data-row="${idx}" value="${qty}" min="1" required></td>
         <td><input type="number" step="0.01" name="items[${idx}][unit_price]" class="form-control form-control-sm price-input" data-row="${idx}" value="${price}" min="0" required></td>
         <td><input type="text" class="form-control form-control-sm total-display" data-row="${idx}" readonly style="background:#f8f9fa;"></td>
         <td><button type="button" class="btn btn-sm btn-light text-danger" onclick="this.closest('tr').remove()"><i class="bi bi-x-lg"></i></button></td>
+=======
+        <td><select name="items[${idx}][sparepart_id]" class="form-select form-select-sm sp-select" data-row="${idx}" required style="border-radius:10px;"><option value="">-- Select --</option>${opts}</select></td>
+        <td><input type="number" name="items[${idx}][qty]" class="form-control form-control-sm qty-input" data-row="${idx}" value="${qty}" min="1" required style="border-radius:10px;"></td>
+        <td><input type="number" step="0.01" name="items[${idx}][unit_price]" class="form-control form-control-sm price-input" data-row="${idx}" value="${price}" min="0" required style="border-radius:10px;"></td>
+        <td><input type="text" class="form-control form-control-sm total-display" data-row="${idx}" readonly style="border-radius:10px;background:#f8f9fa;"></td>
+        <td><button type="button" class="btn btn-sm btn-light text-danger" onclick="this.closest('tr').remove()" style="border-radius:8px;"><i class="bi bi-x-lg"></i></button></td>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     </tr>`);
     rowIdx++;
     calcRow(idx);

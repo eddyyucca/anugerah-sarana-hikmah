@@ -7,8 +7,11 @@ use App\Models\RepairCostSummary;
 use App\Models\UnitAvailabilityLog;
 use App\Models\StockMovement;
 use App\Models\Sparepart;
+<<<<<<< HEAD
 use App\Models\WorkOrder;
 use App\Models\ComplaintType;
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -71,6 +74,7 @@ class ReportController extends Controller
 
         $allUnits = Unit::active()->orderBy('unit_code')->get(['id', 'unit_code']);
 
+<<<<<<< HEAD
         // Complaint Analysis
         $summaryQuery = WorkOrder::select('complaint_type_id',
             DB::raw('COUNT(*) as total_count'),
@@ -90,6 +94,9 @@ class ReportController extends Controller
         $allComplaintTypes = ComplaintType::active()->get(['id', 'name', 'color']);
 
         return view('reports.repair-cost', compact('costs', 'summary', 'allUnits', 'complaintSummary', 'allComplaintTypes'));
+=======
+        return view('reports.repair-cost', compact('costs', 'summary', 'allUnits'));
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     }
 
     public function stockMovement(Request $request)
@@ -111,6 +118,7 @@ class ReportController extends Controller
 
         return view('reports.stock-movement', compact('movements', 'spareparts'));
     }
+<<<<<<< HEAD
 
     public function complaintAnalysis(Request $request)
     {
@@ -157,4 +165,6 @@ class ReportController extends Controller
 
         return view('reports.complaint-analysis', compact('workOrders', 'summary', 'allComplaintTypes'));
     }
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 }

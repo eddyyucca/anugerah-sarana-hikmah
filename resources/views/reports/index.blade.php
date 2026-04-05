@@ -31,6 +31,7 @@
             </div>
         </a>
     </div>
+<<<<<<< HEAD
     <div class="col-md-4">
         <a href="{{ route('reports.complaint-analysis') }}" class="text-decoration-none">
             <div class="erp-card p-3 card-accent-orange">
@@ -40,5 +41,7 @@
             </div>
         </a>
     </div>
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </div>
 @endsection

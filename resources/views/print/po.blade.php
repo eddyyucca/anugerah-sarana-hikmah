@@ -44,6 +44,7 @@
 
 <table class="items-table">
     <thead>
+<<<<<<< HEAD
         <tr>
             <th>No</th>
             <th>Part Number</th>
@@ -53,6 +54,9 @@
             <th style="text-align:right;">Unit Price (IDR)</th>
             <th style="text-align:right;">Total (IDR)</th>
         </tr>
+=======
+        <tr><th>No</th><th>Part Number</th><th>Description</th><th>UOM</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Unit Price (IDR)</th><th style="text-align:right;">Total (IDR)</th></tr>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     </thead>
     <tbody>
         @foreach($purchaseOrder->items as $i => $item)

@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\Models\ApprovalSetting;
 use App\Models\ApprovalLog;
+<<<<<<< HEAD
 use App\Models\User;
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
 class ApprovalService
 {
@@ -89,6 +92,7 @@ class ApprovalService
             ->with('actor:id,name')
             ->get();
     }
+<<<<<<< HEAD
 
     /**
      * Check if user can approve the document
@@ -170,4 +174,6 @@ class ApprovalService
             default => $documentType,
         };
     }
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 }

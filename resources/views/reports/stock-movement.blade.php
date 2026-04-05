@@ -8,6 +8,7 @@
     <div class="erp-card-body">
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-3">
+<<<<<<< HEAD
                 <select name="sparepart_id" class="form-select form-select-sm tom-select">
                     <option value="">All Spareparts</option>
                     @foreach($spareparts as $sp)
@@ -37,6 +38,20 @@
                         <th>Reference</th>
                     </tr>
                 </thead>
+=======
+                <select name="sparepart_id" class="form-select form-select-sm" style="border-radius:10px;">
+                    <option value="">All Spareparts</option>
+                    @foreach($spareparts as $sp)<option value="{{ $sp->id }}" {{ request('sparepart_id')==$sp->id?'selected':'' }}>{{ $sp->part_number }} - {{ $sp->part_name }}</option>@endforeach
+                </select>
+            </div>
+            <div class="col-md-2"><input type="date" name="date_from" class="form-control form-control-sm" value="{{ request('date_from') }}" style="border-radius:10px;"></div>
+            <div class="col-md-2"><input type="date" name="date_to" class="form-control form-control-sm" value="{{ request('date_to') }}" style="border-radius:10px;"></div>
+            <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" style="border-radius:10px;">Filter</button></div>
+        </form>
+        <div class="table-responsive">
+            <table class="table table-modern mb-0">
+                <thead><tr><th>Date</th><th>Part Number</th><th>Part Name</th><th>Type</th><th>In</th><th>Out</th><th>Balance</th><th>Reference</th></tr></thead>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                 <tbody>
                     @forelse($movements as $mv)
                     <tr>

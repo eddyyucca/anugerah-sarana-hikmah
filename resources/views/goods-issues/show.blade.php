@@ -5,7 +5,11 @@
 @section('content')
 <div class="row g-3">
     <div class="col-lg-4">
+<<<<<<< HEAD
         <x-card class="p-3">
+=======
+        <div class="erp-card p-3">
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <div><div style="font-weight:800;font-size:1.2rem;">{{ $goodsIssue->gi_number }}</div><div class="text-muted" style="font-size:.85rem;">{{ $goodsIssue->issue_date->format('d M Y') }}</div></div>
                 @include('components.status-badge', ['status' => $goodsIssue->status])
@@ -19,6 +23,7 @@
             </table>
             @if($goodsIssue->status === 'draft')
             <form action="{{ route('goods-issues.post', $goodsIssue) }}" method="POST">@csrf
+<<<<<<< HEAD
                 <x-button type="submit" variant="success" size="sm" onclick="return confirm('Post this GI? Stock will decrease.')"><i class="bi bi-check-lg me-1"></i>Post GI</x-button>
             </form>
             @endif
@@ -49,6 +54,38 @@
                 </table>
             </div>
         </x-card>
+=======
+                <button class="btn btn-sm btn-success" style="border-radius:10px;" onclick="return confirm('Post this GI? Stock will decrease.')"><i class="bi bi-check-lg me-1"></i>Post GI</button>
+            </form>
+            @endif
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="erp-card">
+            <div class="erp-card-header"><div class="section-title">Items Issued</div></div>
+            <div class="erp-card-body">
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead><tr><th>#</th><th>Part Number</th><th>Part Name</th><th>Location</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+                        <tbody>
+                            @foreach($goodsIssue->items as $i => $item)
+                            <tr>
+                                <td>{{ $i+1 }}</td>
+                                <td>{{ $item->sparepart->part_number }}</td>
+                                <td>{{ $item->sparepart->part_name }}</td>
+                                <td>{{ $item->warehouseLocation->name ?? '-' }}</td>
+                                <td>{{ $item->qty_issued }}</td>
+                                <td>{{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                                <td>{{ number_format($item->total_price, 0, ',', '.') }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot><tr><td colspan="6" class="text-end"><strong>Total</strong></td><td><strong>{{ number_format($goodsIssue->items->sum('total_price'), 0, ',', '.') }}</strong></td></tr></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     </div>
 </div>
 @endsection

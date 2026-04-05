@@ -50,10 +50,13 @@ class User extends Authenticatable
     {
         return MenuPermission::getMenusForRole($this->role);
     }
+<<<<<<< HEAD
 
     public function canApproveDocument(string $documentType, int $documentId, float $amount = 0): bool
     {
         $result = \App\Services\ApprovalService::canApprove($this, $documentType, $documentId, $amount);
         return $result['can_approve'];
     }
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 }

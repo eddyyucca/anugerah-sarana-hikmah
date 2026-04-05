@@ -5,6 +5,7 @@
 <form action="{{ route('stock-opname.store') }}" method="POST">@csrf
 <div class="erp-card mb-3">
     <div class="erp-card-header"><div class="section-title">Opname Header</div></div>
+<<<<<<< HEAD
     <div class="erp-card-body">
         <div class="row g-3">
             <x-form-date name="opname_date" label="Date" :value="date('Y-m-d')" required class="col-md-3" />
@@ -17,10 +18,18 @@
             <x-form-input name="remarks" label="Remarks" type="text" class="col-md-6" />
         </div>
     </div>
+=======
+    <div class="erp-card-body"><div class="row g-3">
+        <div class="col-md-3"><label class="form-label">Date</label><input type="date" name="opname_date" class="form-control" value="{{ date('Y-m-d') }}" required style="border-radius:10px;"></div>
+        <div class="col-md-3"><label class="form-label">Location</label><select name="warehouse_location_id" class="form-select" style="border-radius:10px;"><option value="">All Location</option>@foreach($locations as $l)<option value="{{ $l->id }}">{{ $l->name }}</option>@endforeach</select></div>
+        <div class="col-md-6"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control" style="border-radius:10px;"></div>
+    </div></div>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </div>
 <div class="erp-card mb-3">
     <div class="erp-card-header d-flex justify-content-between align-items-center">
         <div class="section-title">Items Count</div>
+<<<<<<< HEAD
         <button type="button" class="btn btn-sm btn-outline-danger" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</button>
     </div>
     <div class="erp-card-body">
@@ -40,6 +49,14 @@
 </div>
 <button type="submit" class="btn btn-danger">Save Opname</button>
 <a href="{{ route('stock-opname.index') }}" class="btn btn-light">Cancel</a>
+=======
+        <button type="button" class="btn btn-sm btn-outline-danger" style="border-radius:10px;" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</button>
+    </div>
+    <div class="erp-card-body"><table class="table table-modern mb-0" id="itemsTable"><thead><tr><th>Sparepart</th><th>System Qty</th><th style="width:140px;">Physical Qty</th><th>Notes</th><th style="width:50px;"></th></tr></thead><tbody></tbody></table></div>
+</div>
+<button type="submit" class="btn btn-danger" style="border-radius:12px;">Save Opname</button>
+<a href="{{ route('stock-opname.index') }}" class="btn btn-light" style="border-radius:12px;">Cancel</a>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </form>
 @endsection
 @push('scripts')
@@ -49,6 +66,7 @@ let ri = 0;
 function addItem() {
     const opts = spareparts.map(s => `<option value="${s.id}" data-stk="${s.stock_on_hand}">${s.part_number} - ${s.part_name} (Stk: ${s.stock_on_hand})</option>`).join('');
     document.querySelector('#itemsTable tbody').insertAdjacentHTML('beforeend', `<tr>
+<<<<<<< HEAD
         <td><select name="items[${ri}][sparepart_id]" class="form-select form-select-sm tom-select sp-sel" data-r="${ri}" required><option value="">--Select--</option>${opts}</select></td>
         <td><span class="sys-qty" data-r="${ri}">-</span></td>
         <td><input type="number" name="items[${ri}][physical_qty]" class="form-control form-control-sm" min="0" required></td>
@@ -71,6 +89,9 @@ function addItem() {
     const opts = spareparts.map(s => `<option value="${s.id}" data-stk="${s.stock_on_hand}">${s.part_number} - ${s.part_name} (Stk: ${s.stock_on_hand})</option>`).join('');
     document.querySelector('#itemsTable tbody').insertAdjacentHTML('beforeend', `<tr>
         <td><select name="items[${ri}][sparepart_id]" class="form-select form-select-sm tom-select sp-sel" data-r="${ri}" required style="border-radius:10px;"><option value="">--Select--</option>${opts}</select></td>
+=======
+        <td><select name="items[${ri}][sparepart_id]" class="form-select form-select-sm sp-sel" data-r="${ri}" required style="border-radius:10px;"><option value="">--Select--</option>${opts}</select></td>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         <td><span class="sys-qty" data-r="${ri}">-</span></td>
         <td><input type="number" name="items[${ri}][physical_qty]" class="form-control form-control-sm" min="0" required style="border-radius:10px;"></td>
         <td><input type="text" name="items[${ri}][notes]" class="form-control form-control-sm" style="border-radius:10px;"></td>

@@ -39,7 +39,11 @@ class MenuPermission extends Model
             'goods-receipts', 'goods-issues', 'warehouse-transfer', 'stock-opname',
             'work-orders', 'downtime',
             'operators', 'p2h', 'p2h-summary',
+<<<<<<< HEAD
             'users', 'reports', 'approval-settings', 'menu-settings',
+=======
+            'reports', 'approval-settings', 'menu-settings',
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         ];
     }
 }
