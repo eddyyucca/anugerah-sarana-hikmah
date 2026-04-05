@@ -1,0 +1,73 @@
+# Workshop ERP - Mining Logistics System
+
+## Instalasi
+
+### 1. Buat project Laravel baru
+```bash
+composer create-project laravel/laravel workshop-erp
+cd workshop-erp
+```
+
+### 2. Copy file dari ZIP ini
+Timpa/copy semua folder dari ZIP ke project Laravel:
+- `app/` → ke `app/`
+- `database/` → ke `database/`
+- `resources/views/` → ke `resources/views/`
+- `public/assets/` → ke `public/assets/`
+- `routes/web.php` → ke `routes/web.php`
+
+### 3. Setup Database
+Edit `.env`:
+```
+DB_DATABASE=workshop_erp
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 4. Jalankan Migration & Seeder
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### 5. Jalankan Server
+```bash
+php artisan serve
+```
+Buka: http://localhost:8000
+
+## Struktur Modul
+
+| Modul | Route | Fungsi |
+|-------|-------|--------|
+| Dashboard | `/` | KPI, chart, summary |
+| Units | `/units` | Master unit alat berat |
+| Spareparts | `/spareparts` | Master sparepart |
+| Suppliers | `/suppliers` | Master supplier |
+| Technicians | `/technicians` | Master teknisi |
+| Purchase Request | `/purchase-requests` | Pengajuan pembelian |
+| Purchase Order | `/purchase-orders` | Order pembelian |
+| Goods Receipt | `/goods-receipts` | Penerimaan barang |
+| Goods Issue | `/goods-issues` | Pengeluaran barang |
+| Work Orders | `/work-orders` | Order perbaikan |
+| Reports | `/reports` | Laporan & analisis |
+
+## Alur Bisnis
+
+### Procurement: PR → PO → GR → Stock Update
+### Maintenance: WO → GI (parts) → Complete → Cost Summary
+### Warehouse: GR (masuk) / GI (keluar) → Stock Movement
+
+## Database: 23 Tabel
+- 5 migration files
+- Index composite untuk performa query
+- Summary table untuk dashboard cepat
+- Soft delete untuk master data
+
+## Tech Stack
+- Laravel 11+
+- MySQL/MariaDB
+- Bootstrap 5 CDN
+- Chart.js CDN
+- Bootstrap Icons CDN
+- Blade Templating
