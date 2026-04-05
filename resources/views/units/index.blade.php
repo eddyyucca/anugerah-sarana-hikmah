@@ -6,17 +6,28 @@
 <div class="erp-card">
     <div class="erp-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="section-title">Unit List</div>
+<<<<<<< HEAD
+        <a href="{{ route('units.create') }}" class="btn btn-danger btn-sm">
+=======
         <a href="{{ route('units.create') }}" class="btn btn-danger btn-sm" style="border-radius:12px;">
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             <i class="bi bi-plus-lg me-1"></i> Add Unit
         </a>
     </div>
     <div class="erp-card-body">
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-3">
+<<<<<<< HEAD
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Search code / model..." value="{{ request('search') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select form-select-sm tom-select">
+=======
                 <input type="text" name="search" class="form-control form-control-sm" placeholder="Search code / model..." value="{{ request('search') }}" style="border-radius:10px;">
             </div>
             <div class="col-md-2">
                 <select name="status" class="form-select form-select-sm" style="border-radius:10px;">
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                     <option value="">All Status</option>
                     <option value="available" {{ request('status')=='available'?'selected':'' }}>Available</option>
                     <option value="under_repair" {{ request('status')=='under_repair'?'selected':'' }}>Under Repair</option>
@@ -24,7 +35,11 @@
                 </select>
             </div>
             <div class="col-md-2">
+<<<<<<< HEAD
+                <select name="category_id" class="form-select form-select-sm tom-select">
+=======
                 <select name="category_id" class="form-select form-select-sm" style="border-radius:10px;">
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                     <option value="">All Category</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat->id }}" {{ request('category_id')==$cat->id?'selected':'' }}>{{ $cat->name }}</option>
@@ -32,8 +47,13 @@
                 </select>
             </div>
             <div class="col-auto">
+<<<<<<< HEAD
+                <button class="btn btn-outline-secondary btn-sm">Filter</button>
+                <a href="{{ route('units.index') }}" class="btn btn-light btn-sm">Reset</a>
+=======
                 <button class="btn btn-outline-secondary btn-sm" style="border-radius:10px;">Filter</button>
                 <a href="{{ route('units.index') }}" class="btn btn-light btn-sm" style="border-radius:10px;">Reset</a>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             </div>
         </form>
 
@@ -62,11 +82,19 @@
                         <td>@include('components.status-badge', ['status' => $unit->current_status])</td>
                         <td>{{ number_format($unit->hour_meter, 1) }}</td>
                         <td>
+<<<<<<< HEAD
+                            <a href="{{ route('units.show', $unit) }}" class="btn btn-sm btn-light"><i class="bi bi-eye"></i></a>
+                            <a href="{{ route('units.edit', $unit) }}" class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></a>
+                            <form action="{{ route('units.destroy', $unit) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this unit?')">
+                                @csrf @method('DELETE')
+                                <button class="btn btn-sm btn-light text-danger"><i class="bi bi-trash"></i></button>
+=======
                             <a href="{{ route('units.show', $unit) }}" class="btn btn-sm btn-light" style="border-radius:8px;"><i class="bi bi-eye"></i></a>
                             <a href="{{ route('units.edit', $unit) }}" class="btn btn-sm btn-light" style="border-radius:8px;"><i class="bi bi-pencil"></i></a>
                             <form action="{{ route('units.destroy', $unit) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this unit?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-light text-danger" style="border-radius:8px;"><i class="bi bi-trash"></i></button>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                             </form>
                         </td>
                     </tr>

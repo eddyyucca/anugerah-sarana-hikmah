@@ -2,6 +2,63 @@
 @section('page-title', 'Edit PO')
 @section('breadcrumb')<li class="breadcrumb-item"><a href="{{ route('purchase-orders.index') }}">Purchase Orders</a></li><li class="breadcrumb-item active">Edit</li>@endsection
 @section('content')
+<<<<<<< HEAD
+<form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST">
+    @csrf @method('PUT')
+    <x-card class="mb-3">
+        <x-slot:header>
+            <div class="section-title">PO Header</div>
+        </x-slot:header>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <x-form-group label="PO Number">
+                    <input type="text" class="form-control" value="{{ $purchaseOrder->po_number }}" readonly style="background:#f8f9fa;">
+                </x-form-group>
+            </div>
+            <div class="col-md-3">
+                <x-form-group label="Supplier">
+                    <select name="supplier_id" class="form-select tom-select" required>
+                        <option value="">--Select--</option>
+                        @foreach($suppliers as $sup)
+                        <option value="{{ $sup->id }}" {{ $purchaseOrder->supplier_id==$sup->id?'selected':'' }}>{{ $sup->supplier_name }}</option>
+                        @endforeach
+                    </select>
+                </x-form-group>
+            </div>
+            <div class="col-md-2">
+                <x-form-group label="PO Date">
+                    <input type="date" name="po_date" class="form-control" value="{{ $purchaseOrder->po_date->format('Y-m-d') }}" required>
+                </x-form-group>
+            </div>
+            <div class="col-md-2">
+                <x-form-group label="Expected">
+                    <input type="date" name="expected_date" class="form-control" value="{{ $purchaseOrder->expected_date?->format('Y-m-d') }}">
+                </x-form-group>
+            </div>
+            <div class="col-md-12">
+                <x-form-group label="Remarks">
+                    <input type="text" name="remarks" class="form-control" value="{{ $purchaseOrder->remarks }}">
+                </x-form-group>
+            </div>
+        </div>
+    </x-card>
+    <x-card class="mb-3">
+        <x-slot:header>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="section-title">Items</div>
+                <x-button type="button" variant="outline-danger" size="sm" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</x-button>
+            </div>
+        </x-slot:header>
+        <div class="table-responsive">
+            <table class="table table-modern mb-0" id="itemsTable">
+                <thead><tr><th>Sparepart</th><th style="width:100px;">Qty</th><th style="width:150px;">Price</th><th style="width:50px;"></th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </x-card>
+    <x-button type="submit" variant="danger">Update PO</x-button>
+    <a href="{{ route('purchase-orders.show', $purchaseOrder) }}" class="btn btn-light">Cancel</a>
+=======
 <form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST">@csrf @method('PUT')
 <div class="erp-card mb-3"><div class="erp-card-header"><div class="section-title">PO Header</div></div><div class="erp-card-body"><div class="row g-3">
     <div class="col-md-3"><label class="form-label">PO Number</label><input type="text" class="form-control" value="{{ $purchaseOrder->po_number }}" readonly style="border-radius:10px;background:#f8f9fa;"></div>
@@ -13,6 +70,7 @@
 <div class="erp-card mb-3"><div class="erp-card-header d-flex justify-content-between align-items-center"><div class="section-title">Items</div><button type="button" class="btn btn-sm btn-outline-danger" style="border-radius:10px;" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
 <div class="erp-card-body"><table class="table table-modern mb-0" id="itemsTable"><thead><tr><th>Sparepart</th><th style="width:100px;">Qty</th><th style="width:150px;">Price</th><th style="width:50px;"></th></tr></thead><tbody></tbody></table></div></div>
 <button type="submit" class="btn btn-danger" style="border-radius:12px;">Update PO</button> <a href="{{ route('purchase-orders.show', $purchaseOrder) }}" class="btn btn-light" style="border-radius:12px;">Cancel</a>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </form>
 @endsection
 @push('scripts')
@@ -22,7 +80,11 @@ let rowIdx = 0;
 function addItem(spId='', qty=1, price=0) {
     const tbody = document.querySelector('#itemsTable tbody');
     const opts = spareparts.map(sp => `<option value="${sp.id}" ${sp.id==spId?'selected':''}>${sp.part_number} - ${sp.part_name}</option>`).join('');
+<<<<<<< HEAD
+    tbody.insertAdjacentHTML('beforeend', `<tr><td><select name="items[${rowIdx}][sparepart_id]" class="form-select form-select-sm tom-select" required><option value="">--Select--</option>${opts}</select></td><td><input type="number" name="items[${rowIdx}][qty]" class="form-control form-control-sm" value="${qty}" min="1" required></td><td><input type="number" step="0.01" name="items[${rowIdx}][unit_price]" class="form-control form-control-sm" value="${price}" min="0" required></td><td><button type="button" class="btn btn-sm btn-light text-danger" onclick="this.closest('tr').remove()"><i class="bi bi-x-lg"></i></button></td></tr>`);
+=======
     tbody.insertAdjacentHTML('beforeend', `<tr><td><select name="items[${rowIdx}][sparepart_id]" class="form-select form-select-sm" required style="border-radius:10px;"><option value="">--Select--</option>${opts}</select></td><td><input type="number" name="items[${rowIdx}][qty]" class="form-control form-control-sm" value="${qty}" min="1" required style="border-radius:10px;"></td><td><input type="number" step="0.01" name="items[${rowIdx}][unit_price]" class="form-control form-control-sm" value="${price}" min="0" required style="border-radius:10px;"></td><td><button type="button" class="btn btn-sm btn-light text-danger" onclick="this.closest('tr').remove()" style="border-radius:8px;"><i class="bi bi-x-lg"></i></button></td></tr>`);
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     rowIdx++;
 }
 document.addEventListener('DOMContentLoaded', () => {

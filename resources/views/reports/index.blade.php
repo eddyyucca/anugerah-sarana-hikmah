@@ -31,5 +31,17 @@
             </div>
         </a>
     </div>
+<<<<<<< HEAD
+    <div class="col-md-4">
+        <a href="{{ route('reports.complaint-analysis') }}" class="text-decoration-none">
+            <div class="erp-card p-3 card-accent-orange">
+                <div class="kpi-icon mb-3" style="background:rgba(249,115,22,.12);color:#f97316;"><i class="bi bi-exclamation-triangle"></i></div>
+                <div style="font-weight:700;font-size:1.1rem;color:var(--text-main);">Complaint Analysis</div>
+                <div class="text-muted" style="font-size:.85rem;">Damage type analysis by complaint category</div>
+            </div>
+        </a>
+    </div>
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </div>
 @endsection

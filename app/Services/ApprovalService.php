@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Models\ApprovalSetting;
 use App\Models\ApprovalLog;
+<<<<<<< HEAD
+use App\Models\User;
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
 class ApprovalService
 {
@@ -88,4 +92,88 @@ class ApprovalService
             ->with('actor:id,name')
             ->get();
     }
+<<<<<<< HEAD
+
+    /**
+     * Check if user can approve the document
+     * @param User $user
+     * @param string $documentType
+     * @param int $documentId
+     * @param float $amount - Document amount for budget validation
+     * @return array ['can_approve' => bool, 'message' => string]
+     */
+    public static function canApprove(User $user, string $documentType, int $documentId, float $amount = 0): array
+    {
+        // Admin can always approve
+        if ($user->isAdmin()) {
+            return ['can_approve' => true, 'message' => ''];
+        }
+
+        // Check if user has can_approve permission for this document type
+        $menuKey = self::getMenuKeyForDocumentType($documentType);
+        if (!$user->canAccess($menuKey, 'can_approve')) {
+            return ['can_approve' => false, 'message' => 'You do not have approval permission for this document.'];
+        }
+
+        // Check if there's a pending approval for this document
+        $pending = ApprovalLog::where('document_type', $documentType)
+            ->where('document_id', $documentId)
+            ->where('action', 'pending')
+            ->orderBy('level_order')
+            ->first();
+
+        if (!$pending) {
+            return ['can_approve' => false, 'message' => 'No pending approval found for this document.'];
+        }
+
+        // Check if user is eligible approver for this level
+        $setting = ApprovalSetting::find($pending->approval_setting_id);
+        if (!self::isEligibleApprover($user, $setting)) {
+            return ['can_approve' => false, 'message' => 'You are not the designated approver for this approval level.'];
+        }
+
+        return ['can_approve' => true, 'message' => ''];
+    }
+
+    /**
+     * Check if user is eligible to approve based on ApprovalSetting
+     * @param User $user
+     * @param ApprovalSetting $setting
+     * @return bool
+     */
+    public static function isEligibleApprover(User $user, ApprovalSetting $setting): bool
+    {
+        // If specific user is designated, only that user can approve
+        if ($setting->approver_user_id) {
+            return $user->id === $setting->approver_user_id;
+        }
+
+        // If role is designated, user with that role can approve
+        if ($setting->approver_role) {
+            return $user->role === $setting->approver_role;
+        }
+
+        // If no specific approver set, any user with can_approve permission can approve
+        return true;
+    }
+
+    /**
+     * Map document type to menu key
+     * @param string $documentType
+     * @return string
+     */
+    private static function getMenuKeyForDocumentType(string $documentType): string
+    {
+        return match($documentType) {
+            'pr' => 'purchase-requests',
+            'po' => 'purchase-orders',
+            'wo' => 'work-orders',
+            'gi' => 'goods-issues',
+            'gs' => 'goods-receipts',
+            'so' => 'stock-opname',
+            default => $documentType,
+        };
+    }
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 }

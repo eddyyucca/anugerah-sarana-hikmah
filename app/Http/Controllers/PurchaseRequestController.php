@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\PurchaseRequest;
 use App\Models\Sparepart;
 use App\Services\DocumentNumberService;
+<<<<<<< HEAD
+use App\Services\ApprovalService;
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -120,7 +124,18 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Only draft PR can be submitted.');
         }
 
+<<<<<<< HEAD
+        // Calculate total amount for approval
+        $totalAmount = $purchaseRequest->items->sum(fn($item) => $item->sparepart?->unit_price * $item->qty ?? 0);
+
         $purchaseRequest->update(['status' => 'submitted']);
+
+        // Initiate approval workflow if approval settings exist
+        ApprovalService::initiate('pr', $purchaseRequest->id, $totalAmount);
+
+=======
+        $purchaseRequest->update(['status' => 'submitted']);
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         return back()->with('success', 'PR submitted for approval.');
     }
 
@@ -130,12 +145,37 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Only submitted PR can be approved.');
         }
 
+<<<<<<< HEAD
+        // Calculate total amount for approval
+        $totalAmount = $purchaseRequest->items->sum(fn($item) => $item->sparepart?->unit_price * $item->qty ?? 0);
+
+        // Check if user can approve
+        $authCheck = ApprovalService::canApprove(auth()->user(), 'pr', $purchaseRequest->id, $totalAmount);
+        if (!$authCheck['can_approve']) {
+            return back()->with('error', $authCheck['message']);
+        }
+
+        // Perform the approval
+        $result = ApprovalService::approve('pr', $purchaseRequest->id, auth()->id());
+
+        if ($result === 'fully_approved') {
+            $purchaseRequest->update([
+                'status' => 'approved',
+                'approved_by' => auth()->id(),
+                'approved_at' => now(),
+            ]);
+            return back()->with('success', 'PR fully approved and ready for PO creation.');
+        } else {
+            return back()->with('success', 'PR approval level completed. Awaiting further approvals.');
+        }
+=======
         $purchaseRequest->update([
             'status' => 'approved',
             'approved_by' => auth()->id() ?? 1,
             'approved_at' => now(),
         ]);
         return back()->with('success', 'PR approved.');
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     }
 
     public function reject(PurchaseRequest $purchaseRequest)
@@ -144,7 +184,17 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Only submitted PR can be rejected.');
         }
 
+<<<<<<< HEAD
+        // Log rejection via ApprovalService
+        ApprovalService::reject('pr', $purchaseRequest->id, auth()->id());
+
+        // Reset status back to draft for revision
+        $purchaseRequest->update(['status' => 'draft']);
+
+        return back()->with('success', 'PR rejected and returned to draft.');
+=======
         $purchaseRequest->update(['status' => 'rejected']);
         return back()->with('success', 'PR rejected.');
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     }
 }

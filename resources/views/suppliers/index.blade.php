@@ -5,12 +5,21 @@
 <div class="erp-card">
     <div class="erp-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="section-title">Supplier List</div>
+<<<<<<< HEAD
+        <a href="{{ route('suppliers.create') }}" class="btn btn-danger btn-sm"><i class="bi bi-plus-lg me-1"></i> Add Supplier</a>
+    </div>
+    <div class="erp-card-body">
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-md-4"><input type="text" name="search" class="form-control form-control-sm" placeholder="Search code / name..." value="{{ request('search') }}"></div>
+            <div class="col-auto"><button class="btn btn-outline-secondary btn-sm">Search</button></div>
+=======
         <a href="{{ route('suppliers.create') }}" class="btn btn-danger btn-sm" style="border-radius:12px;"><i class="bi bi-plus-lg me-1"></i> Add Supplier</a>
     </div>
     <div class="erp-card-body">
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-4"><input type="text" name="search" class="form-control form-control-sm" placeholder="Search code / name..." value="{{ request('search') }}" style="border-radius:10px;"></div>
             <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" style="border-radius:10px;">Search</button></div>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         </form>
         <div class="table-responsive">
             <table class="table table-modern mb-0">
@@ -24,9 +33,15 @@
                         <td>{{ $sup->phone ?? '-' }}</td>
                         <td>{{ $sup->email ?? '-' }}</td>
                         <td>
+<<<<<<< HEAD
+                            <a href="{{ route('suppliers.show', $sup) }}" class="btn btn-sm btn-light"><i class="bi bi-eye"></i></a>
+                            <a href="{{ route('suppliers.edit', $sup) }}" class="btn btn-sm btn-light"><i class="bi bi-pencil"></i></a>
+                            <form action="{{ route('suppliers.destroy', $sup) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button class="btn btn-sm btn-light text-danger"><i class="bi bi-trash"></i></button></form>
+=======
                             <a href="{{ route('suppliers.show', $sup) }}" class="btn btn-sm btn-light" style="border-radius:8px;"><i class="bi bi-eye"></i></a>
                             <a href="{{ route('suppliers.edit', $sup) }}" class="btn btn-sm btn-light" style="border-radius:8px;"><i class="bi bi-pencil"></i></a>
                             <form action="{{ route('suppliers.destroy', $sup) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button class="btn btn-sm btn-light text-danger" style="border-radius:8px;"><i class="bi bi-trash"></i></button></form>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                         </td>
                     </tr>
                     @empty<tr><td colspan="6" class="text-center text-muted py-4">No suppliers found.</td></tr>@endforelse

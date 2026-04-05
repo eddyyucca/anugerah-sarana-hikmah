@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+<x-form-row>
+    <x-form-input name="operator_code" label="Operator Code" value="{{ $operator->operator_code ?? '' }}" required class="col-md-3" />
+    <x-form-input name="operator_name" label="Name" value="{{ $operator->operator_name ?? '' }}" required class="col-md-4" />
+    <x-form-input name="nik" label="NIK" value="{{ $operator->nik ?? '' }}" class="col-md-3" />
+    <x-form-input name="phone" label="Phone" value="{{ $operator->phone ?? '' }}" class="col-md-2" />
+    <x-form-input name="license_type" label="License Type" value="{{ $operator->license_type ?? '' }}" placeholder="SIM B2, SIO, dll" class="col-md-3" />
+    <x-form-date name="license_expiry" label="License Expiry" value="{{ $operator->license_expiry ?? '' }}" class="col-md-3" />
+</x-form-row>
+=======
 <div class="row g-3">
     <div class="col-md-3"><label class="form-label">Operator Code <span class="text-danger">*</span></label><input type="text" name="operator_code" class="form-control @error('operator_code') is-invalid @enderror" value="{{ old('operator_code', $operator->operator_code ?? '') }}" required style="border-radius:10px;">@error('operator_code')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
     <div class="col-md-4"><label class="form-label">Name <span class="text-danger">*</span></label><input type="text" name="operator_name" class="form-control @error('operator_name') is-invalid @enderror" value="{{ old('operator_name', $operator->operator_name ?? '') }}" required style="border-radius:10px;">@error('operator_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
@@ -6,3 +16,4 @@
     <div class="col-md-3"><label class="form-label">License Type</label><input type="text" name="license_type" class="form-control" value="{{ old('license_type', $operator->license_type ?? '') }}" placeholder="SIM B2, SIO, dll" style="border-radius:10px;"></div>
     <div class="col-md-3"><label class="form-label">License Expiry</label><input type="date" name="license_expiry" class="form-control" value="{{ old('license_expiry', isset($operator) && $operator->license_expiry ? $operator->license_expiry->format('Y-m-d') : '') }}" style="border-radius:10px;"></div>
 </div>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c

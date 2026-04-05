@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\MenuPermission;
+<<<<<<< HEAD
+=======
 use App\Models\User;
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,8 +14,20 @@ class MenuPermissionController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< HEAD
+        // Get all roles from menu_permissions or default roles
+        $roles = MenuPermission::select('role')->distinct()->pluck('role')->toArray();
+
+        // If no roles exist, add default roles
+        if (empty($roles)) {
+            $roles = ['admin', 'user', 'manager'];
+        }
+
+        $currentRole = $request->get('role', $roles[0] ?? 'admin');
+=======
         $roles = User::select('role')->distinct()->pluck('role')->toArray();
         $currentRole = $request->get('role', $roles[0] ?? 'user');
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
         $menuKeys = MenuPermission::getAllMenuKeys();
         $permissions = MenuPermission::where('role', $currentRole)->get()->keyBy('menu_key');
@@ -35,6 +50,10 @@ class MenuPermissionController extends Controller
             'operators' => 'Operators',
             'p2h' => 'P2H Check',
             'p2h-summary' => 'P2H Summary',
+<<<<<<< HEAD
+            'users' => 'Users (Account Management)',
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             'reports' => 'Reports',
             'approval-settings' => 'Approval Settings',
             'menu-settings' => 'Menu Settings',

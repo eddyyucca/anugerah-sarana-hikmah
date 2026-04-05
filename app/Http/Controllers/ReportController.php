@@ -7,6 +7,11 @@ use App\Models\RepairCostSummary;
 use App\Models\UnitAvailabilityLog;
 use App\Models\StockMovement;
 use App\Models\Sparepart;
+<<<<<<< HEAD
+use App\Models\WorkOrder;
+use App\Models\ComplaintType;
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -69,7 +74,29 @@ class ReportController extends Controller
 
         $allUnits = Unit::active()->orderBy('unit_code')->get(['id', 'unit_code']);
 
+<<<<<<< HEAD
+        // Complaint Analysis
+        $summaryQuery = WorkOrder::select('complaint_type_id',
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed_count'),
+            DB::raw('SUM(downtime_hours) as total_downtime'),
+            DB::raw('SUM(labor_cost + vendor_cost + consumable_cost) as total_cost')
+        )->whereNotNull('complaint_type_id')->with('complaintType:id,name,color');
+
+        if ($request->filled('date_from')) {
+            $summaryQuery->where('start_time', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $summaryQuery->where('start_time', '<=', $request->date_to . ' 23:59:59');
+        }
+
+        $complaintSummary = $summaryQuery->groupBy('complaint_type_id')->orderByDesc('total_count')->get();
+        $allComplaintTypes = ComplaintType::active()->get(['id', 'name', 'color']);
+
+        return view('reports.repair-cost', compact('costs', 'summary', 'allUnits', 'complaintSummary', 'allComplaintTypes'));
+=======
         return view('reports.repair-cost', compact('costs', 'summary', 'allUnits'));
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     }
 
     public function stockMovement(Request $request)
@@ -91,4 +118,53 @@ class ReportController extends Controller
 
         return view('reports.stock-movement', compact('movements', 'spareparts'));
     }
+<<<<<<< HEAD
+
+    public function complaintAnalysis(Request $request)
+    {
+        $query = WorkOrder::with('unit:id,unit_code,unit_model', 'complaintType:id,name,color', 'creator:id,name');
+
+        // Filter by complaint type
+        if ($request->filled('complaint_type_id')) {
+            $query->where('complaint_type_id', $request->complaint_type_id);
+        }
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->where('start_time', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('start_time', '<=', $request->date_to . ' 23:59:59');
+        }
+
+        // Filter by maintenance type
+        if ($request->filled('maintenance_type')) {
+            $query->where('maintenance_type', $request->maintenance_type);
+        }
+
+        $workOrders = $query->latest('start_time')->paginate(20)->withQueryString();
+
+        // Summary by complaint type
+        $summaryQuery = WorkOrder::select('complaint_type_id',
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed_count'),
+            DB::raw('SUM(downtime_hours) as total_downtime'),
+            DB::raw('SUM(labor_cost + vendor_cost + consumable_cost) as total_cost')
+        )->whereNotNull('complaint_type_id')->with('complaintType:id,name,color');
+
+        if ($request->filled('date_from')) {
+            $summaryQuery->where('start_time', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $summaryQuery->where('start_time', '<=', $request->date_to . ' 23:59:59');
+        }
+
+        $summary = $summaryQuery->groupBy('complaint_type_id')->orderByDesc('total_count')->get();
+
+        $allComplaintTypes = ComplaintType::active()->get(['id', 'name', 'color']);
+
+        return view('reports.complaint-analysis', compact('workOrders', 'summary', 'allComplaintTypes'));
+    }
+=======
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 }

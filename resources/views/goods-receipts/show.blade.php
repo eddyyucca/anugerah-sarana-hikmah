@@ -5,7 +5,11 @@
 @section('content')
 <div class="row g-3">
     <div class="col-lg-4">
+<<<<<<< HEAD
+        <x-card class="p-3">
+=======
         <div class="erp-card p-3">
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <div><div style="font-weight:800;font-size:1.2rem;">{{ $goodsReceipt->gr_number }}</div><div class="text-muted" style="font-size:.85rem;">{{ $goodsReceipt->receipt_date->format('d M Y') }}</div></div>
                 @include('components.status-badge', ['status' => $goodsReceipt->status])
@@ -18,6 +22,35 @@
             </table>
             @if($goodsReceipt->status === 'draft')
             <form action="{{ route('goods-receipts.post', $goodsReceipt) }}" method="POST">@csrf
+<<<<<<< HEAD
+                <x-button type="submit" variant="success" size="sm" onclick="return confirm('Post this GR? Stock will be updated.')"><i class="bi bi-check-lg me-1"></i>Post GR</x-button>
+            </form>
+            @endif
+        </x-card>
+    </div>
+    <div class="col-lg-8">
+        <x-card>
+            <x-slot:header>
+                <div class="section-title">Items Received</div>
+            </x-slot:header>
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead><tr><th>#</th><th>Part Number</th><th>Part Name</th><th>Location</th><th>Qty Received</th></tr></thead>
+                    <tbody>
+                        @foreach($goodsReceipt->items as $i => $item)
+                        <tr>
+                            <td>{{ $i+1 }}</td>
+                            <td>{{ $item->sparepart->part_number }}</td>
+                            <td>{{ $item->sparepart->part_name }}</td>
+                            <td>{{ $item->warehouseLocation->name ?? '-' }}</td>
+                            <td>{{ $item->qty_received }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </x-card>
+=======
                 <button class="btn btn-sm btn-success" style="border-radius:10px;" onclick="return confirm('Post this GR? Stock will be updated.')"><i class="bi bi-check-lg me-1"></i>Post GR</button>
             </form>
             @endif
@@ -45,6 +78,7 @@
                 </div>
             </div>
         </div>
+>>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     </div>
 </div>
 @endsection
