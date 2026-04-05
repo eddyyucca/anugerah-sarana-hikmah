@@ -27,6 +27,10 @@ Sistem ERP terintegrasi untuk pengelolaan workshop yang mencakup user management
 | **Goods Issue** | `/goods-issues` | Pengeluaran barang |
 | **Stock Opname** | `/stock-opnames` | Verifikasi stok (dengan approval) |
 | **Work Orders** | `/work-orders` | Order perbaikan unit |
+| **Warehouse Transfer** | `/warehouse-transfers` | Transfer barang antar gudang |
+| **P2H Check** | `/p2h-checks` | Pemeriksaan pra-penggunaan unit |
+| **Repair Cost Summary** | `/repair-cost-summaries` | Ringkasan biaya perbaikan |
+| **Notifications** | `/notifications` | Sistem notifikasi untuk user |
 | **Reports** | `/reports` | Laporan dan analisis |
 
 ## 📋 Alur Bisnis
@@ -44,6 +48,11 @@ WO → GI (Parts) → Complete → Cost Summary
 ### Warehouse Management
 ```
 GR (Masuk) / GI (Keluar) → Stock Movement → Opname (Approval)
+```
+
+### Unit Management
+```
+Unit Registration → Availability Log → P2H Check → Work Order
 ```
 
 ## 🛠️ Instalasi & Setup
@@ -98,6 +107,23 @@ Akses aplikasi: **http://localhost:8000**
 ```php
 // Check if user can access menu
 $canAccess = auth()->user()->canAccess('purchase-request', 'create');
+```
+
+## 📊 Teknologi yang Digunakan
+- **Backend**: Laravel 11 (PHP Framework)
+- **Database**: MySQL/MariaDB
+- **Frontend**: Blade Templates, Bootstrap (dengan Vite untuk asset bundling)
+- **Authentication**: Laravel Sanctum/Breeze
+- **Queue & Jobs**: Laravel Queue untuk background processing
+- **Notifications**: Email & in-app notifications
+
+## 🎯 Fitur Tambahan
+- **Stock Movement Tracking**: Pelacakan pergerakan stok secara real-time
+- **Unit Availability Log**: Log ketersediaan unit untuk monitoring
+- **Complaint Types**: Kategori keluhan untuk work orders
+- **Warehouse Locations**: Manajemen lokasi penyimpanan di gudang
+- **Document Numbering**: Sistem penomoran otomatis untuk dokumen
+- **Multi-warehouse Support**: Dukungan multiple gudang dengan transfer
 
 // Check if user can approve document
 $canApprove = auth()->user()->canApproveDocument('pr', $id, $amount);
