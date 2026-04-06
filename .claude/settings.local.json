@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -l \"stock_opname\\\\|sparepart\" \"c:/xampp/htdocs/anugerah-sarana-hikmah-main/database/migrations\"/*.php)",
+      "Bash(php artisan:*)"
+    ]
+  }
+}

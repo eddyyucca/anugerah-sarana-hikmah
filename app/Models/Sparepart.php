@@ -10,7 +10,7 @@ class Sparepart extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'part_number', 'part_name', 'category_id', 'unit_price',
+        'part_number', 'part_name', 'bin_location', 'category_id', 'unit_price',
         'minimum_stock', 'stock_on_hand', 'uom', 'is_active',
     ];
 

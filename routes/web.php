@@ -78,7 +78,10 @@ Route::middleware('auth')->group(function () {
 
     // Stock Opname
     Route::resource('stock-opname', StockOpnameController::class)->only(['index', 'create', 'store', 'show']);
+    Route::post('stock-opname/{stock_opname}/count', [StockOpnameController::class, 'count'])->name('stock-opname.count');
+    Route::post('stock-opname/{stock_opname}/submit', [StockOpnameController::class, 'submit'])->name('stock-opname.submit');
     Route::post('stock-opname/{stock_opname}/approve', [StockOpnameController::class, 'approve'])->name('stock-opname.approve');
+    Route::post('stock-opname/{stock_opname}/reject', [StockOpnameController::class, 'reject'])->name('stock-opname.reject');
 
     // WO
     Route::resource('work-orders', WorkOrderController::class)->except(['destroy']);

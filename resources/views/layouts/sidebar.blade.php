@@ -8,7 +8,7 @@
     if (request()->routeIs('operators.*') || request()->routeIs('p2h.*')) $activeSection = 'operasi';
     elseif (request()->routeIs('work-orders.*') || request()->routeIs('downtime.*')) $activeSection = 'pemeliharaan';
     elseif (request()->routeIs('purchase-requests.*') || request()->routeIs('consumable-pr.*') || request()->routeIs('purchase-orders.*')) $activeSection = 'pengadaan';
-    elseif (request()->routeIs('goods-receipts.*') || request()->routeIs('goods-issues.*') || request()->routeIs('warehouse-transfer.*') || request()->routeIs('stock-opname.*')) $activeSection = 'gudang';
+    elseif (request()->routeIs('goods-receipts.*') || request()->routeIs('goods-issues.*') || request()->routeIs('stock-opname.*')) $activeSection = 'gudang';
     elseif (request()->routeIs('units.*') || request()->routeIs('spareparts.*') || request()->routeIs('suppliers.*') || request()->routeIs('technicians.*')) $activeSection = 'master';
     elseif (request()->routeIs('reports.*')) $activeSection = 'laporan';
     elseif (request()->routeIs('approval-settings.*') || request()->routeIs('menu-settings.*') || request()->routeIs('users.*')) $activeSection = 'pengaturan';
@@ -112,7 +112,7 @@
     @endif
 
     {{-- Gudang --}}
-    @if($can('goods-receipts') || $can('goods-issues') || $can('warehouse-transfer') || $can('stock-opname'))
+    @if($can('goods-receipts') || $can('goods-issues') || $can('stock-opname'))
     @php $open = $activeSection === 'gudang'; @endphp
     <div class="sidebar-group">
         <div class="sidebar-group-toggle {{ $open ? '' : 'collapsed' }}" data-sidebar-toggle>
@@ -130,12 +130,6 @@
             <a href="{{ route('goods-issues.index') }}" class="sidebar-link {{ request()->routeIs('goods-issues.*') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="bi bi-box-arrow-up"></i></span>
                 <span class="sidebar-link-text">Pengeluaran Barang (GI)</span>
-            </a>
-            @endif
-            @if($can('warehouse-transfer'))
-            <a href="{{ route('warehouse-transfer.index') }}" class="sidebar-link {{ request()->routeIs('warehouse-transfer.*') ? 'active' : '' }}">
-                <span class="sidebar-link-icon"><i class="bi bi-arrow-left-right"></i></span>
-                <span class="sidebar-link-text">Transfer</span>
             </a>
             @endif
             @if($can('stock-opname'))

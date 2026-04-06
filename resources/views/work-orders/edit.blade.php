@@ -23,23 +23,19 @@
                 </x-form-group>
             </div>
             <div class="col-md-3">
+                <x-form-group label="Lokasi Perbaikan" required>
+                    <select name="repair_location" class="form-select @error('repair_location') is-invalid @enderror" required>
+                        <option value="di_workshop" {{ $workOrder->repair_location=='di_workshop'?'selected':'' }}>Di Workshop</option>
+                        <option value="di_luar_workshop" {{ $workOrder->repair_location=='di_luar_workshop'?'selected':'' }}>Di Luar Workshop</option>
+                    </select>
+                    @error('repair_location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </x-form-group>
+            </div>
+            <div class="col-md-3">
                 <x-form-group label="Technician">
                     <select name="technician_id" class="form-select tom-select">
                         <option value="">-- None --</option>
                         @foreach($technicians as $t)<option value="{{ $t->id }}" {{ $workOrder->technician_id==$t->id?'selected':'' }}>{{ $t->technician_name }}</option>@endforeach
-                    </select>
-                </x-form-group>
-            </div>
-            <div class="col-md-12">
-                <x-form-group label="Complaint">
-                    <textarea name="complaint" class="form-control" rows="2" required>{{ $workOrder->complaint }}</textarea>
-                </x-form-group>
-            </div>
-            <div class="col-md-3">
-                <x-form-group label="Type of Complaint" required>
-                    <select name="complaint_type_id" class="form-select tom-select" required>
-                        <option value="">-- Select Type --</option>
-                        @foreach($complaintTypes as $ct)<option value="{{ $ct->id }}" {{ $workOrder->complaint_type_id==$ct->id?'selected':'' }}>{{ $ct->name }}</option>@endforeach
                     </select>
                 </x-form-group>
             </div>
@@ -63,9 +59,9 @@
                     <input type="number" step="0.01" name="consumable_cost" class="form-control" value="{{ $workOrder->consumable_cost }}">
                 </x-form-group>
             </div>
-            <div class="col-md-3">
-                <x-form-group label="Remarks">
-                    <input type="text" name="remarks" class="form-control" value="{{ $workOrder->remarks }}">
+            <div class="col-md-9">
+                <x-form-group label="Remark">
+                    <textarea name="remarks" class="form-control" rows="3">{{ $workOrder->remarks }}</textarea>
                 </x-form-group>
             </div>
         </div>

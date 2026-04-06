@@ -17,18 +17,15 @@
                 <tr><td class="text-muted">Start</td><td>{{ $workOrder->start_time?->format('d M Y H:i') ?? '-' }}</td></tr>
                 <tr><td class="text-muted">End</td><td>{{ $workOrder->end_time?->format('d M Y H:i') ?? '-' }}</td></tr>
                 <tr><td class="text-muted">Downtime</td><td>{{ $workOrder->downtime_hours }} hours</td></tr>
-                <tr><td class="text-muted">Complaint Type</td><td>
-                    @if($workOrder->complaintType)
-                        <span class="badge" style="background-color:{{ $workOrder->complaintType->color }}; color:#fff; border-radius:4px; padding:.4rem .7rem; font-size:.75rem;">
-                            {{ $workOrder->complaintType->name }}
-                        </span>
+                <tr><td class="text-muted">Lokasi Perbaikan</td><td>
+                    @if($workOrder->repair_location === 'di_luar_workshop')
+                        <span class="badge bg-warning text-dark">Di Luar Workshop</span>
                     @else
-                        <span class="text-muted">-</span>
+                        <span class="badge bg-secondary">Di Workshop</span>
                     @endif
                 </td></tr>
-                <tr><td class="text-muted">Complaint</td><td>{{ $workOrder->complaint }}</td></tr>
                 @if($workOrder->action_taken)<tr><td class="text-muted">Action</td><td>{{ $workOrder->action_taken }}</td></tr>@endif
-                @if($workOrder->remarks)<tr><td class="text-muted">Remarks</td><td>{{ $workOrder->remarks }}</td></tr>@endif
+                @if($workOrder->remarks)<tr><td class="text-muted">Remark</td><td>{{ $workOrder->remarks }}</td></tr>@endif
             </table>
 
             <div class="d-flex flex-wrap gap-2">

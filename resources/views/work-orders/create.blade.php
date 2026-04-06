@@ -34,6 +34,15 @@
                 </x-form-group>
             </div>
             <div class="col-md-3">
+                <x-form-group label="Lokasi Perbaikan" required>
+                    <select name="repair_location" class="form-select @error('repair_location') is-invalid @enderror" required>
+                        <option value="di_workshop" {{ old('repair_location','di_workshop')=='di_workshop'?'selected':'' }}>Di Workshop</option>
+                        <option value="di_luar_workshop" {{ old('repair_location')=='di_luar_workshop'?'selected':'' }}>Di Luar Workshop</option>
+                    </select>
+                    @error('repair_location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </x-form-group>
+            </div>
+            <div class="col-md-3">
                 <x-form-group label="Technician">
                     <select name="technician_id" class="form-select tom-select">
                         <option value="">-- Assign Later --</option>
@@ -44,21 +53,6 @@
             <div class="col-md-3">
                 <x-form-group label="Start Time" required>
                     <input type="datetime-local" name="start_time" class="form-control" value="{{ old('start_time', now()->format('Y-m-d\TH:i')) }}" required>
-                </x-form-group>
-            </div>
-            <div class="col-md-9">
-                <x-form-group label="Complaint" required>
-                    <textarea name="complaint" class="form-control @error('complaint') is-invalid @enderror" rows="2" required>{{ old('complaint') }}</textarea>
-                    @error('complaint')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </x-form-group>
-            </div>
-            <div class="col-md-3">
-                <x-form-group label="Type of Complaint" required>
-                    <select name="complaint_type_id" class="form-select tom-select @error('complaint_type_id') is-invalid @enderror" required>
-                        <option value="">-- Select Type --</option>
-                        @foreach($complaintTypes as $ct)<option value="{{ $ct->id }}" {{ old('complaint_type_id')==$ct->id?'selected':'' }}>{{ $ct->name }}</option>@endforeach
-                    </select>
-                    @error('complaint_type_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </x-form-group>
             </div>
             <div class="col-md-3">
@@ -76,9 +70,9 @@
                     <input type="number" step="0.01" name="consumable_cost" class="form-control" value="{{ old('consumable_cost', 0) }}">
                 </x-form-group>
             </div>
-            <div class="col-md-3">
-                <x-form-group label="Remarks">
-                    <input type="text" name="remarks" class="form-control" value="{{ old('remarks') }}">
+            <div class="col-md-9">
+                <x-form-group label="Remark">
+                    <textarea name="remarks" class="form-control" rows="3">{{ old('remarks') }}</textarea>
                 </x-form-group>
             </div>
         </div>

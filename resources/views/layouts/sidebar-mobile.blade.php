@@ -41,9 +41,6 @@
         <a href="{{ route('goods-issues.index') }}" class="sidebar-link {{ request()->routeIs('goods-issues.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-box-arrow-up"></i></span><span>Goods Issue</span>
         </a>
-        <a href="{{ route('warehouse-transfer.index') }}" class="sidebar-link {{ request()->routeIs('warehouse-transfer.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="bi bi-arrow-left-right"></i></span><span>Transfer</span>
-        </a>
         <a href="{{ route('stock-opname.index') }}" class="sidebar-link {{ request()->routeIs('stock-opname.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-clipboard2-data"></i></span><span>Stock Opname</span>
         </a>

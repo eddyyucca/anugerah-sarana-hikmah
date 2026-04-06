@@ -33,11 +33,13 @@
     <tr>
         <td class="label">Downtime</td>
         <td>{{ $workOrder->downtime_hours }} hours</td>
-        <td class="label"></td>
-        <td></td>
+        <td class="label">Lokasi Perbaikan</td>
+        <td>{{ $workOrder->repair_location === 'di_luar_workshop' ? 'Di Luar Workshop' : 'Di Workshop' }}</td>
     </tr>
 </table>
-<div class="notes-box"><strong>Complaint:</strong> {{ $workOrder->complaint ?? '-' }}</div>
+@if($workOrder->remarks)
+<div class="notes-box"><strong>Remark:</strong> {{ $workOrder->remarks }}</div>
+@endif
 @if($workOrder->action_taken)
 <div class="notes-box"><strong>Action Taken:</strong> {{ $workOrder->action_taken }}</div>
 @endif

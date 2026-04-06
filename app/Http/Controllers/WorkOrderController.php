@@ -6,7 +6,6 @@ use App\Models\WorkOrder;
 use App\Models\WorkOrderLog;
 use App\Models\Unit;
 use App\Models\Technician;
-use App\Models\ComplaintType;
 use App\Services\DocumentNumberService;
 use App\Services\RepairCostService;
 use Illuminate\Http\Request;
@@ -42,16 +41,14 @@ class WorkOrderController extends Controller
         $woNumber = DocumentNumberService::generateWO();
         $units = Unit::active()->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model']);
         $technicians = Technician::active()->orderBy('technician_name')->get(['id', 'technician_code', 'technician_name']);
-        $complaintTypes = ComplaintType::active()->get(['id', 'name']);
-        return view('work-orders.create', compact('woNumber', 'units', 'technicians', 'complaintTypes'));
+        return view('work-orders.create', compact('woNumber', 'units', 'technicians'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
-            'complaint' => 'required|string',
-            'complaint_type_id' => 'required|exists:complaint_types,id',
+            'repair_location' => 'required|in:di_workshop,di_luar_workshop',
             'maintenance_type' => 'required|in:corrective,preventive,predictive',
             'technician_id' => 'nullable|exists:technicians,id',
             'start_time' => 'required|date',
@@ -65,8 +62,7 @@ class WorkOrderController extends Controller
             $wo = WorkOrder::create([
                 'wo_number' => DocumentNumberService::generateWO(),
                 'unit_id' => $request->unit_id,
-                'complaint' => $request->complaint,
-                'complaint_type_id' => $request->complaint_type_id,
+                'repair_location' => $request->repair_location,
                 'maintenance_type' => $request->maintenance_type,
                 'technician_id' => $request->technician_id,
                 'status' => 'open',
@@ -108,8 +104,7 @@ class WorkOrderController extends Controller
 
         $units = Unit::active()->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model']);
         $technicians = Technician::active()->orderBy('technician_name')->get(['id', 'technician_code', 'technician_name']);
-        $complaintTypes = ComplaintType::active()->get(['id', 'name']);
-        return view('work-orders.edit', compact('workOrder', 'units', 'technicians', 'complaintTypes'));
+        return view('work-orders.edit', compact('workOrder', 'units', 'technicians'));
     }
 
     public function update(Request $request, WorkOrder $workOrder)
@@ -119,8 +114,7 @@ class WorkOrderController extends Controller
         }
 
         $request->validate([
-            'complaint' => 'required|string',
-            'complaint_type_id' => 'required|exists:complaint_types,id',
+            'repair_location' => 'required|in:di_workshop,di_luar_workshop',
             'maintenance_type' => 'required|in:corrective,preventive,predictive',
             'technician_id' => 'nullable|exists:technicians,id',
             'action_taken' => 'nullable|string',
@@ -131,7 +125,7 @@ class WorkOrderController extends Controller
         ]);
 
         $workOrder->update($request->only([
-            'complaint', 'complaint_type_id', 'maintenance_type', 'technician_id', 'action_taken',
+            'repair_location', 'maintenance_type', 'technician_id', 'action_taken',
             'labor_cost', 'vendor_cost', 'consumable_cost', 'remarks',
         ]));
 

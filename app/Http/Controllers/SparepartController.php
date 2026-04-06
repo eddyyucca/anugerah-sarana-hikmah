@@ -39,13 +39,14 @@ class SparepartController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'part_number' => 'required|string|max:50|unique:spareparts,part_number',
-            'part_name' => 'required|string|max:150',
-            'category_id' => 'nullable|exists:sparepart_categories,id',
-            'unit_price' => 'nullable|numeric|min:0',
+            'part_number'  => 'required|string|max:50|unique:spareparts,part_number',
+            'part_name'    => 'required|string|max:150',
+            'bin_location' => 'nullable|string|max:30',
+            'category_id'  => 'nullable|exists:sparepart_categories,id',
+            'unit_price'   => 'nullable|numeric|min:0',
             'minimum_stock' => 'nullable|integer|min:0',
             'stock_on_hand' => 'nullable|integer|min:0',
-            'uom' => 'nullable|string|max:20',
+            'uom'          => 'nullable|string|max:20',
         ]);
 
         Sparepart::create($validated);
@@ -67,12 +68,13 @@ class SparepartController extends Controller
     public function update(Request $request, Sparepart $sparepart)
     {
         $validated = $request->validate([
-            'part_number' => 'required|string|max:50|unique:spareparts,part_number,' . $sparepart->id,
-            'part_name' => 'required|string|max:150',
-            'category_id' => 'nullable|exists:sparepart_categories,id',
-            'unit_price' => 'nullable|numeric|min:0',
+            'part_number'  => 'required|string|max:50|unique:spareparts,part_number,' . $sparepart->id,
+            'part_name'    => 'required|string|max:150',
+            'bin_location' => 'nullable|string|max:30',
+            'category_id'  => 'nullable|exists:sparepart_categories,id',
+            'unit_price'   => 'nullable|numeric|min:0',
             'minimum_stock' => 'nullable|integer|min:0',
-            'uom' => 'nullable|string|max:20',
+            'uom'          => 'nullable|string|max:20',
         ]);
 
         $sparepart->update($validated);
