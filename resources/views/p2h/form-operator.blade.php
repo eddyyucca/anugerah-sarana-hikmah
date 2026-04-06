@@ -147,11 +147,7 @@
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label fw-bold">Pilih Unit <span class="text-danger">*</span></label>
-<<<<<<< HEAD
                         <select name="unit_id" class="form-select tom-select" required style="padding:.7rem;" id="unitSelect">
-=======
-                        <select name="unit_id" class="form-select" required style="border-radius:12px;padding:.7rem;" id="unitSelect">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                             <option value="">-- Pilih Unit yang Akan Dipakai --</option>
                             @foreach($units as $u)
                             <option value="{{ $u->id }}" data-hm="{{ $u->hour_meter }}" {{ old('unit_id')==$u->id?'selected':'' }}>
@@ -165,11 +161,7 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-bold">Nama Operator <span class="text-danger">*</span></label>
-<<<<<<< HEAD
                         <select name="operator_id" class="form-select tom-select" required style="padding:.7rem;">
-=======
-                        <select name="operator_id" class="form-select" required style="border-radius:12px;padding:.7rem;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                             <option value="">-- Pilih Nama Anda --</option>
                             @foreach($operators as $op)
                             <option value="{{ $op->id }}" {{ old('operator_id')==$op->id?'selected':'' }}>{{ $op->operator_name }} ({{ $op->operator_code }})</option>
@@ -178,38 +170,22 @@
                     </div>
                     <div class="col-6">
                         <label class="form-label fw-bold">Tanggal</label>
-<<<<<<< HEAD
                         <input type="date" name="check_date" class="form-control" value="{{ old('check_date', date('Y-m-d')) }}" required style="padding:.7rem;">
                     </div>
                     <div class="col-6">
                         <label class="form-label fw-bold">Shift</label>
                         <select name="shift" class="form-select tom-select" required style="padding:.7rem;">
-=======
-                        <input type="date" name="check_date" class="form-control" value="{{ old('check_date', date('Y-m-d')) }}" required style="border-radius:12px;padding:.7rem;">
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label fw-bold">Shift</label>
-                        <select name="shift" class="form-select" required style="border-radius:12px;padding:.7rem;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                             <option value="day" {{ old('shift')=='day'?'selected':'' }}>Day Shift</option>
                             <option value="night" {{ old('shift')=='night'?'selected':'' }}>Night Shift</option>
                         </select>
                     </div>
                     <div class="col-6">
                         <label class="form-label fw-bold">Hour Meter</label>
-<<<<<<< HEAD
                         <input type="number" step="0.1" name="hour_meter_start" id="hmInput" class="form-control" value="{{ old('hour_meter_start', 0) }}" style="padding:.7rem;">
                     </div>
                     <div class="col-6">
                         <label class="form-label fw-bold">KM</label>
                         <input type="number" step="0.1" name="km_start" class="form-control" value="{{ old('km_start', 0) }}" style="padding:.7rem;">
-=======
-                        <input type="number" step="0.1" name="hour_meter_start" id="hmInput" class="form-control" value="{{ old('hour_meter_start', 0) }}" style="border-radius:12px;padding:.7rem;">
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label fw-bold">KM</label>
-                        <input type="number" step="0.1" name="km_start" class="form-control" value="{{ old('km_start', 0) }}" style="border-radius:12px;padding:.7rem;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                     </div>
                 </div>
             </div>
@@ -259,11 +235,7 @@
                     </div>
 
                     <div class="check-notes">
-<<<<<<< HEAD
                         <input type="text" name="items[{{ $idx }}][notes]" class="form-control form-control-sm" placeholder="Catatan (opsional)..." style="font-size:.82rem;">
-=======
-                        <input type="text" name="items[{{ $idx }}][notes]" class="form-control form-control-sm" placeholder="Catatan (opsional)..." style="border-radius:10px;font-size:.82rem;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                     </div>
                 </div>
                 @php $idx++; @endphp

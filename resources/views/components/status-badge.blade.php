@@ -18,8 +18,30 @@ $colors = [
     'standby' => 'badge-soft-warning',
     'sent' => 'badge-soft-warning',
     'received' => 'badge-soft-success',
-    'in_progress' => 'badge-soft-warning',
 ];
+
+$translations = [
+    'draft' => 'Draf',
+    'submitted' => 'Diajukan',
+    'approved' => 'Disetujui',
+    'rejected' => 'Ditolak',
+    'closed' => 'Ditutup',
+    'issued' => 'Diterbitkan',
+    'partial' => 'Parsial',
+    'completed' => 'Selesai',
+    'cancelled' => 'Dibatalkan',
+    'posted' => 'Diposting',
+    'open' => 'Terbuka',
+    'in_progress' => 'Dalam Proses',
+    'waiting_part' => 'Menunggu Suku Cadang',
+    'available' => 'Tersedia',
+    'under_repair' => 'Dalam Perbaikan',
+    'standby' => 'Siaga',
+    'sent' => 'Dikirim',
+    'received' => 'Diterima',
+];
+
 $class = $colors[$status] ?? 'badge-soft-info';
+$displayText = $translations[$status] ?? ucwords(str_replace('_', ' ', $status));
 @endphp
-<span class="badge {{ $class }}" style="border-radius:999px;padding:.35em .75em;">{{ ucwords(str_replace('_', ' ', $status)) }}</span>
+<span class="badge {{ $class }}" style="border-radius:999px;padding:.35em .75em;">{{ $displayText }}</span>

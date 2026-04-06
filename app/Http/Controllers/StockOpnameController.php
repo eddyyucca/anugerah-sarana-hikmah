@@ -6,10 +6,7 @@ use App\Models\StockOpname;
 use App\Models\Sparepart;
 use App\Models\WarehouseLocation;
 use App\Services\DocumentNumberService;
-<<<<<<< HEAD
 use App\Services\ApprovalService;
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -79,15 +76,12 @@ class StockOpnameController extends Controller
     {
         if ($stockOpname->status !== 'draft') return back()->with('error', 'Already processed.');
 
-<<<<<<< HEAD
         // Check if user can approve stock opname
         $authCheck = ApprovalService::canApprove(auth()->user(), 'so', $stockOpname->id);
         if (!$authCheck['can_approve']) {
             return back()->with('error', $authCheck['message']);
         }
 
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         DB::transaction(function () use ($stockOpname) {
             foreach ($stockOpname->items as $item) {
                 if ($item->difference !== 0) {
@@ -99,18 +93,12 @@ class StockOpnameController extends Controller
 
             $stockOpname->update([
                 'status' => 'completed',
-<<<<<<< HEAD
                 'approved_by' => auth()->id(),
                 'approved_at' => now(),
             ]);
 
             // Log approval
             ApprovalService::approve('so', $stockOpname->id, auth()->id());
-=======
-                'approved_by' => auth()->id() ?? 1,
-                'approved_at' => now(),
-            ]);
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         });
 
         return back()->with('success', 'Stock opname approved. Stock adjusted.');

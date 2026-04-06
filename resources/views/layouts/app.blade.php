@@ -1,81 +1,92 @@
-<<<<<<< HEAD
 {{-- resources/views/layouts/app.blade.php --}}
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-<<<<<<< HEAD
     <title>{{ $title ?? 'Workshop ERP' }}</title>
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
 
     {{-- Google Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    {{-- Font Awesome (AdminLTE dependency) --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     {{-- Bootstrap Icons --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    {{-- AdminLTE 3 --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css">
+    {{-- Bootstrap 5 --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     {{-- Tom Select --}}
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 
     {{-- App CSS --}}
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
 
     @stack('styles')
+
+    {{-- Restore sidebar collapsed state before paint --}}
+    <script>
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-collapsed-init');
+        }
+    </script>
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
+<body style="background:var(--app-bg);">
+<div class="app-shell" id="appShell">
 
-    @include('layouts.header')
-    @include('layouts.sidebar')
-
-    <div class="content-wrapper">
-        {{-- Page Header --}}
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-1 align-items-center">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">@yield('page-title', 'Dashboard')</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right mb-0" style="font-size:.76rem;">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                            @hasSection('breadcrumb')
-                                @yield('breadcrumb')
-                            @endif
-                        </ol>
-                    </div>
-                </div>
+    {{-- Sidebar Desktop (hidden on mobile) --}}
+    <aside class="sidebar-desktop" id="desktopSidebar">
+        <div class="sidebar-brand d-flex align-items-center gap-3">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo">
+            <div>
+                <div class="sidebar-title">Workshop ERP</div>
+                <div class="sidebar-subtitle">Mining Logistics</div>
             </div>
         </div>
+        @include('layouts.sidebar')
+    </aside>
 
-        {{-- Main Content --}}
-        <div class="content">
-            <div class="container-fluid">
-                @include('components.alerts')
-                @yield('content')
+    {{-- Sidebar overlay (mobile & collapsed desktop) --}}
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    {{-- Mobile Sidebar Offcanvas --}}
+    <div class="offcanvas offcanvas-start sidebar-offcanvas" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="{{ asset('assets/images/logo.png') }}" height="28" alt="Logo">
+                <div>
+                    <div class="sidebar-title" style="font-size:.9rem;">Workshop ERP</div>
+                    <div class="sidebar-subtitle">Mining Logistics</div>
+                </div>
             </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            @include('layouts.sidebar')
         </div>
     </div>
 
-    @include('layouts.footer')
+    <div class="main-shell">
+        {{-- Header / Topbar --}}
+        @include('layouts.header')
 
-</div>{{-- /.wrapper --}}
+        {{-- Main Content --}}
+        <main class="content-shell">
+            @include('components.alerts')
+            @yield('content')
+        </main>
+
+        {{-- Footer --}}
+        @include('layouts.footer')
+    </div>
+
+</div>{{-- /.app-shell --}}
 
 {{-- Scripts --}}
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
@@ -85,7 +96,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Auto-init Tom Select
+    // ─── Tom Select ───────────────────────────────────────────────
     function initTomSelect() {
         document.querySelectorAll('.tom-select:not(.ts-hidden-accessible)').forEach(function (el) {
             if (!el.tomselect) {
@@ -93,66 +104,62 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
-    // Initial load
     initTomSelect();
-
-    // Reinitialize when new elements are added (for dynamic rows)
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length) {
-                initTomSelect();
-            }
+            if (mutation.addedNodes.length) initTomSelect();
         });
     });
-
     observer.observe(document.body, { childList: true, subtree: true });
+
+    // ─── Desktop Sidebar Toggle ────────────────────────────────────
+    const appShell = document.getElementById('appShell');
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+
+    // Restore state
+    if (localStorage.getItem('sidebarCollapsed') === 'true') {
+        appShell.classList.add('sidebar-collapsed');
+    }
+    document.documentElement.classList.remove('sidebar-collapsed-init');
+
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', function () {
+            appShell.classList.toggle('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', appShell.classList.contains('sidebar-collapsed'));
+        });
+    }
+
+    // ─── Sidebar Group Collapsible ─────────────────────────────────
+    document.addEventListener('click', function (e) {
+        const toggle = e.target.closest('[data-sidebar-toggle]');
+        if (!toggle) return;
+
+        const content = toggle.nextElementSibling;
+        if (!content || !content.classList.contains('sidebar-collapse-content')) return;
+
+        const isOpen = !content.classList.contains('closed');
+
+        if (isOpen) {
+            // Closing
+            content.style.maxHeight = content.scrollHeight + 'px';
+            requestAnimationFrame(function () {
+                content.style.maxHeight = '0';
+            });
+            toggle.classList.add('collapsed');
+            setTimeout(function () { content.classList.add('closed'); }, 300);
+        } else {
+            // Opening
+            content.classList.remove('closed');
+            content.style.maxHeight = '0';
+            requestAnimationFrame(function () {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                setTimeout(function () { content.style.maxHeight = ''; }, 300);
+            });
+            toggle.classList.remove('collapsed');
+        }
+    });
 });
 </script>
 
 </body>
 </html>
-=======
-    <title>{{ $title ?? 'Workshop ERP Dashboard' }}</title>
-    <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
-    <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
-</head>
-<body>
-    <div class="app-shell">
-        <div class="d-none d-lg-block">
-            @include('layouts.sidebar')
-        </div>
-
-        <div class="main-shell">
-            @include('layouts.header')
-
-            <main class="content-shell">
-                @include('components.alerts')
-                @yield('content')
-            </main>
-
-            @include('layouts.footer')
-        </div>
-    </div>
-
-    @include('layouts.sidebar-mobile')
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    @stack('scripts')
-    <script src="{{ asset('assets/js/app.js') }}"></script>
-    <script>
-    // Auto-init Tom-Select on all .tom-select elements
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.tom-select').forEach(el => {
-            new TomSelect(el, { allowEmptyOption: true, plugins: ['clear_button'] });
-        });
-    });
-    </script>
-</body>
-</html>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c

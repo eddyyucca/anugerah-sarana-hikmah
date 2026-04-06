@@ -5,7 +5,6 @@
 @section('content')
 <form action="{{ route('goods-receipts.store') }}" method="POST">
     @csrf
-<<<<<<< HEAD
     <x-card class="mb-3">
         <x-slot:header>
             <div class="section-title">GR Header</div>
@@ -19,22 +18,11 @@
             <div class="col-md-3">
                 <x-form-group label="Source PO" required>
                     <select name="purchase_order_id" class="form-select tom-select" required id="poSelect">
-=======
-    <div class="erp-card mb-3">
-        <div class="erp-card-header"><div class="section-title">GR Header</div></div>
-        <div class="erp-card-body">
-            <div class="row g-3">
-                <div class="col-md-3"><label class="form-label">GR Number</label><input type="text" class="form-control" value="{{ $grNumber }}" readonly style="border-radius:10px;background:#f8f9fa;"></div>
-                <div class="col-md-3">
-                    <label class="form-label">Source PO <span class="text-danger">*</span></label>
-                    <select name="purchase_order_id" class="form-select" required style="border-radius:10px;" id="poSelect">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                         <option value="">-- Select PO --</option>
                         @foreach($openPOs as $opo)
                         <option value="{{ $opo->id }}" {{ ($po && $po->id == $opo->id)?'selected':'' }}>{{ $opo->po_number }}</option>
                         @endforeach
                     </select>
-<<<<<<< HEAD
                 </x-form-group>
             </div>
             <div class="col-md-3">
@@ -58,21 +46,6 @@
             </div>
         </x-slot:header>
         <div class="table-responsive">
-=======
-                </div>
-                <div class="col-md-3"><label class="form-label">Receipt Date <span class="text-danger">*</span></label><input type="date" name="receipt_date" class="form-control" value="{{ date('Y-m-d') }}" required style="border-radius:10px;"></div>
-                <div class="col-md-3"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control" style="border-radius:10px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="erp-card mb-3">
-        <div class="erp-card-header">
-            <div class="section-title">Items to Receive</div>
-            <div class="section-subtitle">Only items with outstanding qty shown. Enter qty received (can be partial).</div>
-        </div>
-        <div class="erp-card-body">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             <table class="table table-modern mb-0" id="itemsTable">
                 <thead><tr><th>Part Number</th><th>Part Name</th><th class="text-center">Ordered</th><th class="text-center">Already Received</th><th class="text-center" style="color:#dc2626;">Outstanding</th><th>Location</th><th style="width:130px;">Qty to Receive</th></tr></thead>
                 <tbody>
@@ -89,21 +62,13 @@
                             <td class="text-center text-success fw-bold">{{ $item->qty_received }}</td>
                             <td class="text-center text-danger fw-bold">{{ $item->qty_remaining }}</td>
                             <td>
-<<<<<<< HEAD
                                 <select name="items[{{ $i }}][warehouse_location_id]" class="form-select form-select-sm tom-select">
-=======
-                                <select name="items[{{ $i }}][warehouse_location_id]" class="form-select form-select-sm" style="border-radius:10px;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                                     <option value="">-- Default --</option>
                                     @foreach($locations as $loc)<option value="{{ $loc->id }}">{{ $loc->name }}</option>@endforeach
                                 </select>
                             </td>
                             <td>
-<<<<<<< HEAD
                                 <input type="number" name="items[{{ $i }}][qty_received]" class="form-control form-control-sm" value="{{ $item->qty_remaining }}" min="0" max="{{ $item->qty_remaining }}" required>
-=======
-                                <input type="number" name="items[{{ $i }}][qty_received]" class="form-control form-control-sm" value="{{ $item->qty_remaining }}" min="0" max="{{ $item->qty_remaining }}" required style="border-radius:10px;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                             </td>
                         </tr>
                         @endforeach
@@ -113,16 +78,9 @@
                 </tbody>
             </table>
         </div>
-<<<<<<< HEAD
     </x-card>
 
     <x-button type="submit" variant="danger">Save GR</x-button>
     <a href="{{ route('goods-receipts.index') }}" class="btn btn-light">Cancel</a>
-=======
-    </div>
-
-    <button type="submit" class="btn btn-danger" style="border-radius:12px;">Save GR</button>
-    <a href="{{ route('goods-receipts.index') }}" class="btn btn-light" style="border-radius:12px;">Cancel</a>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </form>
 @endsection

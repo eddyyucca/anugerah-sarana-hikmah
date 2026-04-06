@@ -5,7 +5,6 @@
 <li class="breadcrumb-item active">Edit</li>
 @endsection
 @section('content')
-<<<<<<< HEAD
 <x-card title="Edit: {{ $sparepart->part_number }}">
     <form action="{{ route('spareparts.update', $sparepart) }}" method="POST">
         @csrf
@@ -17,10 +16,4 @@
         </div>
     </form>
 </x-card>
-=======
-<div class="erp-card"><div class="erp-card-header"><div class="section-title">Edit: {{ $sparepart->part_number }}</div></div><div class="erp-card-body">
-<form action="{{ route('spareparts.update', $sparepart) }}" method="POST">@csrf @method('PUT') @include('spareparts._form')
-<div class="mt-3"><button type="submit" class="btn btn-danger" style="border-radius:12px;">Update</button> <a href="{{ route('spareparts.index') }}" class="btn btn-light" style="border-radius:12px;">Cancel</a></div>
-</form></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 @endsection

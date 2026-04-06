@@ -9,35 +9,24 @@
         <div class="erp-card-header"><div class="section-title"><i class="bi bi-droplet me-2"></i>Consumable PR Header</div></div>
         <div class="erp-card-body">
             <div class="row g-3">
-<<<<<<< HEAD
                 <div class="col-md-3">
                     <label class="form-label">PR Number</label>
                     <input type="text" class="form-control" value="{{ $prNumber }}" readonly style="background:#f8f9fa;">
                 </div>
                 <x-form-date name="request_date" label="Request Date" :value="date('Y-m-d')" required class="col-md-3" />
                 <x-form-input name="remarks" label="Remarks" type="text" placeholder="Consumable restock..." class="col-md-6" />
-=======
-                <div class="col-md-3"><label class="form-label">PR Number</label><input type="text" class="form-control" value="{{ $prNumber }}" readonly style="border-radius:10px;background:#f8f9fa;"></div>
-                <div class="col-md-3"><label class="form-label">Request Date <span class="text-danger">*</span></label><input type="date" name="request_date" class="form-control" value="{{ date('Y-m-d') }}" required style="border-radius:10px;"></div>
-                <div class="col-md-6"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control" placeholder="Consumable restock..." style="border-radius:10px;"></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             </div>
         </div>
     </div>
 
     @if($spareparts->isEmpty())
-<<<<<<< HEAD
     <div class="alert alert-warning">
-=======
-    <div class="alert alert-warning" style="border-radius:14px;">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         <i class="bi bi-exclamation-triangle me-2"></i>No consumable spareparts found. Mark spareparts as consumable in Sparepart Master first.
     </div>
     @else
     <div class="erp-card mb-3">
         <div class="erp-card-header d-flex justify-content-between align-items-center">
             <div class="section-title">Consumable Items</div>
-<<<<<<< HEAD
             <button type="button" class="btn btn-sm btn-outline-danger" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</button>
         </div>
         <div class="erp-card-body">
@@ -52,26 +41,14 @@
                         <th style="width:50px;"></th>
                     </tr>
                 </thead>
-=======
-            <button type="button" class="btn btn-sm btn-outline-danger" style="border-radius:10px;" onclick="addItem()"><i class="bi bi-plus-lg me-1"></i>Add</button>
-        </div>
-        <div class="erp-card-body">
-            <table class="table table-modern mb-0" id="itemsTable">
-                <thead><tr><th>Consumable Part</th><th>Stock</th><th>Min</th><th style="width:120px;">Order Qty</th><th>Notes</th><th style="width:50px;"></th></tr></thead>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                 <tbody></tbody>
             </table>
         </div>
     </div>
     @endif
 
-<<<<<<< HEAD
     <button type="submit" class="btn btn-danger">Save Consumable PR</button>
     <a href="{{ route('consumable-pr.index') }}" class="btn btn-light">Cancel</a>
-=======
-    <button type="submit" class="btn btn-danger" style="border-radius:12px;">Save Consumable PR</button>
-    <a href="{{ route('consumable-pr.index') }}" class="btn btn-light" style="border-radius:12px;">Cancel</a>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 </form>
 @endsection
 
@@ -82,21 +59,12 @@ let ri = 0;
 function addItem() {
     const opts = parts.map(p => `<option value="${p.id}" data-stk="${p.stock_on_hand}" data-min="${p.minimum_stock}">${p.part_number} - ${p.part_name} (${p.uom})</option>`).join('');
     document.querySelector('#itemsTable tbody').insertAdjacentHTML('beforeend', `<tr>
-<<<<<<< HEAD
         <td><select name="items[${ri}][sparepart_id]" class="form-select form-select-sm tom-select sp-sel" data-r="${ri}" required><option value="">--Select Consumable--</option>${opts}</select></td>
         <td class="stk-val" data-r="${ri}">-</td>
         <td class="min-val" data-r="${ri}">-</td>
         <td><input type="number" name="items[${ri}][qty]" class="form-control form-control-sm" min="1" value="1" required></td>
         <td><input type="text" name="items[${ri}][notes]" class="form-control form-control-sm"></td>
         <td><button type="button" class="btn btn-sm btn-light text-danger" onclick="this.closest('tr').remove()"><i class="bi bi-x-lg"></i></button></td>
-=======
-        <td><select name="items[${ri}][sparepart_id]" class="form-select form-select-sm sp-sel" data-r="${ri}" required style="border-radius:10px;"><option value="">--Select Consumable--</option>${opts}</select></td>
-        <td class="stk-val" data-r="${ri}">-</td>
-        <td class="min-val" data-r="${ri}">-</td>
-        <td><input type="number" name="items[${ri}][qty]" class="form-control form-control-sm" min="1" value="1" required style="border-radius:10px;"></td>
-        <td><input type="text" name="items[${ri}][notes]" class="form-control form-control-sm" style="border-radius:10px;"></td>
-        <td><button type="button" class="btn btn-sm btn-light text-danger" onclick="this.closest('tr').remove()" style="border-radius:8px;"><i class="bi bi-x-lg"></i></button></td>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     </tr>`);
     ri++;
 }

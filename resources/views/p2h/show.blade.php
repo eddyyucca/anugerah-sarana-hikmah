@@ -6,11 +6,7 @@
 <div class="row g-3">
     {{-- Left: Info --}}
     <div class="col-lg-4">
-<<<<<<< HEAD
         <x-card class="p-3 mb-3">
-=======
-        <div class="erp-card p-3 mb-3">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
                     <div style="font-weight:800;font-size:1.2rem;">{{ $p2h->p2h_number }}</div>
@@ -37,7 +33,6 @@
 
             @if(!$p2h->reviewed_at)
             <form action="{{ route('p2h.review', $p2h) }}" method="POST">@csrf
-<<<<<<< HEAD
                 <x-button type="submit" variant="success" size="sm"><i class="bi bi-check-lg me-1"></i>Mark as Reviewed</x-button>
             </form>
             @endif
@@ -45,15 +40,6 @@
 
         {{-- Score Summary --}}
         <x-card class="p-3">
-=======
-                <button class="btn btn-sm btn-success" style="border-radius:10px;"><i class="bi bi-check-lg me-1"></i>Mark as Reviewed</button>
-            </form>
-            @endif
-        </div>
-
-        {{-- Score Summary --}}
-        <div class="erp-card p-3">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
             <div class="section-title mb-3"><i class="bi bi-speedometer2 me-2"></i>Inspection Score</div>
             @php
                 $total = $p2h->items->whereIn('condition', ['good','warning','bad'])->count();
@@ -83,17 +69,12 @@
                 <span><i class="bi bi-dash-circle text-secondary me-1"></i> N/A</span>
                 <strong class="text-secondary">{{ $na }}</strong>
             </div>
-<<<<<<< HEAD
         </x-card>
-=======
-        </div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     </div>
 
     {{-- Right: Checklist Details --}}
     <div class="col-lg-8">
         @foreach($groupedItems as $category => $items)
-<<<<<<< HEAD
         <x-card class="mb-3">
             <x-slot:header>
                 <div class="section-title">{{ $category }}</div>
@@ -121,37 +102,6 @@
                 </tbody>
             </table>
         </x-card>
-=======
-        <div class="erp-card mb-3">
-            <div class="erp-card-header">
-                <div class="section-title">{{ $category }}</div>
-            </div>
-            <div class="erp-card-body p-0">
-                <table class="table table-modern mb-0">
-                    <thead><tr><th>Check Item</th><th style="width:120px;">Condition</th><th>Notes</th></tr></thead>
-                    <tbody>
-                        @foreach($items as $item)
-                        <tr>
-                            <td>{{ $item->check_item }}</td>
-                            <td>
-                                @if($item->condition === 'good')
-                                    <span class="badge badge-soft-success" style="border-radius:999px;"><i class="bi bi-check-lg me-1"></i>Good</span>
-                                @elseif($item->condition === 'warning')
-                                    <span class="badge badge-soft-warning" style="border-radius:999px;"><i class="bi bi-exclamation-triangle me-1"></i>Warning</span>
-                                @elseif($item->condition === 'bad')
-                                    <span class="badge badge-soft-danger" style="border-radius:999px;"><i class="bi bi-x-lg me-1"></i>Bad</span>
-                                @else
-                                    <span class="badge badge-soft-info" style="border-radius:999px;">N/A</span>
-                                @endif
-                            </td>
-                            <td class="text-muted">{{ $item->notes ?? '-' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         @endforeach
     </div>
 </div>

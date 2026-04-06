@@ -1,16 +1,10 @@
 @extends('layouts.app')
-<<<<<<< HEAD
 @section('page-title', 'Repair Cost & Complaint Analysis')
 @section('breadcrumb')<li class="breadcrumb-item"><a href="{{ route('reports.index') }}">Reports</a></li><li class="breadcrumb-item active">Repair Cost & Complaint</li>@endsection
-=======
-@section('page-title', 'Repair Cost Report')
-@section('breadcrumb')<li class="breadcrumb-item"><a href="{{ route('reports.index') }}">Reports</a></li><li class="breadcrumb-item active">Repair Cost</li>@endsection
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 
 @section('content')
 {{-- Summary Cards --}}
 <div class="row g-3 mb-3">
-<<<<<<< HEAD
     <div class="col-sm-6 col-lg-3">
         <div class="erp-card p-3">
             <div class="kpi-label">Sparepart Cost</div>
@@ -38,20 +32,10 @@
 </div>
 
 <div class="erp-card mb-3">
-=======
-    <div class="col-sm-6 col-lg-3"><div class="erp-card p-3"><div class="kpi-label">Sparepart Cost</div><div class="kpi-value" style="font-size:1.3rem;">{{ number_format($summary['sparepart'], 0, ',', '.') }}</div></div></div>
-    <div class="col-sm-6 col-lg-3"><div class="erp-card p-3"><div class="kpi-label">Labor Cost</div><div class="kpi-value" style="font-size:1.3rem;">{{ number_format($summary['labor'], 0, ',', '.') }}</div></div></div>
-    <div class="col-sm-6 col-lg-3"><div class="erp-card p-3"><div class="kpi-label">Vendor Cost</div><div class="kpi-value" style="font-size:1.3rem;">{{ number_format($summary['vendor'], 0, ',', '.') }}</div></div></div>
-    <div class="col-sm-6 col-lg-3"><div class="erp-card p-3 summary-highlight"><div class="kpi-label">Total Cost</div><div class="kpi-value" style="font-size:1.3rem;">{{ number_format($summary['total'], 0, ',', '.') }}</div></div></div>
-</div>
-
-<div class="erp-card">
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
     <div class="erp-card-header"><div class="section-title">Repair Cost Details</div></div>
     <div class="erp-card-body">
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-3">
-<<<<<<< HEAD
                 <select name="unit_id" class="form-select form-select-sm tom-select">
                     <option value="">All Units</option>
                     @foreach($allUnits as $u)
@@ -80,20 +64,6 @@
                         <th>Total</th>
                     </tr>
                 </thead>
-=======
-                <select name="unit_id" class="form-select form-select-sm" style="border-radius:10px;">
-                    <option value="">All Units</option>
-                    @foreach($allUnits as $u)<option value="{{ $u->id }}" {{ request('unit_id')==$u->id?'selected':'' }}>{{ $u->unit_code }}</option>@endforeach
-                </select>
-            </div>
-            <div class="col-md-2"><input type="date" name="date_from" class="form-control form-control-sm" value="{{ request('date_from') }}" style="border-radius:10px;"></div>
-            <div class="col-md-2"><input type="date" name="date_to" class="form-control form-control-sm" value="{{ request('date_to') }}" style="border-radius:10px;"></div>
-            <div class="col-auto"><button class="btn btn-outline-secondary btn-sm" style="border-radius:10px;">Filter</button></div>
-        </form>
-        <div class="table-responsive">
-            <table class="table table-modern mb-0">
-                <thead><tr><th>Unit</th><th>WO</th><th>Sparepart</th><th>Labor</th><th>Vendor</th><th>Consumable</th><th>Total</th></tr></thead>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                 <tbody>
                     @forelse($costs as $c)
                     <tr>
@@ -114,7 +84,6 @@
         <div class="mt-3">{{ $costs->links() }}</div>
     </div>
 </div>
-<<<<<<< HEAD
 
 <!-- Complaint Type Analysis -->
 <div class="erp-card">
@@ -153,6 +122,4 @@
         </div>
     </div>
 </div>
-=======
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
 @endsection

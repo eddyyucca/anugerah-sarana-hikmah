@@ -9,7 +9,6 @@
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label class="form-label" style="font-size:.8rem;">Unit</label>
-<<<<<<< HEAD
                 <select name="unit_id" class="form-select form-select-sm tom-select">
                     <option value="">All Units</option>
                     @foreach($units as $u)
@@ -29,16 +28,6 @@
                 <button class="btn btn-danger btn-sm"><i class="bi bi-funnel me-1"></i>Filter</button>
                 <a href="{{ route('downtime.index') }}" class="btn btn-light btn-sm">Reset</a>
             </div>
-=======
-                <select name="unit_id" class="form-select form-select-sm" style="border-radius:10px;">
-                    <option value="">All Units</option>
-                    @foreach($units as $u)<option value="{{ $u->id }}" {{ request('unit_id')==$u->id?'selected':'' }}>{{ $u->unit_code }} - {{ $u->unit_model }}</option>@endforeach
-                </select>
-            </div>
-            <div class="col-md-2"><label class="form-label" style="font-size:.8rem;">From</label><input type="date" name="date_from" class="form-control form-control-sm" value="{{ request('date_from') }}" style="border-radius:10px;"></div>
-            <div class="col-md-2"><label class="form-label" style="font-size:.8rem;">To</label><input type="date" name="date_to" class="form-control form-control-sm" value="{{ request('date_to') }}" style="border-radius:10px;"></div>
-            <div class="col-auto"><button class="btn btn-danger btn-sm" style="border-radius:10px;"><i class="bi bi-funnel me-1"></i>Filter</button> <a href="{{ route('downtime.index') }}" class="btn btn-light btn-sm" style="border-radius:10px;">Reset</a></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         </form>
     </div>
 </div>
@@ -84,25 +73,17 @@
     <div class="col-lg-8">
         <div class="erp-card">
             <div class="erp-card-header"><div class="section-title"><i class="bi bi-graph-down me-2"></i>Downtime Trend (Monthly)</div></div>
-<<<<<<< HEAD
             <div class="erp-card-body">
                 <div class="chart-box chart-lg"><canvas id="dtTrendChart"></canvas></div>
             </div>
-=======
-            <div class="erp-card-body"><div class="chart-box chart-lg"><canvas id="dtTrendChart"></canvas></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         </div>
     </div>
     <div class="col-lg-4">
         <div class="erp-card">
             <div class="erp-card-header"><div class="section-title"><i class="bi bi-wrench me-2"></i>WO by Type</div></div>
-<<<<<<< HEAD
             <div class="erp-card-body d-flex align-items-center justify-content-center">
                 <div style="width:200px;height:200px;"><canvas id="woTypeChart"></canvas></div>
             </div>
-=======
-            <div class="erp-card-body d-flex align-items-center justify-content-center"><div style="width:200px;height:200px;"><canvas id="woTypeChart"></canvas></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         </div>
     </div>
 </div>
@@ -113,7 +94,6 @@
     <div class="erp-card-body">
         <div class="table-responsive">
             <table class="table table-modern mb-0">
-<<<<<<< HEAD
                 <thead>
                     <tr>
                         <th>Unit</th>
@@ -125,9 +105,6 @@
                         <th>Reliability</th>
                     </tr>
                 </thead>
-=======
-                <thead><tr><th>Unit</th><th>Model</th><th>Failures</th><th>Total Downtime (hrs)</th><th>MTTR (hrs)</th><th>MTBF (hrs)</th><th>Reliability</th></tr></thead>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                 <tbody>
                     @forelse($mtbfData as $m)
                     <tr>
@@ -140,13 +117,9 @@
                         <td>
                             @php $rel = $m->mtbf > 0 ? round(($m->mtbf / ($m->mtbf + $m->mttr)) * 100, 1) : 0; @endphp
                             <div class="d-flex align-items-center gap-2">
-<<<<<<< HEAD
                                 <div class="progress-modern flex-grow-1" style="height:8px;">
                                     <div class="progress-bar" style="width:{{ $rel }}%;background:{{ $rel >= 80 ? '#10b981' : ($rel >= 60 ? '#f59e0b' : '#ef4444') }};"></div>
                                 </div>
-=======
-                                <div class="progress-modern flex-grow-1" style="height:8px;"><div class="progress-bar" style="width:{{ $rel }}%;background:{{ $rel >= 80 ? '#10b981' : ($rel >= 60 ? '#f59e0b' : '#ef4444') }};"></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                                 <span style="font-size:.82rem;font-weight:700;">{{ $rel }}%</span>
                             </div>
                         </td>
@@ -163,13 +136,9 @@
     <div class="col-lg-6">
         <div class="erp-card">
             <div class="erp-card-header"><div class="section-title"><i class="bi bi-exclamation-triangle me-2"></i>Top Breakdown Reasons</div></div>
-<<<<<<< HEAD
             <div class="erp-card-body">
                 <div class="chart-box chart-md"><canvas id="breakdownChart"></canvas></div>
             </div>
-=======
-            <div class="erp-card-body"><div class="chart-box chart-md"><canvas id="breakdownChart"></canvas></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
         </div>
     </div>
     <div class="col-lg-6">
@@ -199,7 +168,6 @@
     <div class="erp-card-body">
         <div class="table-responsive">
             <table class="table table-modern mb-0">
-<<<<<<< HEAD
                 <thead>
                     <tr>
                         <th>Unit</th>
@@ -211,9 +179,6 @@
                         <th>Downtime Bar</th>
                     </tr>
                 </thead>
-=======
-                <thead><tr><th>Unit</th><th>Model</th><th>Total WO</th><th>Completed</th><th>Total Downtime (hrs)</th><th>Avg Downtime (hrs)</th><th>Downtime Bar</th></tr></thead>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                 <tbody>
                     @php $maxDt = $downtimePerUnit->max('total_downtime') ?: 1; @endphp
                     @forelse($downtimePerUnit as $d)
@@ -225,13 +190,9 @@
                         <td><strong>{{ round($d->total_downtime, 1) }}</strong></td>
                         <td>{{ round($d->avg_downtime, 1) }}</td>
                         <td>
-<<<<<<< HEAD
                             <div class="progress-modern" style="height:10px;">
                                 <div class="progress-bar" style="width:{{ ($d->total_downtime / $maxDt) * 100 }}%;"></div>
                             </div>
-=======
-                            <div class="progress-modern" style="height:10px;"><div class="progress-bar" style="width:{{ ($d->total_downtime / $maxDt) * 100 }}%;"></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                         </td>
                     </tr>
                     @empty<tr><td colspan="7" class="text-center text-muted py-4">No data.</td></tr>@endforelse
@@ -247,7 +208,6 @@
     <div class="erp-card-body">
         <div class="table-responsive">
             <table class="table table-modern mb-0">
-<<<<<<< HEAD
                 <thead>
                     <tr>
                         <th>Unit</th>
@@ -258,9 +218,6 @@
                         <th>Availability</th>
                     </tr>
                 </thead>
-=======
-                <thead><tr><th>Unit</th><th>Model</th><th>Days Tracked</th><th>Scheduled (hrs)</th><th>Downtime (hrs)</th><th>Availability</th></tr></thead>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                 <tbody>
                     @forelse($availSummary as $a)
                     <tr>
@@ -272,13 +229,9 @@
                         <td>
                             @php $av = round($a->avg_avail, 1); @endphp
                             <div class="d-flex align-items-center gap-2">
-<<<<<<< HEAD
                                 <div class="progress-modern flex-grow-1" style="height:10px;">
                                     <div class="progress-bar" style="width:{{ $av }}%;background:{{ $av >= 85 ? '#10b981' : ($av >= 70 ? '#f59e0b' : '#ef4444') }};"></div>
                                 </div>
-=======
-                                <div class="progress-modern flex-grow-1" style="height:10px;"><div class="progress-bar" style="width:{{ $av }}%;background:{{ $av >= 85 ? '#10b981' : ($av >= 70 ? '#f59e0b' : '#ef4444') }};"></div></div>
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
                                 <span style="font-size:.85rem;font-weight:700;min-width:50px;">{{ $av }}%</span>
                             </div>
                         </td>
