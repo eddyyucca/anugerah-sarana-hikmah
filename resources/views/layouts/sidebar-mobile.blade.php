@@ -3,8 +3,8 @@
         <div class="d-flex align-items-center gap-3">
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo">
             <div>
-                <div class="sidebar-title text-white">Workshop ERP</div>
-                <div class="sidebar-subtitle">Mining Logistics</div>
+                <div class="sidebar-title text-white">APEX</div>
+                <div class="sidebar-subtitle">Mining ERP</div>
             </div>
         </div>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>

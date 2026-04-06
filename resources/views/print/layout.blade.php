@@ -46,7 +46,7 @@
     @yield('content')
 
     <div class="footer-print">
-        Workshop ERP - Mining Logistics System &middot; Printed: {{ now()->format('d M Y H:i') }}
+        APEX &mdash; PT Anugerah Sarana Hikmah &middot; Printed: {{ now()->format('d M Y H:i') }}
     </div>
 </body>
 </html>

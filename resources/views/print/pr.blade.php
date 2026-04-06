@@ -3,8 +3,8 @@
 @section('content')
 <div class="print-header">
     <div>
-        <div class="company-name">Workshop ERP</div>
-        <div class="company-sub">Mining Logistics System</div>
+        <div class="company-name">APEX</div>
+        <div class="company-sub">PT Anugerah Sarana Hikmah</div>
     </div>
     <div>
         <div class="doc-title">PURCHASE REQUEST</div>

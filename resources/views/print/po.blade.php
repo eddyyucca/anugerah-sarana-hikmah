@@ -4,8 +4,8 @@
 @section('content')
 <div class="print-header">
     <div>
-        <div class="company-name">Workshop ERP</div>
-        <div class="company-sub">Mining Logistics System</div>
+        <div class="company-name">APEX</div>
+        <div class="company-sub">PT Anugerah Sarana Hikmah</div>
         <div class="company-sub">Jl. Mining Site KM 12, Kalimantan Selatan</div>
     </div>
     <div>

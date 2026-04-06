@@ -107,7 +107,7 @@
         <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="p2h-logo">
             <div>
                 <div style="font-weight:700;font-size:1.05rem;">Pemeriksaan Harian (P2H)</div>
-                <div style="font-size:.78rem;color:rgba(255,255,255,.6);">Workshop ERP - Mining Logistics</div>
+                <div style="font-size:.78rem;color:rgba(255,255,255,.6);">APEX - Mining ERP</div>
             </div>
         </div>
     </div>
@@ -258,7 +258,7 @@
         </button>
 
         <div class="text-center text-muted mb-4" style="font-size:.78rem;">
-            <i class="bi bi-shield-check me-1"></i> Data akan tersimpan otomatis ke sistem Workshop ERP
+            <i class="bi bi-shield-check me-1"></i> Data akan tersimpan otomatis ke sistem APEX
         </div>
     </form>
 </div>

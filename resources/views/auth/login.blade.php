@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - Workshop ERP</title>
+    <title>Masuk - APEX</title>
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -46,9 +46,9 @@
 </head>
 <body>
     <div class="login-card">
-        <img src="{{ asset('assets/images/logo.png') }}" alt="Workshop ERP Logo" class="login-logo">
-        <h4 class="text-center mb-1" style="font-weight:800;">Workshop ERP</h4>
-        <p class="text-center text-muted mb-4" style="font-size:.88rem;">Sistem Logistik Pertambangan</p>
+        <img src="{{ asset('assets/images/logo.png') }}" alt="APEX Logo" class="login-logo">
+        <h4 class="text-center mb-1" style="font-weight:800;">APEX</h4>
+        <p class="text-center text-muted mb-4" style="font-size:.88rem;">Mining ERP System</p>
 
         @if($errors->any())
         <div class="alert alert-danger py-2" style="border-radius:12px;font-size:.88rem;">

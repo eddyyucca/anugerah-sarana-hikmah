@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @php
-    $title = 'Workshop ERP Dashboard';
-    $pageTitle = 'Workshop Dashboard';
+    $title = 'APEX Dashboard';
+    $pageTitle = 'APEX Dashboard';
     $maxCost = collect($costBreakdown)->max('value');
 @endphp
 
