@@ -22,19 +22,34 @@ class ConsumablePrController extends Controller
         if ($request->filled('date_to')) $query->where('request_date', '<=', $request->date_to);
 
         $prs = $query->latest()->paginate(25)->withQueryString();
-        return view('consumable-pr.index', compact('prs'));
+
+        $lowStockCount = Sparepart::active()
+            ->where('is_consumable', true)
+            ->whereColumn('stock_on_hand', '<=', 'minimum_stock')
+            ->count();
+
+        return view('consumable-pr.index', compact('prs', 'lowStockCount'));
     }
 
     public function create()
     {
         $prNumber = DocumentNumberService::generatePR();
-        // Only consumable spareparts
+
+        // All consumable spareparts for manual add dropdown
         $spareparts = Sparepart::active()
             ->where('is_consumable', true)
             ->orderBy('part_name')
             ->get(['id', 'part_number', 'part_name', 'uom', 'unit_price', 'stock_on_hand', 'minimum_stock']);
 
-        return view('consumable-pr.create', compact('prNumber', 'spareparts'));
+        // Auto-suggest: consumables where stock is at or below minimum
+        $lowStockItems = $spareparts->filter(fn($s) => $s->stock_on_hand <= $s->minimum_stock)
+            ->map(function ($s) {
+                $s->suggested_qty = max(1, $s->minimum_stock - $s->stock_on_hand);
+                return $s;
+            })
+            ->values();
+
+        return view('consumable-pr.create', compact('prNumber', 'spareparts', 'lowStockItems'));
     }
 
     public function store(Request $request)

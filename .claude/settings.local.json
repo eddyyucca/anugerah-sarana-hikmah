@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(grep -l \"stock_opname\\\\|sparepart\" \"c:/xampp/htdocs/anugerah-sarana-hikmah-main/database/migrations\"/*.php)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(grep -n \"is_consumable\" /c/xampp/htdocs/anugerah-sarana-hikmah-main/app/Models/*.php)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

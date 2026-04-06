@@ -1,73 +1,112 @@
-<<<<<<< HEAD
-# Anugerah Sarana Hikmah - Workshop ERP System
+# APEX — Mining ERP System
 
-Sistem ERP terintegrasi untuk pengelolaan workshop yang mencakup user management, inventory control, purchase requests, maintenance workflows, dan approval system.
+> **Asset & Plant ERP for Extraction**
+> Sistem ERP terintegrasi untuk industri pertambangan — mengelola work order, inventaris sparepart, pengadaan, dan operasional workshop alat berat secara menyeluruh.
 
-## 🚀 Fitur Utama
+---
 
-### User & Access Control
-- **User Management**: CRUD user dengan role-based access control
-- **Role & Permission System**: Manajemen role dan menu permission yang flexible
-- **Approval Workflow**: Multi-level approval untuk dokumen (PR, Stock Opname, dll)
+## Tentang Aplikasi
 
-### Modul Utama
+**APEX** adalah sistem Enterprise Resource Planning (ERP) yang dirancang khusus untuk perusahaan pertambangan. Aplikasi ini mencakup seluruh siklus operasional workshop, mulai dari pemeliharaan alat berat, manajemen suku cadang, proses pengadaan, hingga pelaporan dan analisis.
+
+Dikembangkan oleh **PT Anugerah Sarana Hikmah**.
+
+---
+
+## Fitur Utama
+
+### Manajemen Operasional
+- **Work Order** — Pencatatan dan pelacakan perbaikan/perawatan unit alat berat
+- **P2H Check** — Pemeriksaan harian pra-penggunaan unit oleh operator
+- **Downtime Analysis** — Analisis downtime unit untuk efisiensi operasional
+
+### Inventaris & Gudang
+- **Sparepart Management** — Master data suku cadang dengan stok real-time
+- **Goods Receipt** — Penerimaan barang dari supplier
+- **Goods Issue** — Pengeluaran barang untuk kebutuhan perbaikan
+- **Stock Opname** — Verifikasi stok fisik dengan approval multi-level
+- **Warehouse Transfer** — Transfer barang antar lokasi gudang
+
+### Pengadaan (Procurement)
+- **Purchase Request** — Pengajuan pembelian dengan workflow approval
+- **Purchase Order** — Order pembelian ke supplier
+- **Consumable PR** — Pengajuan khusus untuk barang konsumabel
+
+### Akses & Keamanan
+- **User Management** — CRUD pengguna dengan role-based access control
+- **Menu Permissions** — Konfigurasi hak akses per role secara granular
+- **Approval Workflow** — Multi-level approval untuk dokumen kritis
+
+### Laporan
+- **Dashboard** — KPI, chart, dan ringkasan operasional
+- **Reports** — Laporan dan analisis data
+
+---
+
+## Alur Bisnis
+
+```
+Procurement:   PR (Approval) → PO → GR → Stock Update
+Maintenance:   WO → GI (Parts) → Complete → Cost Summary
+Warehouse:     GR (Masuk) / GI (Keluar) → Stock Movement → Opname (Approval)
+Unit:          Registration → Availability Log → P2H Check → Work Order
+```
+
+---
+
+## Modul & Route
 
 | Modul | Route | Deskripsi |
-|-------|-------|-----------|
-| **Dashboard** | `/` | KPI, chart, dan ringkasan |
-| **User Management** | `/users` | Kelola user, role, dan permission |
-| **Menu Permissions** | `/settings/menu-permissions` | Konfigurasi role dan akses menu |
-| **Units** | `/units` | Master data unit/alat berat |
-| **Spareparts** | `/spareparts` | Master data sparepart |
-| **Suppliers** | `/suppliers` | Master data supplier |
-| **Technicians** | `/technicians` | Master data teknisi |
-| **Purchase Request** | `/purchase-requests` | Pengajuan pembelian (dengan approval) |
-| **Purchase Order** | `/purchase-orders` | Order pembelian ke supplier |
-| **Goods Receipt** | `/goods-receipts` | Penerimaan barang |
-| **Goods Issue** | `/goods-issues` | Pengeluaran barang |
-| **Stock Opname** | `/stock-opnames` | Verifikasi stok (dengan approval) |
-| **Work Orders** | `/work-orders` | Order perbaikan unit |
-| **Warehouse Transfer** | `/warehouse-transfers` | Transfer barang antar gudang |
-| **P2H Check** | `/p2h-checks` | Pemeriksaan pra-penggunaan unit |
-| **Repair Cost Summary** | `/repair-cost-summaries` | Ringkasan biaya perbaikan |
-| **Notifications** | `/notifications` | Sistem notifikasi untuk user |
-| **Reports** | `/reports` | Laporan dan analisis |
+|---|---|---|
+| Dashboard | `/` | KPI, chart, ringkasan |
+| Units | `/units` | Master data unit alat berat |
+| Spareparts | `/spareparts` | Master data suku cadang |
+| Suppliers | `/suppliers` | Master data supplier |
+| Technicians | `/technicians` | Master data teknisi |
+| Operators | `/operators` | Master data operator |
+| Purchase Request | `/purchase-requests` | Pengajuan pembelian |
+| Consumable PR | `/consumable-pr` | Pengajuan barang konsumabel |
+| Purchase Order | `/purchase-orders` | Order pembelian ke supplier |
+| Goods Receipt | `/goods-receipts` | Penerimaan barang |
+| Goods Issue | `/goods-issues` | Pengeluaran barang |
+| Stock Opname | `/stock-opname` | Verifikasi stok fisik |
+| Work Orders | `/work-orders` | Order perbaikan unit |
+| Downtime Analysis | `/downtime` | Analisis downtime |
+| P2H Check | `/p2h` | Pemeriksaan harian unit |
+| Reports | `/reports` | Laporan & analisis |
+| Users | `/users` | Manajemen pengguna |
+| Menu Permissions | `/settings/menu-permissions` | Konfigurasi akses role |
+| Approval Settings | `/approval-settings` | Konfigurasi level approval |
 
-## 📋 Alur Bisnis
+---
 
-### Procurement Workflow
-```
-PR (Approval) → PO → GR → Stock Update
-```
+## Tech Stack
 
-### Maintenance Workflow
-```
-WO → GI (Parts) → Complete → Cost Summary
-```
+| Layer | Teknologi |
+|---|---|
+| Backend | Laravel 11 (PHP 8.2+) |
+| Database | MySQL / MariaDB |
+| Frontend | Blade Templating + Bootstrap 5 |
+| UI Icons | Bootstrap Icons |
+| Charts | Chart.js |
+| Select Input | Tom Select |
+| Authentication | Laravel Auth built-in |
 
-### Warehouse Management
-```
-GR (Masuk) / GI (Keluar) → Stock Movement → Opname (Approval)
-```
+---
 
-### Unit Management
-```
-Unit Registration → Availability Log → P2H Check → Work Order
-```
-
-## 🛠️ Instalasi & Setup
+## Instalasi
 
 ### Prasyarat
 - PHP 8.2+
 - Composer
-- MySQL/MariaDB
-- Laravel 11+
+- MySQL / MariaDB
+- XAMPP / Laragon (opsional)
 
 ### Langkah Instalasi
 
 ```bash
 # 1. Clone repository
-git clone [repository-url]
+git clone https://github.com/eddyyucca/anugerah-sarana-hikmah-main.git
 cd anugerah-sarana-hikmah-main
 
 # 2. Install dependencies
@@ -80,7 +119,7 @@ cp .env.example .env
 php artisan key:generate
 
 # 5. Konfigurasi database di .env
-DB_DATABASE=anugerah_erp
+DB_DATABASE=apex_erp
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -94,166 +133,38 @@ php artisan serve
 
 Akses aplikasi: **http://localhost:8000**
 
-## 🔐 Authorization & Approval System
+---
 
-### Permission Hierarchy
-1. **User Role**: Pengguna memiliki role yang dikonfigurasi di menu_permissions
-2. **Menu Access**: Setiap menu memiliki permission per role (can_create, can_view, can_edit, can_delete, can_approve)
-3. **Document Approval**:
-   - Konfigurasi di ApprovalSetting (min/max budget, approver role/user)
-   - Tracking di ApprovalLog (pending→approved/rejected)
+## Struktur Database
 
-### Contoh Usage
-```php
-// Check if user can access menu
-$canAccess = auth()->user()->canAccess('purchase-request', 'create');
-```
-
-## 📊 Teknologi yang Digunakan
-- **Backend**: Laravel 11 (PHP Framework)
-- **Database**: MySQL/MariaDB
-- **Frontend**: Blade Templates, Bootstrap (dengan Vite untuk asset bundling)
-- **Authentication**: Laravel Sanctum/Breeze
-- **Queue & Jobs**: Laravel Queue untuk background processing
-- **Notifications**: Email & in-app notifications
-
-## 🎯 Fitur Tambahan
-- **Stock Movement Tracking**: Pelacakan pergerakan stok secara real-time
-- **Unit Availability Log**: Log ketersediaan unit untuk monitoring
-- **Complaint Types**: Kategori keluhan untuk work orders
-- **Warehouse Locations**: Manajemen lokasi penyimpanan di gudang
-- **Document Numbering**: Sistem penomoran otomatis untuk dokumen
-- **Multi-warehouse Support**: Dukungan multiple gudang dengan transfer
-
-// Check if user can approve document
-$canApprove = auth()->user()->canApproveDocument('pr', $id, $amount);
-
-// Get list of menus user can access
-$menus = auth()->user()->allowedMenus();
-```
-
-## 📦 Database Structure
-
-- **27 Tabel** dengan foreign keys dan indexes
-- **Soft delete** untuk master data (units, suppliers, spareparts, technicians)
-- **Approval logs** untuk tracking perubahan status document
-- **Menu permissions** untuk granular access control
+- **27+ Tabel** dengan foreign keys dan indexes
+- Soft delete untuk master data (units, suppliers, spareparts, technicians)
+- Approval logs untuk tracking perubahan status dokumen
+- Menu permissions untuk granular access control
 
 ### Tabel Utama
-- `users` - User dan role assignment
-- `menu_permissions` - Permission per role
-- `purchase_requests` - Pengajuan pembelian
-- `purchase_orders` - Order pembelian
-- `goods_receipts` - Penerimaan barang
-- `goods_issues` - Pengeluaran barang
-- `stock_opnames` - Verifikasi stok
-- `approval_settings` - Konfigurasi approval level
-- `approval_logs` - History approval dokumen
+- `users` — Pengguna dan role assignment
+- `menu_permissions` — Permission per role
+- `units` — Master data alat berat
+- `spareparts` — Master data suku cadang
+- `purchase_requests` — Pengajuan pembelian
+- `purchase_orders` — Order pembelian
+- `goods_receipts` — Penerimaan barang
+- `goods_issues` — Pengeluaran barang
+- `stock_opnames` — Verifikasi stok
+- `work_orders` — Order perbaikan
+- `approval_settings` — Konfigurasi approval level
+- `approval_logs` — History approval dokumen
 
-## 🎨 Tech Stack
+---
 
-- **Backend**: Laravel 11+
-- **Database**: MySQL/MariaDB
-- **Frontend**: Blade Templating + Bootstrap 5
-- **UI Components**: Bootstrap 5 CDN, Bootstrap Icons
-- **Charts**: Chart.js CDN
-- **Authentication**: Laravel Auth built-in
+## Developer
 
-## 📝 Konvensi & Best Practices
+**Eddy Adha Saputra**
+GitHub: [https://github.com/eddyyucca](https://github.com/eddyyucca)
 
-### Authorization
-- Selalu validasi permission di controller sebelum approval
-- Gunakan ApprovalService untuk multi-level approval
-- Check user permission di blade template sebelum show button
+---
 
-### Database
-- Gunakan soft delete untuk data master yang sering di-update
-- Composite indexes untuk query yang sering diakses
-- Foreign keys dengan cascading rules yang tepat
+## Lisensi
 
-### Code Structure
-- Controllers handle: validation, authorization, business logic
-- Models handle: relationships, custom queries, helpers
-- Views handle: display logic hanya, gunakan @php sparingly
-
-## 📚 Development Notes
-
-- Semua migrasi sudah ada di `database/migrations/`
-- Seeders tersedia di `database/seeders/`
-- Custom helpers di `app/Services/`
-- Role checkers di `User.php` model
-=======
-# Workshop ERP - Mining Logistics System
-
-## Instalasi
-
-### 1. Buat project Laravel baru
-```bash
-composer create-project laravel/laravel workshop-erp
-cd workshop-erp
-```
-
-### 2. Copy file dari ZIP ini
-Timpa/copy semua folder dari ZIP ke project Laravel:
-- `app/` → ke `app/`
-- `database/` → ke `database/`
-- `resources/views/` → ke `resources/views/`
-- `public/assets/` → ke `public/assets/`
-- `routes/web.php` → ke `routes/web.php`
-
-### 3. Setup Database
-Edit `.env`:
-```
-DB_DATABASE=workshop_erp
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### 4. Jalankan Migration & Seeder
-```bash
-php artisan migrate
-php artisan db:seed
-```
-
-### 5. Jalankan Server
-```bash
-php artisan serve
-```
-Buka: http://localhost:8000
-
-## Struktur Modul
-
-| Modul | Route | Fungsi |
-|-------|-------|--------|
-| Dashboard | `/` | KPI, chart, summary |
-| Units | `/units` | Master unit alat berat |
-| Spareparts | `/spareparts` | Master sparepart |
-| Suppliers | `/suppliers` | Master supplier |
-| Technicians | `/technicians` | Master teknisi |
-| Purchase Request | `/purchase-requests` | Pengajuan pembelian |
-| Purchase Order | `/purchase-orders` | Order pembelian |
-| Goods Receipt | `/goods-receipts` | Penerimaan barang |
-| Goods Issue | `/goods-issues` | Pengeluaran barang |
-| Work Orders | `/work-orders` | Order perbaikan |
-| Reports | `/reports` | Laporan & analisis |
-
-## Alur Bisnis
-
-### Procurement: PR → PO → GR → Stock Update
-### Maintenance: WO → GI (parts) → Complete → Cost Summary
-### Warehouse: GR (masuk) / GI (keluar) → Stock Movement
-
-## Database: 23 Tabel
-- 5 migration files
-- Index composite untuk performa query
-- Summary table untuk dashboard cepat
-- Soft delete untuk master data
-
-## Tech Stack
-- Laravel 11+
-- MySQL/MariaDB
-- Bootstrap 5 CDN
-- Chart.js CDN
-- Bootstrap Icons CDN
-- Blade Templating
->>>>>>> a456df66c536f85e5f8af9e06880d7e6a6f56a1c
+Dikembangkan oleh **PT Anugerah Sarana Hikmah**. Hak cipta dilindungi.

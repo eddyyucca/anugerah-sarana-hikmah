@@ -6,9 +6,23 @@
 <div class="erp-card">
     <div class="erp-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="section-title"><i class="bi bi-droplet me-2"></i>Consumable Purchase Requests</div>
-        <a href="{{ route('consumable-pr.create') }}" class="btn btn-danger btn-sm"><i class="bi bi-plus-lg me-1"></i> New Consumable PR</a>
+        <a href="{{ route('consumable-pr.create') }}" class="btn btn-danger btn-sm position-relative">
+            <i class="bi bi-plus-lg me-1"></i> New Consumable PR
+            @if($lowStockCount > 0)
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size:10px;">{{ $lowStockCount }}</span>
+            @endif
+        </a>
     </div>
     <div class="erp-card-body">
+        @if($lowStockCount > 0)
+        <div class="alert alert-warning d-flex align-items-center gap-2 mb-3 py-2">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>
+                <strong>{{ $lowStockCount }} consumable item{{ $lowStockCount > 1 ? 's' : '' }}</strong> below minimum stock.
+                <a href="{{ route('consumable-pr.create') }}" class="alert-link ms-1">Create Restock PR &rarr;</a>
+            </div>
+        </div>
+        @endif
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-3">
                 <input type="text" name="search" class="form-control form-control-sm" placeholder="PR Number..." value="{{ request('search') }}">
