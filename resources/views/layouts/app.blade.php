@@ -42,7 +42,7 @@
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="sidebar-logo">
             <div>
                 <div class="sidebar-title">APEX</div>
-                <div class="sidebar-subtitle">Mining ERP</div>
+                <div class="sidebar-subtitle">Asset & Plant ERP for Extraction</div>
             </div>
         </div>
         @include('layouts.sidebar')
@@ -58,7 +58,7 @@
                 <img src="{{ asset('assets/images/logo.png') }}" height="28" alt="Logo">
                 <div>
                     <div class="sidebar-title" style="font-size:.9rem;">APEX</div>
-                    <div class="sidebar-subtitle">Mining ERP</div>
+                    <div class="sidebar-subtitle">Asset & Plant ERP for Extraction</div>
                 </div>
             </div>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
