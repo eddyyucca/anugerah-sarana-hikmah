@@ -3,7 +3,7 @@
 > **Asset & Plant ERP for Extraction**
 > Sistem ERP terintegrasi untuk industri pertambangan — mengelola work order, inventaris sparepart, pengadaan, dan operasional workshop alat berat secara menyeluruh.
 
-Dikembangkan oleh **PT Anugerah Sarana Hikmah**.
+Dikembangkan oleh **Fluxa Borneo Tech**.
 
 ---
 
