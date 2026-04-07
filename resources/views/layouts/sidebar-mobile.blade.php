@@ -51,13 +51,25 @@
             <span class="sidebar-link-icon"><i class="bi bi-speedometer2"></i></span><span>Downtime Analysis</span>
         </a>
         <a href="{{ route('operators.index') }}" class="sidebar-link {{ request()->routeIs('operators.*') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="bi bi-people"></i></span><span>Operators</span>
+            <span class="sidebar-link-icon"><i class="bi bi-people"></i></span><span>Operator</span>
+        </a>
+        <a href="{{ route('fit-to-work.index') }}" class="sidebar-link {{ request()->routeIs('fit-to-work.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-heart-pulse"></i></span><span>Fit to Work</span>
         </a>
         <a href="{{ route('p2h.index') }}" class="sidebar-link {{ request()->routeIs('p2h.index') || request()->routeIs('p2h.create') || request()->routeIs('p2h.show') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-clipboard-check"></i></span><span>P2H Check</span>
         </a>
+        <a href="{{ route('timesheets.index') }}" class="sidebar-link {{ request()->routeIs('timesheets.*') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-clock-history"></i></span><span>Timesheet</span>
+        </a>
         <a href="{{ route('p2h.summary') }}" class="sidebar-link {{ request()->routeIs('p2h.summary') ? 'active' : '' }}">
-            <span class="sidebar-link-icon"><i class="bi bi-graph-up"></i></span><span>P2H Summary</span>
+            <span class="sidebar-link-icon"><i class="bi bi-graph-up"></i></span><span>Ringkasan P2H</span>
+        </a>
+        <a href="{{ route('operasi.log') }}" class="sidebar-link {{ request()->routeIs('operasi.log') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-journal-text"></i></span><span>Log Harian</span>
+        </a>
+        <a href="{{ route('operasi.laporan') }}" class="sidebar-link {{ request()->routeIs('operasi.laporan') ? 'active' : '' }}">
+            <span class="sidebar-link-icon"><i class="bi bi-bar-chart-line"></i></span><span>Laporan Operasi</span>
         </a>
         <a href="{{ route('reports.index') }}" class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
             <span class="sidebar-link-icon"><i class="bi bi-bar-chart-line"></i></span><span>Reports</span>

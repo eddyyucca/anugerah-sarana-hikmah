@@ -46,14 +46,18 @@
             <div class="col-md-2">
                 <x-form-group label="Shift" required>
                     <select name="shift" class="form-select tom-select" required>
-                        <option value="day">Day Shift</option>
-                        <option value="night">Night Shift</option>
+                        <option value="day">Shift Pagi</option>
+                        <option value="night">Shift Malam</option>
                     </select>
                 </x-form-group>
             </div>
             <div class="col-md-2">
                 <x-form-group label="Hour Meter">
-                    <input type="number" step="0.1" name="hour_meter_start" id="hmInput" class="form-control" value="0">
+                    <input type="number" step="0.1" name="hour_meter_start" id="hmInput"
+                        class="form-control @error('hour_meter_start') is-invalid @enderror"
+                        value="{{ old('hour_meter_start', 0) }}" min="0">
+                    <small id="hmHint" class="text-muted"></small>
+                    @error('hour_meter_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </x-form-group>
             </div>
             <div class="col-md-2">
@@ -126,8 +130,29 @@
 <script>
 document.getElementById('unitSelect').addEventListener('change', function() {
     const opt = this.selectedOptions[0];
-    if (opt && opt.dataset.hm) {
-        document.getElementById('hmInput').value = opt.dataset.hm;
+    const hmInput = document.getElementById('hmInput');
+    const hmHint = document.getElementById('hmHint');
+    if (opt && opt.dataset.hm !== undefined) {
+        const minHm = parseFloat(opt.dataset.hm) || 0;
+        hmInput.value = minHm;
+        hmInput.min = minHm;
+        hmHint.textContent = 'HM saat ini: ' + minHm + ' (tidak boleh lebih kecil)';
+    } else {
+        hmInput.min = 0;
+        hmHint.textContent = '';
+    }
+});
+
+document.getElementById('hmInput').addEventListener('input', function() {
+    const opt = document.getElementById('unitSelect').selectedOptions[0];
+    if (!opt || opt.dataset.hm === undefined) return;
+    const minHm = parseFloat(opt.dataset.hm) || 0;
+    if (parseFloat(this.value) < minHm) {
+        this.setCustomValidity('HM tidak boleh kurang dari ' + minHm);
+        this.classList.add('is-invalid');
+    } else {
+        this.setCustomValidity('');
+        this.classList.remove('is-invalid');
     }
 });
 </script>

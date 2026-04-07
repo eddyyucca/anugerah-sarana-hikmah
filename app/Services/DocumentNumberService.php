@@ -10,6 +10,8 @@ use App\Models\WorkOrder;
 use App\Models\P2hCheck;
 use App\Models\StockOpname;
 use App\Models\WarehouseTransfer;
+use App\Models\FitToWork;
+use App\Models\Timesheet;
 
 class DocumentNumberService
 {
@@ -51,6 +53,16 @@ class DocumentNumberService
     public static function generateWT(): string
     {
         return self::generate('WT', WarehouseTransfer::class, 'transfer_number');
+    }
+
+    public static function generateFTW(): string
+    {
+        return self::generate('FTW', FitToWork::class, 'ftw_number');
+    }
+
+    public static function generateTS(): string
+    {
+        return self::generate('TS', Timesheet::class, 'ts_number');
     }
 
     private static function generate(string $prefix, string $model, string $column): string

@@ -107,12 +107,15 @@ class P2hCheckController extends Controller
 
     public function store(Request $request)
     {
+        $unit = Unit::findOrFail($request->unit_id);
+        $currentHm = (float) $unit->hour_meter;
+
         $request->validate([
             'unit_id' => 'required|exists:units,id',
             'operator_id' => 'required|exists:operators,id',
             'check_date' => 'required|date',
             'shift' => 'required|in:day,night',
-            'hour_meter_start' => 'nullable|numeric|min:0',
+            'hour_meter_start' => "nullable|numeric|min:{$currentHm}",
             'km_start' => 'nullable|numeric|min:0',
             'general_notes' => 'nullable|string',
             'items' => 'required|array|min:1',
@@ -120,13 +123,17 @@ class P2hCheckController extends Controller
             'items.*.check_item' => 'required|string|max:150',
             'items.*.condition' => 'required|in:good,warning,bad,na',
             'items.*.notes' => 'nullable|string|max:255',
+        ], [
+            'hour_meter_start.min' => "HM tidak boleh kurang dari nilai saat ini ({$currentHm}).",
         ]);
 
-        DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request, $unit) {
             // Determine overall status
             $hasBad = collect($request->items)->contains('condition', 'bad');
             $hasWarning = collect($request->items)->contains('condition', 'warning');
             $overall = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
+
+            $hmValue = (float) ($request->hour_meter_start ?? $unit->hour_meter);
 
             $check = P2hCheck::create([
                 'p2h_number' => DocumentNumberService::generateP2H(),
@@ -134,7 +141,7 @@ class P2hCheckController extends Controller
                 'operator_id' => $request->operator_id,
                 'check_date' => $request->check_date,
                 'shift' => $request->shift,
-                'hour_meter_start' => $request->hour_meter_start ?? 0,
+                'hour_meter_start' => $hmValue,
                 'km_start' => $request->km_start ?? 0,
                 'overall_status' => $overall,
                 'general_notes' => $request->general_notes,
@@ -142,6 +149,11 @@ class P2hCheckController extends Controller
 
             foreach ($request->items as $item) {
                 $check->items()->create($item);
+            }
+
+            // Update HM unit jika nilai baru lebih besar
+            if ($hmValue > (float) $unit->hour_meter) {
+                $unit->update(['hour_meter' => $hmValue]);
             }
         });
 
@@ -160,12 +172,15 @@ class P2hCheckController extends Controller
 
     public function storeOperator(Request $request)
     {
+        $unit = Unit::findOrFail($request->unit_id);
+        $currentHm = (float) $unit->hour_meter;
+
         $request->validate([
             'unit_id' => 'required|exists:units,id',
             'operator_id' => 'required|exists:operators,id',
             'check_date' => 'required|date',
             'shift' => 'required|in:day,night',
-            'hour_meter_start' => 'nullable|numeric|min:0',
+            'hour_meter_start' => "nullable|numeric|min:{$currentHm}",
             'km_start' => 'nullable|numeric|min:0',
             'general_notes' => 'nullable|string',
             'items' => 'required|array|min:1',
@@ -173,12 +188,16 @@ class P2hCheckController extends Controller
             'items.*.check_item' => 'required|string|max:150',
             'items.*.condition' => 'required|in:good,warning,bad,na',
             'items.*.notes' => 'nullable|string|max:255',
+        ], [
+            'hour_meter_start.min' => "HM tidak boleh kurang dari nilai saat ini ({$currentHm}).",
         ]);
 
-        DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request, $unit) {
             $hasBad = collect($request->items)->contains('condition', 'bad');
             $hasWarning = collect($request->items)->contains('condition', 'warning');
             $overall = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
+
+            $hmValue = (float) ($request->hour_meter_start ?? $unit->hour_meter);
 
             $check = P2hCheck::create([
                 'p2h_number' => DocumentNumberService::generateP2H(),
@@ -186,7 +205,7 @@ class P2hCheckController extends Controller
                 'operator_id' => $request->operator_id,
                 'check_date' => $request->check_date,
                 'shift' => $request->shift,
-                'hour_meter_start' => $request->hour_meter_start ?? 0,
+                'hour_meter_start' => $hmValue,
                 'km_start' => $request->km_start ?? 0,
                 'overall_status' => $overall,
                 'general_notes' => $request->general_notes,
@@ -194,6 +213,11 @@ class P2hCheckController extends Controller
 
             foreach ($request->items as $item) {
                 $check->items()->create($item);
+            }
+
+            // Update HM unit jika nilai baru lebih besar
+            if ($hmValue > (float) $unit->hour_meter) {
+                $unit->update(['hour_meter' => $hmValue]);
             }
         });
 

@@ -24,15 +24,29 @@ use App\Http\Controllers\ConsumablePrController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\MenuPermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FitToWorkController;
+use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\OperasiLogController;
 
 // Auth
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+// ── Portal Operator (tanpa login) ────────────────────────────────────────────
+Route::get('operator', fn() => view('operator.landing'))->name('operator.landing');
+
 // P2H Standalone
-Route::get('p2h-form', [P2hCheckController::class, 'formOperator'])->name('p2h.form-operator');
-Route::post('p2h-form', [P2hCheckController::class, 'storeOperator'])->name('p2h.store-operator');
+Route::get('operator/p2h', [P2hCheckController::class, 'formOperator'])->name('p2h.form-operator');
+Route::post('operator/p2h', [P2hCheckController::class, 'storeOperator'])->name('p2h.store-operator');
+
+// Fit to Work Standalone
+Route::get('operator/fit-to-work', [FitToWorkController::class, 'formOperator'])->name('operator.ftw-form');
+Route::post('operator/fit-to-work', [FitToWorkController::class, 'storeOperator'])->name('operator.ftw-store');
+
+// Timesheet Standalone
+Route::get('operator/timesheet', [TimesheetController::class, 'formOperator'])->name('operator.ts-form');
+Route::post('operator/timesheet', [TimesheetController::class, 'storeOperator'])->name('operator.ts-store');
 
 // Authenticated
 Route::middleware('auth')->group(function () {
@@ -98,6 +112,22 @@ Route::middleware('auth')->group(function () {
     Route::get('p2h/summary', [P2hCheckController::class, 'summary'])->name('p2h.summary');
     Route::get('p2h/{p2h}', [P2hCheckController::class, 'show'])->name('p2h.show');
     Route::post('p2h/{p2h}/review', [P2hCheckController::class, 'review'])->name('p2h.review');
+
+    // Fit to Work
+    Route::get('fit-to-work', [FitToWorkController::class, 'index'])->name('fit-to-work.index');
+    Route::get('fit-to-work/create', [FitToWorkController::class, 'create'])->name('fit-to-work.create');
+    Route::post('fit-to-work', [FitToWorkController::class, 'store'])->name('fit-to-work.store');
+    Route::get('fit-to-work/{fitToWork}', [FitToWorkController::class, 'show'])->name('fit-to-work.show');
+
+    // Timesheet
+    Route::get('timesheets', [TimesheetController::class, 'index'])->name('timesheets.index');
+    Route::get('timesheets/create', [TimesheetController::class, 'create'])->name('timesheets.create');
+    Route::post('timesheets', [TimesheetController::class, 'store'])->name('timesheets.store');
+    Route::get('timesheets/{timesheet}', [TimesheetController::class, 'show'])->name('timesheets.show');
+
+    // Operasi Log & Laporan
+    Route::get('operasi/log', [OperasiLogController::class, 'log'])->name('operasi.log');
+    Route::get('operasi/laporan', [OperasiLogController::class, 'laporan'])->name('operasi.laporan');
 
     // Reports
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');

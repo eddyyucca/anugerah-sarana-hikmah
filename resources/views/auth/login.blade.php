@@ -48,7 +48,7 @@
     <div class="login-card">
         <img src="{{ asset('assets/images/logo.png') }}" alt="APEX Logo" class="login-logo">
         <h4 class="text-center mb-1" style="font-weight:800;">APEX</h4>
-        <p class="text-center text-muted mb-4" style="font-size:.88rem;">Mining ERP System</p>
+        <p class="text-center text-muted mb-4" style="font-size:.88rem;">Asset & Plant ERP for Extraction</p>
 
         @if($errors->any())
         <div class="alert alert-danger py-2" style="border-radius:12px;font-size:.88rem;">

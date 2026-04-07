@@ -38,7 +38,8 @@ class MenuPermission extends Model
             'purchase-requests', 'consumable-pr', 'purchase-orders',
             'goods-receipts', 'goods-issues', 'warehouse-transfer', 'stock-opname',
             'work-orders', 'downtime',
-            'operators', 'p2h', 'p2h-summary',
+            'operators', 'fit-to-work', 'p2h', 'p2h-summary', 'timesheets',
+            'operasi-log', 'operasi-laporan',
             'users', 'reports', 'approval-settings', 'menu-settings',
         ];
     }

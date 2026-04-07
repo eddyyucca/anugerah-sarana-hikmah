@@ -544,7 +544,7 @@
         <div class="col-lg-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <div class="section-title"><i class="bi bi-pie-chart mr-2"></i>Cost Breakdown – Month</div>
+                    <div class="section-title"><i class="bi bi-pie-chart mr-2"></i> Cost Breakdown – Month</div>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-center">
                     <div style="width:210px;height:210px;">
@@ -556,7 +556,7 @@
         <div class="col-lg-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <div class="section-title"><i class="bi bi-speedometer2 mr-2"></i>Unit Status</div>
+                    <div class="section-title"><i class="bi bi-speedometer2 mr-2"></i> Unit Status</div>
                 </div>
                 <div class="card-body d-flex flex-column align-items-center justify-content-center">
                     <div style="width:180px;height:180px;position:relative;">

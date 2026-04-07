@@ -5,7 +5,8 @@
 
     // Auto-expand section berdasarkan halaman aktif
     $activeSection = '';
-    if (request()->routeIs('operators.*') || request()->routeIs('p2h.*')) $activeSection = 'operasi';
+    if (request()->routeIs('operators.*') || request()->routeIs('p2h.*') || request()->routeIs('fit-to-work.*') || request()->routeIs('timesheets.*')) $activeSection = 'operasi';
+    elseif (request()->routeIs('operasi.*')) $activeSection = 'operasi-log';
     elseif (request()->routeIs('work-orders.*') || request()->routeIs('downtime.*')) $activeSection = 'pemeliharaan';
     elseif (request()->routeIs('purchase-requests.*') || request()->routeIs('consumable-pr.*') || request()->routeIs('purchase-orders.*')) $activeSection = 'pengadaan';
     elseif (request()->routeIs('goods-receipts.*') || request()->routeIs('goods-issues.*') || request()->routeIs('stock-opname.*')) $activeSection = 'gudang';
@@ -25,7 +26,7 @@
     @endif
 
     {{-- Operasi --}}
-    @if($can('operators') || $can('p2h') || $can('p2h-summary'))
+    @if($can('operators') || $can('p2h') || $can('p2h-summary') || $can('fit-to-work') || $can('timesheets'))
     @php $open = $activeSection === 'operasi'; @endphp
     <div class="sidebar-group mt-2">
         <div class="sidebar-group-toggle {{ $open ? '' : 'collapsed' }}" data-sidebar-toggle>
@@ -39,16 +40,53 @@
                 <span class="sidebar-link-text">Operator</span>
             </a>
             @endif
+            @if($can('fit-to-work'))
+            <a href="{{ route('fit-to-work.index') }}" class="sidebar-link {{ request()->routeIs('fit-to-work.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-heart-pulse"></i></span>
+                <span class="sidebar-link-text">Fit to Work</span>
+            </a>
+            @endif
             @if($can('p2h'))
             <a href="{{ route('p2h.index') }}" class="sidebar-link {{ request()->routeIs('p2h.index') || request()->routeIs('p2h.create') || request()->routeIs('p2h.show') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="bi bi-clipboard-check"></i></span>
                 <span class="sidebar-link-text">Pemeriksaan P2H</span>
             </a>
             @endif
+            @if($can('timesheets'))
+            <a href="{{ route('timesheets.index') }}" class="sidebar-link {{ request()->routeIs('timesheets.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-clock-history"></i></span>
+                <span class="sidebar-link-text">Timesheet</span>
+            </a>
+            @endif
             @if($can('p2h-summary'))
             <a href="{{ route('p2h.summary') }}" class="sidebar-link {{ request()->routeIs('p2h.summary') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="bi bi-graph-up"></i></span>
                 <span class="sidebar-link-text">Ringkasan P2H</span>
+            </a>
+            @endif
+        </div>
+    </div>
+    @endif
+
+    {{-- Log & Laporan Operasi --}}
+    @if($can('operasi-log') || $can('operasi-laporan'))
+    @php $open = $activeSection === 'operasi-log'; @endphp
+    <div class="sidebar-group">
+        <div class="sidebar-group-toggle {{ $open ? '' : 'collapsed' }}" data-sidebar-toggle>
+            <span>Log & Laporan Operasi</span>
+            <i class="bi bi-chevron-down sidebar-chevron"></i>
+        </div>
+        <div class="sidebar-collapse-content {{ $open ? '' : 'closed' }}">
+            @if($can('operasi-log'))
+            <a href="{{ route('operasi.log') }}" class="sidebar-link {{ request()->routeIs('operasi.log') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-journal-text"></i></span>
+                <span class="sidebar-link-text">Log Harian</span>
+            </a>
+            @endif
+            @if($can('operasi-laporan'))
+            <a href="{{ route('operasi.laporan') }}" class="sidebar-link {{ request()->routeIs('operasi.laporan') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-bar-chart-line"></i></span>
+                <span class="sidebar-link-text">Laporan & Analisa</span>
             </a>
             @endif
         </div>

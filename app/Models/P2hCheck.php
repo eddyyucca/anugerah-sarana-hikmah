@@ -42,6 +42,11 @@ class P2hCheck extends Model
         return $this->hasMany(P2hCheckItem::class);
     }
 
+    public function timesheet()
+    {
+        return $this->hasOne(Timesheet::class, 'p2h_check_id');
+    }
+
     public function getGoodCountAttribute(): int
     {
         return $this->items->where('condition', 'good')->count();

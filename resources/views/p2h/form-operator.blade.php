@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>P2H - Pemeriksaan Harian Unit</title>
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
+    @include('operator.pwa-head')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -103,8 +104,11 @@
 {{-- Header --}}
 <div class="p2h-header">
     <div class="p2h-container p-0">
+        <a href="{{ route('operator.landing') }}" style="display:flex;align-items:center;gap:.4rem;color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;margin-bottom:.3rem;">
+            <i class="bi bi-chevron-left"></i> Kembali ke Portal
+        </a>
         <div class="d-flex align-items-center gap-3">
-        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="p2h-logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="p2h-logo">
             <div>
                 <div style="font-weight:700;font-size:1.05rem;">Pemeriksaan Harian (P2H)</div>
                 <div style="font-size:.78rem;color:rgba(255,255,255,.6);">APEX - Mining ERP</div>
@@ -121,9 +125,14 @@
         <div class="success-icon mb-2"><i class="bi bi-check-circle-fill"></i></div>
         <div style="font-weight:700;font-size:1.2rem;color:#15803d;">{{ session('success') }}</div>
         <div class="text-muted mt-1" style="font-size:.88rem;">P2H sudah tercatat di sistem. Unit dapat dioperasikan sesuai hasil inspeksi.</div>
-        <a href="{{ route('p2h.form-operator') }}" class="btn btn-success mt-3" style="border-radius:12px;">
-            <i class="bi bi-plus-lg me-1"></i> Isi P2H Baru
-        </a>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+            <a href="{{ route('p2h.form-operator') }}" class="btn btn-success" style="border-radius:12px;">
+                <i class="bi bi-plus-lg me-1"></i> Isi P2H Baru
+            </a>
+            <a href="{{ route('operator.landing') }}" class="btn btn-outline-secondary" style="border-radius:12px;">
+                <i class="bi bi-house me-1"></i> Portal
+            </a>
+        </div>
     </div>
     @endif
 
@@ -175,13 +184,17 @@
                     <div class="col-6">
                         <label class="form-label fw-bold">Shift</label>
                         <select name="shift" class="form-select tom-select" required style="padding:.7rem;">
-                            <option value="day" {{ old('shift')=='day'?'selected':'' }}>Day Shift</option>
-                            <option value="night" {{ old('shift')=='night'?'selected':'' }}>Night Shift</option>
+                            <option value="day" {{ old('shift')=='day'?'selected':'' }}>Shift Pagi</option>
+                            <option value="night" {{ old('shift')=='night'?'selected':'' }}>Shift Malam</option>
                         </select>
                     </div>
                     <div class="col-6">
                         <label class="form-label fw-bold">Hour Meter</label>
-                        <input type="number" step="0.1" name="hour_meter_start" id="hmInput" class="form-control" value="{{ old('hour_meter_start', 0) }}" style="padding:.7rem;">
+                        <input type="number" step="0.1" name="hour_meter_start" id="hmInput"
+                            class="form-control @error('hour_meter_start') is-invalid @enderror"
+                            value="{{ old('hour_meter_start', 0) }}" min="0" style="padding:.7rem;">
+                        <small id="hmHint" class="text-muted" style="font-size:.78rem;"></small>
+                        @error('hour_meter_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="col-6">
                         <label class="form-label fw-bold">KM</label>
@@ -257,8 +270,13 @@
             <i class="bi bi-clipboard-check me-2"></i> KIRIM P2H
         </button>
 
-        <div class="text-center text-muted mb-4" style="font-size:.78rem;">
+        <div class="text-center text-muted mb-2" style="font-size:.78rem;">
             <i class="bi bi-shield-check me-1"></i> Data akan tersimpan otomatis ke sistem APEX
+        </div>
+        <div class="text-center mb-4">
+            <a href="{{ route('operator.landing') }}" style="color:#9ca3af;font-size:.83rem;">
+                <i class="bi bi-arrow-left me-1"></i>Kembali ke Portal
+            </a>
         </div>
     </form>
 </div>
@@ -267,8 +285,32 @@
 <script>
 document.getElementById('unitSelect').addEventListener('change', function() {
     const opt = this.selectedOptions[0];
-    if (opt && opt.dataset.hm) document.getElementById('hmInput').value = opt.dataset.hm;
+    const hmInput = document.getElementById('hmInput');
+    const hmHint = document.getElementById('hmHint');
+    if (opt && opt.dataset.hm !== undefined) {
+        const minHm = parseFloat(opt.dataset.hm) || 0;
+        hmInput.value = minHm;
+        hmInput.min = minHm;
+        hmHint.textContent = 'HM saat ini: ' + minHm + ' (tidak boleh lebih kecil)';
+    } else {
+        hmInput.min = 0;
+        hmHint.textContent = '';
+    }
+});
+
+document.getElementById('hmInput').addEventListener('input', function() {
+    const opt = document.getElementById('unitSelect').selectedOptions[0];
+    if (!opt || opt.dataset.hm === undefined) return;
+    const minHm = parseFloat(opt.dataset.hm) || 0;
+    if (parseFloat(this.value) < minHm) {
+        this.setCustomValidity('HM tidak boleh kurang dari ' + minHm);
+        this.classList.add('is-invalid');
+    } else {
+        this.setCustomValidity('');
+        this.classList.remove('is-invalid');
+    }
 });
 </script>
+@include('operator.pwa-register')
 </body>
 </html>
