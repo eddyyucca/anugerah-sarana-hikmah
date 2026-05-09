@@ -27,6 +27,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FitToWorkController;
 use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\OperasiLogController;
+use App\Http\Controllers\OperatorPerformanceController;
 
 // Auth
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
@@ -101,6 +102,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('work-orders', WorkOrderController::class)->except(['destroy']);
     Route::post('work-orders/{work_order}/progress', [WorkOrderController::class, 'progress'])->name('work-orders.progress');
     Route::post('work-orders/{work_order}/complete', [WorkOrderController::class, 'complete'])->name('work-orders.complete');
+    Route::post('work-orders/{work_order}/approve', [WorkOrderController::class, 'approve'])->name('work-orders.approve');
+    Route::post('work-orders/{work_order}/reject', [WorkOrderController::class, 'reject'])->name('work-orders.reject');
+
+    // Operator Performance (Budget Exceedance Records)
+    Route::get('operator-performance', [OperatorPerformanceController::class, 'index'])->name('operator-performance.index');
 
     // Downtime
     Route::get('downtime', [DowntimeAnalysisController::class, 'index'])->name('downtime.index');

@@ -14,7 +14,7 @@
             <div class="col-md-2">
                 <select name="status" class="form-select form-select-sm" style="border-radius:10px;">
                     <option value="">Semua Status</option>
-                    @foreach(['open' => 'Terbuka', 'in_progress' => 'Sedang Berjalan', 'waiting_part' => 'Menunggu Onderdil', 'completed' => 'Selesai', 'cancelled' => 'Dibatalkan'] as $key => $label)
+                    @foreach(['pending_approval' => 'Menunggu Persetujuan', 'open' => 'Terbuka', 'in_progress' => 'Sedang Berjalan', 'waiting_part' => 'Menunggu Onderdil', 'completed' => 'Selesai', 'cancelled' => 'Dibatalkan'] as $key => $label)
                     <option value="{{ $key }}" {{ request('status')==$key?'selected':'' }}>{{ $label }}</option>
                     @endforeach
                 </select>

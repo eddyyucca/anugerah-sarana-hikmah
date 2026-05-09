@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class WorkOrder extends Model
 {
     protected $fillable = [
-        'wo_number', 'unit_id', 'repair_location', 'maintenance_type',
+        'wo_number', 'unit_id', 'operator_id', 'repair_location', 'maintenance_type',
         'technician_id', 'status', 'start_time', 'end_time',
         'downtime_hours', 'labor_cost', 'vendor_cost', 'consumable_cost',
         'action_taken', 'remarks', 'created_by',
@@ -28,6 +28,11 @@ class WorkOrder extends Model
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function operator()
+    {
+        return $this->belongsTo(Operator::class);
     }
 
     public function complaintType()

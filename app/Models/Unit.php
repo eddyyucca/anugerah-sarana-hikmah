@@ -12,6 +12,7 @@ class Unit extends Model
     protected $fillable = [
         'unit_code', 'unit_model', 'unit_type', 'category_id',
         'department', 'current_status', 'hour_meter', 'is_active',
+        'monthly_budget_limit',
     ];
 
     protected function casts(): array
@@ -19,6 +20,7 @@ class Unit extends Model
         return [
             'hour_meter' => 'decimal:2',
             'is_active' => 'boolean',
+            'monthly_budget_limit' => 'decimal:2',
         ];
     }
 
@@ -40,6 +42,11 @@ class Unit extends Model
     public function repairCosts()
     {
         return $this->hasMany(RepairCostSummary::class);
+    }
+
+    public function monthlyCosts()
+    {
+        return $this->hasMany(UnitMonthlyCost::class);
     }
 
     public function scopeActive($query)

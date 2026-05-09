@@ -15,4 +15,19 @@
         @endforeach
     </x-form-select>
     <x-form-input name="hour_meter" label="Hour Meter" value="{{ old('hour_meter', $unit->hour_meter ?? 0) }}" type="number" step="0.1" class="col-md-2" />
+    <div class="col-md-4">
+        <div class="mb-3">
+            <label class="form-label">Budget Perbaikan / Bulan <span class="text-muted" style="font-size:.82rem;">(opsional)</span></label>
+            <div class="input-group">
+                <span class="input-group-text" style="border-radius:10px 0 0 10px;">IDR</span>
+                <input type="number" step="1000" min="0" name="monthly_budget_limit"
+                    class="form-control @error('monthly_budget_limit') is-invalid @enderror"
+                    style="border-radius:0 10px 10px 0;"
+                    value="{{ old('monthly_budget_limit', $unit->monthly_budget_limit ?? '') }}"
+                    placeholder="Kosongkan jika tidak ada batas">
+                @error('monthly_budget_limit')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-text">Jika biaya perbaikan unit melebihi batas ini dalam 1 bulan, WO baru membutuhkan persetujuan level tertinggi.</div>
+        </div>
+    </div>
 </x-form-row>

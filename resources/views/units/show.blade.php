@@ -22,9 +22,48 @@
                 <tr><td class="text-muted">Department</td><td>{{ $unit->department ?? '-' }}</td></tr>
                 <tr><td class="text-muted">Status</td><td>@include('components.status-badge', ['status' => $unit->current_status])</td></tr>
                 <tr><td class="text-muted">Hour Meter</td><td>{{ number_format($unit->hour_meter, 1) }}</td></tr>
+                @if($unit->monthly_budget_limit)
+                <tr><td class="text-muted">Budget/Bulan</td><td>IDR {{ number_format($unit->monthly_budget_limit, 0, ',', '.') }}</td></tr>
+                @endif
             </table>
+
+            {{-- Budget Status Card --}}
+            @if($budgetStatus['has_limit'])
+            <div class="mt-3 p-3 rounded-3" style="background:{{ $budgetStatus['is_over_budget'] ? 'rgba(220,38,38,.08)' : 'rgba(16,185,129,.08)' }};border:1px solid {{ $budgetStatus['is_over_budget'] ? 'rgba(220,38,38,.2)' : 'rgba(16,185,129,.2)' }};">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span style="font-size:.82rem;font-weight:600;">Budget Bulan Ini ({{ now()->translatedFormat('F Y') }})</span>
+                    @if($budgetStatus['is_over_budget'])
+                        <span class="badge badge-soft-danger" style="border-radius:999px;"><i class="bi bi-exclamation-triangle-fill me-1"></i>Over Budget</span>
+                    @else
+                        <span class="badge badge-soft-success" style="border-radius:999px;"><i class="bi bi-check-circle me-1"></i>Normal</span>
+                    @endif
+                </div>
+                <div class="progress mb-1" style="height:8px;border-radius:999px;">
+                    <div class="progress-bar {{ $budgetStatus['is_over_budget'] ? 'bg-danger' : ($budgetStatus['percentage'] >= 80 ? 'bg-warning' : 'bg-success') }}"
+                         style="width:{{ $budgetStatus['percentage'] }}%;border-radius:999px;"></div>
+                </div>
+                <div class="d-flex justify-content-between" style="font-size:.78rem;color:#6b7280;">
+                    <span>Terpakai: <strong>IDR {{ number_format($budgetStatus['used'], 0, ',', '.') }}</strong></span>
+                    <span>{{ $budgetStatus['percentage'] }}%</span>
+                    <span>Sisa: <strong>IDR {{ number_format($budgetStatus['remaining'], 0, ',', '.') }}</strong></span>
+                </div>
+                @if($budgetStatus['is_over_budget'])
+                <div class="mt-2" style="font-size:.78rem;color:#dc2626;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    WO baru untuk unit ini membutuhkan persetujuan level tertinggi.
+                    @if($budgetStatus['exceeded_at'])
+                    Terlampaui sejak: {{ $budgetStatus['exceeded_at']->format('d M Y H:i') }}
+                    @endif
+                </div>
+                @endif
+            </div>
+            @endif
+
             <div class="mt-3">
                 <a href="{{ route('units.edit', $unit) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i>Edit</a>
+                @if($budgetStatus['has_limit'])
+                <a href="{{ route('operator-performance.index', ['unit_id' => $unit->id]) }}" class="btn btn-sm btn-outline-warning ms-2"><i class="bi bi-person-exclamation me-1"></i>Performa Operator</a>
+                @endif
             </div>
         </x-card>
     </div>

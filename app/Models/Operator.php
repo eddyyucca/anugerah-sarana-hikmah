@@ -27,6 +27,16 @@ class Operator extends Model
         return $this->hasMany(P2hCheck::class);
     }
 
+    public function workOrders()
+    {
+        return $this->hasMany(WorkOrder::class);
+    }
+
+    public function performanceRecords()
+    {
+        return $this->hasMany(OperatorPerformanceRecord::class);
+    }
+
     public function isLicenseExpired(): bool
     {
         return $this->license_expiry && $this->license_expiry->isPast();

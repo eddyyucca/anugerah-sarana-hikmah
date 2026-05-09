@@ -39,6 +39,14 @@
                     </select>
                 </x-form-group>
             </div>
+            <div class="col-md-3">
+                <x-form-group label="Operator (Yang Menggunakan Unit)">
+                    <select name="operator_id" class="form-select tom-select">
+                        <option value="">-- Tidak Ada --</option>
+                        @foreach($operators as $op)<option value="{{ $op->id }}" {{ $workOrder->operator_id==$op->id?'selected':'' }}>{{ $op->operator_code }} - {{ $op->operator_name }}</option>@endforeach
+                    </select>
+                </x-form-group>
+            </div>
             <div class="col-md-12">
                 <x-form-group label="Action Taken">
                     <textarea name="action_taken" class="form-control" rows="2">{{ $workOrder->action_taken }}</textarea>

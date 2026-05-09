@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Unit;
 use App\Models\UnitCategory;
+use App\Services\UnitBudgetService;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
@@ -39,13 +40,14 @@ class UnitController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'unit_code' => 'required|string|max:30|unique:units,unit_code',
-            'unit_model' => 'required|string|max:100',
-            'unit_type' => 'nullable|string|max:50',
-            'category_id' => 'nullable|exists:unit_categories,id',
-            'department' => 'nullable|string|max:80',
-            'current_status' => 'required|in:available,under_repair,standby',
-            'hour_meter' => 'nullable|numeric|min:0',
+            'unit_code'            => 'required|string|max:30|unique:units,unit_code',
+            'unit_model'           => 'required|string|max:100',
+            'unit_type'            => 'nullable|string|max:50',
+            'category_id'          => 'nullable|exists:unit_categories,id',
+            'department'           => 'nullable|string|max:80',
+            'current_status'       => 'required|in:available,under_repair,standby',
+            'hour_meter'           => 'nullable|numeric|min:0',
+            'monthly_budget_limit' => 'nullable|numeric|min:0',
         ]);
 
         Unit::create($validated);
@@ -55,7 +57,8 @@ class UnitController extends Controller
     public function show(Unit $unit)
     {
         $unit->load('category', 'workOrders.technician', 'repairCosts');
-        return view('units.show', compact('unit'));
+        $budgetStatus = UnitBudgetService::getStatus($unit);
+        return view('units.show', compact('unit', 'budgetStatus'));
     }
 
     public function edit(Unit $unit)
@@ -67,13 +70,14 @@ class UnitController extends Controller
     public function update(Request $request, Unit $unit)
     {
         $validated = $request->validate([
-            'unit_code' => 'required|string|max:30|unique:units,unit_code,' . $unit->id,
-            'unit_model' => 'required|string|max:100',
-            'unit_type' => 'nullable|string|max:50',
-            'category_id' => 'nullable|exists:unit_categories,id',
-            'department' => 'nullable|string|max:80',
-            'current_status' => 'required|in:available,under_repair,standby',
-            'hour_meter' => 'nullable|numeric|min:0',
+            'unit_code'            => 'required|string|max:30|unique:units,unit_code,' . $unit->id,
+            'unit_model'           => 'required|string|max:100',
+            'unit_type'            => 'nullable|string|max:50',
+            'category_id'          => 'nullable|exists:unit_categories,id',
+            'department'           => 'nullable|string|max:80',
+            'current_status'       => 'required|in:available,under_repair,standby',
+            'hour_meter'           => 'nullable|numeric|min:0',
+            'monthly_budget_limit' => 'nullable|numeric|min:0',
         ]);
 
         $unit->update($validated);
