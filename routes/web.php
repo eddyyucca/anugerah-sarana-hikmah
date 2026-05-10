@@ -28,6 +28,15 @@ use App\Http\Controllers\FitToWorkController;
 use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\OperasiLogController;
 use App\Http\Controllers\OperatorPerformanceController;
+use App\Http\Controllers\CompanyProfileController;
+
+// Company Profile (public)
+Route::get('/', [CompanyProfileController::class, 'index'])->name('company.profile');
+Route::get('/lang/{locale}', function (string $locale) {
+    abort_if(!in_array($locale, ['id', 'en', 'zh']), 404);
+    session(['locale' => $locale]);
+    return redirect()->route('company.profile');
+})->name('lang.switch');
 
 // Auth
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
@@ -52,7 +61,7 @@ Route::post('operator/timesheet', [TimesheetController::class, 'storeOperator'])
 // Authenticated
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Master
     Route::resource('units', UnitController::class);

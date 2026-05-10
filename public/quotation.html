@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation - Workshop ERP System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            color: #2d2d2d;
+            background: #f4f6f9;
+            padding: 30px 20px;
+        }
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #1a3c5e 0%, #2563a8 100%);
+            color: #fff;
+            padding: 36px 40px 28px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .header-left h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .header-left p {
+            font-size: 12px;
+            opacity: 0.80;
+            margin-top: 4px;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .header-right .doc-label {
+            font-size: 11px;
+            opacity: 0.75;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .header-right .doc-number {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+        .header-right .doc-date {
+            font-size: 12px;
+            opacity: 0.80;
+            margin-top: 4px;
+        }
+
+        /* META ROW */
+        .meta-row {
+            display: flex;
+            gap: 0;
+            background: #f0f5fb;
+            border-bottom: 1px solid #dde6f0;
+        }
+        .meta-box {
+            flex: 1;
+            padding: 18px 28px;
+            border-right: 1px solid #dde6f0;
+        }
+        .meta-box:last-child { border-right: none; }
+        .meta-box .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #7a90a8;
+            margin-bottom: 4px;
+        }
+        .meta-box .value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a3c5e;
+        }
+        .meta-box .sub {
+            font-size: 11px;
+            color: #7a90a8;
+            margin-top: 2px;
+        }
+
+        /* BODY */
+        .body { padding: 32px 40px; }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7a90a8;
+            margin-bottom: 12px;
+            margin-top: 28px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e8eef5;
+        }
+        .section-title:first-child { margin-top: 0; }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+        }
+        thead tr {
+            background: #1a3c5e;
+            color: #fff;
+        }
+        thead th {
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-align: left;
+        }
+        thead th.right { text-align: right; }
+        tbody tr {
+            border-bottom: 1px solid #edf1f7;
+            transition: background 0.1s;
+        }
+        tbody tr:hover { background: #f7fafd; }
+        tbody tr.group-row {
+            background: #eaf1fb;
+        }
+        tbody tr.group-row td {
+            font-weight: 700;
+            color: #1a3c5e;
+            font-size: 12px;
+            padding: 9px 14px;
+        }
+        tbody td {
+            padding: 9px 14px;
+            vertical-align: top;
+        }
+        td.no { width: 36px; color: #9aacbf; font-size: 12px; }
+        td.desc { color: #2d2d2d; }
+        td.desc .sub-desc {
+            font-size: 11px;
+            color: #9aacbf;
+            margin-top: 2px;
+        }
+        td.qty { width: 50px; text-align: center; color: #5a6a7a; }
+        td.unit { width: 60px; color: #9aacbf; font-size: 11px; }
+        td.price { width: 120px; text-align: right; color: #3a4a5a; }
+        td.total { width: 130px; text-align: right; font-weight: 600; color: #1a3c5e; }
+
+        /* TOTALS */
+        .totals-wrap {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        .totals-table {
+            width: 340px;
+        }
+        .totals-table td {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+        .totals-table .t-label { color: #5a6a7a; text-align: left; }
+        .totals-table .t-val { text-align: right; font-weight: 600; color: #1a3c5e; }
+        .totals-table .t-grand td {
+            background: #1a3c5e;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 0;
+        }
+        .totals-table .t-grand td:first-child { border-radius: 6px 0 0 6px; }
+        .totals-table .t-grand td:last-child { border-radius: 0 6px 6px 0; }
+        .totals-table .divider td {
+            border-top: 1.5px solid #dde6f0;
+            padding-top: 8px;
+        }
+
+        /* BONUS & NOTES */
+        .bonus-box {
+            background: #e8f5e9;
+            border-left: 4px solid #43a047;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin-top: 22px;
+        }
+        .bonus-box .bonus-title {
+            font-weight: 700;
+            color: #2e7d32;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        .bonus-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .bonus-box ul li {
+            padding: 3px 0;
+            color: #2e7d32;
+            font-size: 12px;
+        }
+        .bonus-box ul li::before {
+            content: "✓ ";
+            font-weight: 700;
+        }
+
+        .notes-box {
+            background: #fff8e1;
+            border-left: 4px solid #f9a825;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin-top: 14px;
+        }
+        .notes-box .notes-title {
+            font-weight: 700;
+            color: #e65100;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        .notes-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .notes-box ul li {
+            padding: 2px 0;
+            color: #6d4c00;
+            font-size: 12px;
+        }
+        .notes-box ul li::before {
+            content: "• ";
+        }
+
+        /* SIGNATURE */
+        .signature-row {
+            display: flex;
+            gap: 24px;
+            margin-top: 36px;
+        }
+        .sig-box {
+            flex: 1;
+            border: 1px solid #dde6f0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            text-align: center;
+        }
+        .sig-box .sig-label {
+            font-size: 11px;
+            color: #7a90a8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 56px;
+        }
+        .sig-box .sig-name {
+            border-top: 1.5px solid #1a3c5e;
+            padding-top: 8px;
+            font-weight: 700;
+            color: #1a3c5e;
+            font-size: 12px;
+        }
+        .sig-box .sig-title {
+            font-size: 11px;
+            color: #9aacbf;
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #f0f5fb;
+            border-top: 1px solid #dde6f0;
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #9aacbf;
+            font-size: 11px;
+            margin-top: 32px;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .page { box-shadow: none; border-radius: 0; }
+            .print-btn { display: none; }
+        }
+
+        .print-btn {
+            display: block;
+            margin: 20px auto 0 auto;
+            padding: 10px 32px;
+            background: #2563a8;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+        .print-btn:hover { background: #1a3c5e; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+        }
+        .badge-new { background: #e3f2fd; color: #1565c0; }
+        .badge-incl { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <h1>ANUGERAH SARANA HIKMAH</h1>
+            <p>Software Development &amp; IT Solutions</p>
+        </div>
+        <div class="header-right">
+            <div class="doc-label">Quotation</div>
+            <div class="doc-number">QUO-2026-001</div>
+            <div class="doc-date">Tanggal: 10 Mei 2026</div>
+            <div class="doc-date">Berlaku s/d: 10 Juni 2026</div>
+        </div>
+    </div>
+
+    <!-- META -->
+    <div class="meta-row">
+        <div class="meta-box">
+            <div class="label">Ditujukan Kepada</div>
+            <div class="value">PT. [Nama Perusahaan Client]</div>
+            <div class="sub">[Alamat Client]</div>
+        </div>
+        <div class="meta-box">
+            <div class="label">Kontak PIC</div>
+            <div class="value">[Nama PIC]</div>
+            <div class="sub">[Telepon / Email]</div>
+        </div>
+        <div class="meta-box">
+            <div class="label">Jenis Proyek</div>
+            <div class="value">Workshop ERP System</div>
+            <div class="sub">Web-based, Multi-user, Role-based</div>
+        </div>
+        <div class="meta-box">
+            <div class="label">Durasi Pengerjaan</div>
+            <div class="value">± 30 Hari Kerja</div>
+            <div class="sub">Setelah DP diterima</div>
+        </div>
+    </div>
+
+    <div class="body">
+
+        <!-- MODULE LIST -->
+        <div class="section-title">Rincian Modul &amp; Fitur</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:36px">#</th>
+                    <th>Nama Modul / Fitur</th>
+                    <th class="right" style="width:130px">Harga (Rp)</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <!-- GROUP 1 -->
+                <tr class="group-row">
+                    <td colspan="3">A &nbsp;|&nbsp; Core System</td>
+                </tr>
+                <tr>
+                    <td class="no">1</td>
+                    <td class="desc">
+                        Dashboard &amp; Autentikasi
+                        <div class="sub-desc">Login sistem, session management, landing dashboard ringkasan KPI &amp; statistik real-time</div>
+                    </td>
+                    <td class="total">350.000</td>
+                </tr>
+                <tr>
+                    <td class="no">2</td>
+                    <td class="desc">
+                        Manajemen User &amp; Role
+                        <div class="sub-desc">CRUD user, role-based access control, password management, status aktif/nonaktif</div>
+                    </td>
+                    <td class="total">400.000</td>
+                </tr>
+                <tr>
+                    <td class="no">3</td>
+                    <td class="desc">
+                        Pengaturan Menu &amp; Hak Akses
+                        <div class="sub-desc">Konfigurasi permission per role (view, create, edit, delete, approve), matrix permission</div>
+                    </td>
+                    <td class="total">250.000</td>
+                </tr>
+
+                <!-- GROUP 2 -->
+                <tr class="group-row">
+                    <td colspan="3">B &nbsp;|&nbsp; Master Data</td>
+                </tr>
+                <tr>
+                    <td class="no">4</td>
+                    <td class="desc">
+                        Master Unit Alat Berat
+                        <div class="sub-desc">Data unit, kode unit, status operasional, riwayat unit</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">5</td>
+                    <td class="desc">
+                        Master Operator
+                        <div class="sub-desc">Data operator, lisensi, penugasan unit, foto profil, status aktif</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">6</td>
+                    <td class="desc">
+                        Master Teknisi / Mekanik
+                        <div class="sub-desc">Data teknisi, spesialisasi, history perbaikan yang ditangani</div>
+                    </td>
+                    <td class="total">100.000</td>
+                </tr>
+                <tr>
+                    <td class="no">7</td>
+                    <td class="desc">
+                        Master Sparepart
+                        <div class="sub-desc">Data sparepart, kategori, satuan, stok minimum, harga satuan, QR/barcode ready</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">8</td>
+                    <td class="desc">
+                        Master Supplier
+                        <div class="sub-desc">Data supplier, kontak, alamat, riwayat pembelian, rating</div>
+                    </td>
+                    <td class="total">100.000</td>
+                </tr>
+
+                <!-- GROUP 3 -->
+                <tr class="group-row">
+                    <td colspan="3">C &nbsp;|&nbsp; Modul Perbaikan &amp; Work Order</td>
+                </tr>
+                <tr>
+                    <td class="no">9</td>
+                    <td class="desc">
+                        Work Order (WO) Management
+                        <div class="sub-desc">Buat WO, assign teknisi, tracking status perbaikan, estimasi biaya, print WO</div>
+                    </td>
+                    <td class="total">600.000</td>
+                </tr>
+                <tr>
+                    <td class="no">10</td>
+                    <td class="desc">
+                        Downtime Analysis
+                        <div class="sub-desc">Pencatatan downtime per unit, kategori kerusakan, durasi, analisis tren, grafik availability</div>
+                    </td>
+                    <td class="total">300.000</td>
+                </tr>
+
+                <!-- GROUP 4 -->
+                <tr class="group-row">
+                    <td colspan="3">D &nbsp;|&nbsp; Modul Pengadaan (Procurement)</td>
+                </tr>
+                <tr>
+                    <td class="no">11</td>
+                    <td class="desc">
+                        Purchase Request (PR) — Sparepart
+                        <div class="sub-desc">Pengajuan permintaan sparepart, multi-item, upload dokumen, alur persetujuan</div>
+                    </td>
+                    <td class="total">200.000</td>
+                </tr>
+                <tr>
+                    <td class="no">12</td>
+                    <td class="desc">
+                        Purchase Request (PR) — Consumable
+                        <div class="sub-desc">Pengajuan consumable terpisah, kategori item consumable, alur persetujuan sendiri</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">13</td>
+                    <td class="desc">
+                        Purchase Order (PO)
+                        <div class="sub-desc">Pembuatan PO dari PR yang disetujui, data supplier, harga negosiasi, print PO</div>
+                    </td>
+                    <td class="total">200.000</td>
+                </tr>
+                <tr>
+                    <td class="no">14</td>
+                    <td class="desc">
+                        Goods Receipt (GR) — Penerimaan Barang
+                        <div class="sub-desc">Pencatatan penerimaan barang dari PO, partial receipt, update stok otomatis, print GR</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">15</td>
+                    <td class="desc">
+                        Goods Issue (GI) — Pengeluaran Barang
+                        <div class="sub-desc">Pengeluaran sparepart ke WO, pencatatan penggunaan, update stok otomatis, print GI</div>
+                    </td>
+                    <td class="total">100.000</td>
+                </tr>
+
+                <!-- GROUP 5 -->
+                <tr class="group-row">
+                    <td colspan="3">E &nbsp;|&nbsp; Modul Gudang &amp; Inventori</td>
+                </tr>
+                <tr>
+                    <td class="no">16</td>
+                    <td class="desc">
+                        Warehouse Transfer
+                        <div class="sub-desc">Perpindahan stok antar gudang/lokasi, tracking riwayat transfer, persetujuan transfer</div>
+                    </td>
+                    <td class="total">200.000</td>
+                </tr>
+                <tr>
+                    <td class="no">17</td>
+                    <td class="desc">
+                        Stock Opname
+                        <div class="sub-desc">Pencatatan opname fisik, selisih stok, persetujuan adjustment, riwayat opname</div>
+                    </td>
+                    <td class="total">250.000</td>
+                </tr>
+
+                <!-- GROUP 6 -->
+                <tr class="group-row">
+                    <td colspan="3">F &nbsp;|&nbsp; Modul Operasional Harian</td>
+                </tr>
+                <tr>
+                    <td class="no">18</td>
+                    <td class="desc">
+                        P2H Check (Pre-shift Inspection)
+                        <div class="sub-desc">Form checklist P2H digital, foto dokumentasi, status layak/tidak layak, PWA mobile-ready</div>
+                    </td>
+                    <td class="total">200.000</td>
+                </tr>
+                <tr>
+                    <td class="no">19</td>
+                    <td class="desc">
+                        Fit to Work
+                        <div class="sub-desc">Form kelayakan operator sebelum bekerja, rekam kondisi fisik, persetujuan supervisor</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">20</td>
+                    <td class="desc">
+                        Timesheet Operator
+                        <div class="sub-desc">Pencatatan jam kerja, absensi, shift, total jam operasional per unit per operator</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">21</td>
+                    <td class="desc">
+                        Log Operasi Harian
+                        <div class="sub-desc">Pencatatan log operasi, laporan harian alat, HM (Hour Meter), fuel, aktivitas</div>
+                    </td>
+                    <td class="total">100.000</td>
+                </tr>
+                <tr>
+                    <td class="no">22</td>
+                    <td class="desc">
+                        Operator Performance
+                        <div class="sub-desc">Tracking performa operator, produktivitas, efisiensi, budget perbaikan per operator</div>
+                    </td>
+                    <td class="total">100.000</td>
+                </tr>
+
+                <!-- GROUP 7 -->
+                <tr class="group-row">
+                    <td colspan="3">G &nbsp;|&nbsp; Laporan &amp; Analitik</td>
+                </tr>
+                <tr>
+                    <td class="no">23</td>
+                    <td class="desc">
+                        Laporan Availability Alat
+                        <div class="sub-desc">MA (Mechanical Availability), PA (Physical Availability), grafik tren bulanan</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">24</td>
+                    <td class="desc">
+                        Laporan Biaya Perbaikan
+                        <div class="sub-desc">Rincian biaya per unit, per periode, per komponen, perbandingan budget vs aktual</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">25</td>
+                    <td class="desc">
+                        Laporan Pergerakan Stok
+                        <div class="sub-desc">History keluar masuk stok, rekap per periode, fast/slow moving items</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+                <tr>
+                    <td class="no">26</td>
+                    <td class="desc">
+                        Laporan Analisis Keluhan / Complaint
+                        <div class="sub-desc">Kategori keluhan, frekuensi, trend kerusakan, rekomendasi preventive maintenance</div>
+                    </td>
+                    <td class="total">150.000</td>
+                </tr>
+
+                <!-- GROUP 8 -->
+                <tr class="group-row">
+                    <td colspan="3">H &nbsp;|&nbsp; Sistem Pendukung</td>
+                </tr>
+                <tr>
+                    <td class="no">27</td>
+                    <td class="desc">
+                        Sistem Approval &amp; Notifikasi
+                        <div class="sub-desc">Multi-level approval workflow, notifikasi in-app, konfigurasi batas budget per level approver</div>
+                    </td>
+                    <td class="total">400.000</td>
+                </tr>
+                <tr>
+                    <td class="no">28</td>
+                    <td class="desc">
+                        Cetak Dokumen (Print Module)
+                        <div class="sub-desc">Template cetak: WO, PR, PO, GR, GI — format A4, siap print/export PDF</div>
+                    </td>
+                    <td class="total">250.000</td>
+                </tr>
+
+                <!-- GROUP 9 -->
+                <tr class="group-row">
+                    <td colspan="3">I &nbsp;|&nbsp; Company Profile <span class="badge badge-new">Tambahan</span></td>
+                </tr>
+                <tr>
+                    <td class="no">29</td>
+                    <td class="desc">
+                        Halaman Company Profile
+                        <div class="sub-desc">Profil perusahaan, visi misi, struktur organisasi, galeri, kontak, layanan — terintegrasi dengan sistem ERP</div>
+                    </td>
+                    <td class="total">350.000</td>
+                </tr>
+
+                <!-- GROUP 10 -->
+                <tr class="group-row">
+                    <td colspan="3">J &nbsp;|&nbsp; Infrastruktur <span class="badge badge-incl">Termasuk</span></td>
+                </tr>
+                <tr>
+                    <td class="no">30</td>
+                    <td class="desc">
+                        Hosting &amp; Domain (1 Tahun)
+                        <div class="sub-desc">Web hosting shared/VPS, domain .com / .co.id (1 tahun), SSL certificate, setup &amp; konfigurasi server</div>
+                    </td>
+                    <td class="total">700.000</td>
+                </tr>
+                <tr>
+                    <td class="no">31</td>
+                    <td class="desc">
+                        Email Profesional (5 Akun)
+                        <div class="sub-desc">5 akun email @namadomain.com, webmail access, konfigurasi Outlook/Gmail — gratis 1 tahun
+                            <span class="badge badge-incl">FREE</span>
+                        </div>
+                    </td>
+                    <td class="total">300.000</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <!-- TOTALS -->
+        <div class="totals-wrap">
+            <table class="totals-table">
+                <tr>
+                    <td class="t-label">Subtotal Pengembangan</td>
+                    <td class="t-val">Rp 6.000.000</td>
+                </tr>
+                <tr>
+                    <td class="t-label">Hosting + Domain (1 Thn)</td>
+                    <td class="t-val">Rp 700.000</td>
+                </tr>
+                <tr>
+                    <td class="t-label">Email Profesional 5 Akun</td>
+                    <td class="t-val">Rp 300.000</td>
+                </tr>
+                <tr class="divider">
+                    <td class="t-label" style="font-weight:600;color:#1a3c5e">Diskon</td>
+                    <td class="t-val" style="color:#e53935">— Rp 0</td>
+                </tr>
+                <tr class="t-grand">
+                    <td>TOTAL INVESTASI</td>
+                    <td style="text-align:right">Rp 7.000.000</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- BONUS -->
+        <div class="bonus-box">
+            <div class="bonus-title">Yang Sudah Termasuk dalam Harga</div>
+            <ul>
+                <li>Hosting &amp; domain 1 tahun (nilai Rp 700.000)</li>
+                <li>5 akun email profesional @namadomain.com, gratis 1 tahun (nilai Rp 300.000)</li>
+                <li>Instalasi &amp; konfigurasi server</li>
+                <li>SSL Certificate (HTTPS)</li>
+                <li>Training penggunaan sistem (online, max 2 sesi)</li>
+                <li>Garansi bug fixing 30 hari setelah go-live</li>
+                <li>User manual &amp; dokumentasi singkat</li>
+            </ul>
+        </div>
+
+        <!-- NOTES -->
+        <div class="notes-box">
+            <div class="notes-title">Syarat &amp; Ketentuan</div>
+            <ul>
+                <li>Pembayaran: DP 50% di awal, sisa 50% setelah sistem siap go-live</li>
+                <li>Perubahan scope di luar yang tertulis di atas dapat dikenakan biaya tambahan</li>
+                <li>Konten (logo, foto, teks company profile) disediakan oleh client</li>
+                <li>Perpanjangan hosting/domain/email tahun berikutnya ditanggung client</li>
+                <li>Quotation berlaku 30 hari sejak tanggal terbit</li>
+                <li>Harga belum termasuk PPN 11% (jika diperlukan)</li>
+            </ul>
+        </div>
+
+        <!-- SIGNATURE -->
+        <div class="signature-row">
+            <div class="sig-box">
+                <div class="sig-label">Dibuat Oleh</div>
+                <div class="sig-name">Anugerah Sarana Hikmah</div>
+                <div class="sig-title">Vendor / Developer</div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-label">Disetujui Oleh</div>
+                <div class="sig-name">__________________________</div>
+                <div class="sig-title">Nama &amp; Jabatan Client</div>
+            </div>
+        </div>
+
+    </div><!-- /body -->
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <span>QUO-2026-001 &nbsp;|&nbsp; Workshop ERP System</span>
+        <span>Dokumen ini bersifat rahasia dan hanya untuk pihak yang dituju</span>
+        <span>10 Mei 2026</span>
+    </div>
+
+</div><!-- /page -->
+
+<button class="print-btn" onclick="window.print()">Cetak / Simpan PDF</button>
+
+</body>
+</html>
