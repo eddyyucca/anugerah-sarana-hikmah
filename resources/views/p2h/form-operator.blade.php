@@ -156,10 +156,14 @@
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label fw-bold">Pilih Unit <span class="text-danger">*</span></label>
-                        <select name="unit_id" class="form-select tom-select" required style="padding:.7rem;" id="unitSelect">
+                        <select name="unit_id" class="form-select tom-select" required style="padding:.7rem;" id="unitSelect"
+                            onchange="onUnitChange(this)">
                             <option value="">-- Pilih Unit yang Akan Dipakai --</option>
                             @foreach($units as $u)
-                            <option value="{{ $u->id }}" data-hm="{{ $u->hour_meter }}" {{ old('unit_id')==$u->id?'selected':'' }}>
+                            <option value="{{ $u->id }}"
+                                data-hm="{{ $u->hour_meter }}"
+                                data-odo="{{ $u->current_odometer }}"
+                                {{ old('unit_id')==$u->id?'selected':'' }}>
                                 {{ $u->unit_code }} - {{ $u->unit_model }}
                             </option>
                             @endforeach
@@ -197,8 +201,27 @@
                         @error('hour_meter_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="col-6">
-                        <label class="form-label fw-bold">KM</label>
-                        <input type="number" step="0.1" name="km_start" class="form-control" value="{{ old('km_start', 0) }}" style="padding:.7rem;">
+                        <label class="form-label fw-bold">
+                            Odometer (KM) <span class="text-danger">*</span>
+                            <i class="bi bi-speedometer2 ms-1 text-primary"></i>
+                        </label>
+                        <input type="number" step="0.1" name="km_start" id="kmInput"
+                            class="form-control @error('km_start') is-invalid @enderror"
+                            value="{{ old('km_start', 0) }}" min="0" required style="padding:.7rem;border-color:#3b82f6;">
+                        <small id="odoHint" class="text-primary" style="font-size:.78rem;font-weight:600;"></small>
+                        @error('km_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
+                    {{-- Info odometer unit saat ini --}}
+                    <div class="col-12" id="odoInfoBox" style="display:none;">
+                        <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;">
+                            <i class="bi bi-speedometer2 text-primary" style="font-size:1.4rem;"></i>
+                            <div>
+                                <div style="font-size:.78rem;color:#1d4ed8;font-weight:600;">ODOMETER UNIT SAAT INI</div>
+                                <div style="font-size:1.1rem;font-weight:700;color:#1e3a8a;" id="currentOdoValue">0 km</div>
+                                <div style="font-size:.72rem;color:#3b82f6;">Isi dengan pembacaan odometer unit sekarang. Data ini otomatis update sistem.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -283,19 +306,45 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.getElementById('unitSelect').addEventListener('change', function() {
-    const opt = this.selectedOptions[0];
-    const hmInput = document.getElementById('hmInput');
-    const hmHint = document.getElementById('hmHint');
-    if (opt && opt.dataset.hm !== undefined) {
-        const minHm = parseFloat(opt.dataset.hm) || 0;
+function onUnitChange(sel) {
+    const opt = sel.selectedOptions[0];
+    const hmInput  = document.getElementById('hmInput');
+    const hmHint   = document.getElementById('hmHint');
+    const kmInput  = document.getElementById('kmInput');
+    const odoHint  = document.getElementById('odoHint');
+    const infoBox  = document.getElementById('odoInfoBox');
+    const odoValue = document.getElementById('currentOdoValue');
+
+    if (opt && opt.value) {
+        const minHm  = parseFloat(opt.dataset.hm)  || 0;
+        const minOdo = parseFloat(opt.dataset.odo)  || 0;
+
+        // Hour meter
         hmInput.value = minHm;
-        hmInput.min = minHm;
-        hmHint.textContent = 'HM saat ini: ' + minHm + ' (tidak boleh lebih kecil)';
+        hmInput.min   = minHm;
+        hmHint.textContent = 'HM saat ini: ' + minHm.toLocaleString('id-ID') + ' (tidak boleh lebih kecil)';
+
+        // Odometer
+        kmInput.value = minOdo;
+        kmInput.min   = minOdo;
+        odoHint.textContent = 'Min: ' + minOdo.toLocaleString('id-ID') + ' km';
+
+        // Info box
+        odoValue.textContent = minOdo.toLocaleString('id-ID') + ' km';
+        infoBox.style.display = 'block';
     } else {
         hmInput.min = 0;
         hmHint.textContent = '';
+        kmInput.min = 0;
+        odoHint.textContent = '';
+        infoBox.style.display = 'none';
     }
+}
+
+// Trigger saat halaman load jika ada old value
+document.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('unitSelect');
+    if (sel && sel.value) onUnitChange(sel);
 });
 
 document.getElementById('hmInput').addEventListener('input', function() {
@@ -304,6 +353,19 @@ document.getElementById('hmInput').addEventListener('input', function() {
     const minHm = parseFloat(opt.dataset.hm) || 0;
     if (parseFloat(this.value) < minHm) {
         this.setCustomValidity('HM tidak boleh kurang dari ' + minHm);
+        this.classList.add('is-invalid');
+    } else {
+        this.setCustomValidity('');
+        this.classList.remove('is-invalid');
+    }
+});
+
+document.getElementById('kmInput').addEventListener('input', function() {
+    const opt = document.getElementById('unitSelect').selectedOptions[0];
+    if (!opt || !opt.dataset.odo) return;
+    const minOdo = parseFloat(opt.dataset.odo) || 0;
+    if (parseFloat(this.value) < minOdo) {
+        this.setCustomValidity('Odometer tidak boleh kurang dari ' + minOdo.toLocaleString('id-ID') + ' km');
         this.classList.add('is-invalid');
     } else {
         this.setCustomValidity('');

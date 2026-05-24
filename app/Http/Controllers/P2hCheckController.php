@@ -7,6 +7,7 @@ use App\Models\P2hCheckItem;
 use App\Models\Unit;
 use App\Models\Operator;
 use App\Services\DocumentNumberService;
+use App\Services\OdometerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -98,7 +99,7 @@ class P2hCheckController extends Controller
     public function create()
     {
         $p2hNumber = DocumentNumberService::generateP2H();
-        $units = Unit::active()->status('available')->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model', 'hour_meter']);
+        $units = Unit::active()->status('available')->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model', 'hour_meter', 'current_odometer']);
         $operators = Operator::active()->orderBy('operator_name')->get(['id', 'operator_code', 'operator_name']);
         $checklist = $this->getChecklistTemplate();
 
@@ -109,51 +110,61 @@ class P2hCheckController extends Controller
     {
         $unit = Unit::findOrFail($request->unit_id);
         $currentHm = (float) $unit->hour_meter;
+        $currentOdo = (float) $unit->current_odometer;
 
         $request->validate([
-            'unit_id' => 'required|exists:units,id',
-            'operator_id' => 'required|exists:operators,id',
-            'check_date' => 'required|date',
-            'shift' => 'required|in:day,night',
-            'hour_meter_start' => "nullable|numeric|min:{$currentHm}",
-            'km_start' => 'nullable|numeric|min:0',
-            'general_notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.category' => 'required|string|max:50',
-            'items.*.check_item' => 'required|string|max:150',
-            'items.*.condition' => 'required|in:good,warning,bad,na',
-            'items.*.notes' => 'nullable|string|max:255',
+            'unit_id'              => 'required|exists:units,id',
+            'operator_id'          => 'required|exists:operators,id',
+            'check_date'           => 'required|date',
+            'shift'                => 'required|in:day,night',
+            'hour_meter_start'     => "nullable|numeric|min:{$currentHm}",
+            'km_start'             => "nullable|numeric|min:{$currentOdo}",
+            'general_notes'        => 'nullable|string',
+            'items'                => 'required|array|min:1',
+            'items.*.category'     => 'required|string|max:50',
+            'items.*.check_item'   => 'required|string|max:150',
+            'items.*.condition'    => 'required|in:good,warning,bad,na',
+            'items.*.notes'        => 'nullable|string|max:255',
         ], [
             'hour_meter_start.min' => "HM tidak boleh kurang dari nilai saat ini ({$currentHm}).",
+            'km_start.min'         => "Odometer tidak boleh kurang dari nilai saat ini ({$currentOdo} km).",
         ]);
 
         DB::transaction(function () use ($request, $unit) {
-            // Determine overall status
-            $hasBad = collect($request->items)->contains('condition', 'bad');
+            $hasBad    = collect($request->items)->contains('condition', 'bad');
             $hasWarning = collect($request->items)->contains('condition', 'warning');
-            $overall = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
+            $overall   = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
 
-            $hmValue = (float) ($request->hour_meter_start ?? $unit->hour_meter);
+            $hmValue  = (float) ($request->hour_meter_start ?? $unit->hour_meter);
+            $kmValue  = $request->filled('km_start') ? (float) $request->km_start : null;
 
             $check = P2hCheck::create([
-                'p2h_number' => DocumentNumberService::generateP2H(),
-                'unit_id' => $request->unit_id,
-                'operator_id' => $request->operator_id,
-                'check_date' => $request->check_date,
-                'shift' => $request->shift,
+                'p2h_number'       => DocumentNumberService::generateP2H(),
+                'unit_id'          => $request->unit_id,
+                'operator_id'      => $request->operator_id,
+                'check_date'       => $request->check_date,
+                'shift'            => $request->shift,
                 'hour_meter_start' => $hmValue,
-                'km_start' => $request->km_start ?? 0,
-                'overall_status' => $overall,
-                'general_notes' => $request->general_notes,
+                'km_start'         => $kmValue ?? $unit->current_odometer,
+                'overall_status'   => $overall,
+                'general_notes'    => $request->general_notes,
             ]);
 
             foreach ($request->items as $item) {
                 $check->items()->create($item);
             }
 
-            // Update HM unit jika nilai baru lebih besar
             if ($hmValue > (float) $unit->hour_meter) {
                 $unit->update(['hour_meter' => $hmValue]);
+            }
+
+            // Update odometer unit via OdometerService (update ban otomatis)
+            if ($kmValue !== null && $kmValue > (float) $unit->current_odometer) {
+                OdometerService::recordReading(
+                    $unit, $kmValue, $request->check_date,
+                    'P2H - ' . ($request->operator_id ?? 'operator'),
+                    "Dari P2H {$check->p2h_number}"
+                );
             }
         });
 
@@ -163,7 +174,7 @@ class P2hCheckController extends Controller
     // === STANDALONE FORM (tanpa sidebar, untuk operator langsung) ===
     public function formOperator()
     {
-        $units = Unit::active()->status('available')->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model', 'hour_meter']);
+        $units = Unit::active()->status('available')->orderBy('unit_code')->get(['id', 'unit_code', 'unit_model', 'hour_meter', 'current_odometer']);
         $operators = Operator::active()->orderBy('operator_name')->get(['id', 'operator_code', 'operator_name']);
         $checklist = $this->getChecklistTemplate();
 
@@ -173,51 +184,64 @@ class P2hCheckController extends Controller
     public function storeOperator(Request $request)
     {
         $unit = Unit::findOrFail($request->unit_id);
-        $currentHm = (float) $unit->hour_meter;
+        $currentHm  = (float) $unit->hour_meter;
+        $currentOdo = (float) $unit->current_odometer;
 
         $request->validate([
-            'unit_id' => 'required|exists:units,id',
-            'operator_id' => 'required|exists:operators,id',
-            'check_date' => 'required|date',
-            'shift' => 'required|in:day,night',
-            'hour_meter_start' => "nullable|numeric|min:{$currentHm}",
-            'km_start' => 'nullable|numeric|min:0',
-            'general_notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.category' => 'required|string|max:50',
-            'items.*.check_item' => 'required|string|max:150',
-            'items.*.condition' => 'required|in:good,warning,bad,na',
-            'items.*.notes' => 'nullable|string|max:255',
+            'unit_id'              => 'required|exists:units,id',
+            'operator_id'          => 'required|exists:operators,id',
+            'check_date'           => 'required|date',
+            'shift'                => 'required|in:day,night',
+            'hour_meter_start'     => "nullable|numeric|min:{$currentHm}",
+            'km_start'             => "required|numeric|min:{$currentOdo}",
+            'general_notes'        => 'nullable|string',
+            'items'                => 'required|array|min:1',
+            'items.*.category'     => 'required|string|max:50',
+            'items.*.check_item'   => 'required|string|max:150',
+            'items.*.condition'    => 'required|in:good,warning,bad,na',
+            'items.*.notes'        => 'nullable|string|max:255',
         ], [
             'hour_meter_start.min' => "HM tidak boleh kurang dari nilai saat ini ({$currentHm}).",
+            'km_start.required'    => 'Odometer (KM) wajib diisi setiap P2H.',
+            'km_start.min'         => "Odometer tidak boleh kurang dari nilai saat ini ({$currentOdo} km).",
         ]);
 
         DB::transaction(function () use ($request, $unit) {
-            $hasBad = collect($request->items)->contains('condition', 'bad');
+            $hasBad     = collect($request->items)->contains('condition', 'bad');
             $hasWarning = collect($request->items)->contains('condition', 'warning');
-            $overall = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
+            $overall    = $hasBad ? 'tidak_layak' : ($hasWarning ? 'layak_catatan' : 'layak');
 
             $hmValue = (float) ($request->hour_meter_start ?? $unit->hour_meter);
+            $kmValue = (float) $request->km_start;
 
             $check = P2hCheck::create([
-                'p2h_number' => DocumentNumberService::generateP2H(),
-                'unit_id' => $request->unit_id,
-                'operator_id' => $request->operator_id,
-                'check_date' => $request->check_date,
-                'shift' => $request->shift,
+                'p2h_number'       => DocumentNumberService::generateP2H(),
+                'unit_id'          => $request->unit_id,
+                'operator_id'      => $request->operator_id,
+                'check_date'       => $request->check_date,
+                'shift'            => $request->shift,
                 'hour_meter_start' => $hmValue,
-                'km_start' => $request->km_start ?? 0,
-                'overall_status' => $overall,
-                'general_notes' => $request->general_notes,
+                'km_start'         => $kmValue,
+                'overall_status'   => $overall,
+                'general_notes'    => $request->general_notes,
             ]);
 
             foreach ($request->items as $item) {
                 $check->items()->create($item);
             }
 
-            // Update HM unit jika nilai baru lebih besar
             if ($hmValue > (float) $unit->hour_meter) {
                 $unit->update(['hour_meter' => $hmValue]);
+            }
+
+            // Update odometer unit via OdometerService (otomatis update km ban yang terpasang)
+            if ($kmValue > (float) $unit->current_odometer) {
+                $operator = \App\Models\Operator::find($request->operator_id);
+                OdometerService::recordReading(
+                    $unit, $kmValue, $request->check_date,
+                    'P2H - ' . ($operator?->operator_name ?? 'operator'),
+                    "Dari P2H {$check->p2h_number}"
+                );
             }
         });
 

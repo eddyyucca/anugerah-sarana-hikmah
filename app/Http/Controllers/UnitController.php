@@ -56,7 +56,7 @@ class UnitController extends Controller
 
     public function show(Unit $unit)
     {
-        $unit->load('category', 'workOrders.technician', 'repairCosts');
+        $unit->load('category', 'workOrders.technician', 'repairCosts', 'tires.sparepart');
         $budgetStatus = UnitBudgetService::getStatus($unit);
         return view('units.show', compact('unit', 'budgetStatus'));
     }

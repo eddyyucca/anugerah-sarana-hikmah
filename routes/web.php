@@ -29,6 +29,9 @@ use App\Http\Controllers\TimesheetController;
 use App\Http\Controllers\OperasiLogController;
 use App\Http\Controllers\OperatorPerformanceController;
 use App\Http\Controllers\CompanyProfileController;
+use App\Http\Controllers\OdometerController;
+use App\Http\Controllers\TireController;
+use App\Http\Controllers\MaintenanceItemController;
 
 // Company Profile (public)
 Route::get('/', [CompanyProfileController::class, 'index'])->name('company.profile');
@@ -173,4 +176,25 @@ Route::middleware('auth')->group(function () {
     Route::get('settings/menu', [MenuPermissionController::class, 'index'])->name('menu-settings.index');
     Route::post('settings/menu', [MenuPermissionController::class, 'store'])->name('menu-settings.store');
     Route::post('settings/menu/add-role', [MenuPermissionController::class, 'addRole'])->name('menu-settings.add-role');
+
+    // ── Odometer ─────────────────────────────────────────────────────────────
+    Route::get('odometer', [OdometerController::class, 'index'])->name('odometer.index');
+    Route::post('odometer', [OdometerController::class, 'store'])->name('odometer.store');
+    Route::get('odometer/{unit}/history', [OdometerController::class, 'history'])->name('odometer.history');
+
+    // ── Ban (dari unit) ───────────────────────────────────────────────────────
+    Route::get('tires', [TireController::class, 'index'])->name('tires.index');
+    Route::get('tires/{tire}', [TireController::class, 'show'])->name('tires.show');
+    Route::get('units/{unit}/tires/install', [TireController::class, 'installForm'])->name('tires.install-form');
+    Route::post('units/{unit}/tires/install', [TireController::class, 'install'])->name('tires.install');
+    Route::get('tires/{tire}/move', [TireController::class, 'moveForm'])->name('tires.move-form');
+    Route::post('tires/{tire}/move', [TireController::class, 'move'])->name('tires.move');
+    Route::post('tires/{tire}/remove', [TireController::class, 'remove'])->name('tires.remove');
+
+    // ── Maintenance KM ────────────────────────────────────────────────────────
+    Route::get('maintenance', [MaintenanceItemController::class, 'index'])->name('maintenance.index');
+    Route::post('maintenance/items', [MaintenanceItemController::class, 'store'])->name('maintenance.items.store');
+    Route::put('maintenance/items/{maintenanceItem}', [MaintenanceItemController::class, 'update'])->name('maintenance.items.update');
+    Route::delete('maintenance/items/{maintenanceItem}', [MaintenanceItemController::class, 'destroy'])->name('maintenance.items.destroy');
+    Route::post('maintenance/log', [MaintenanceItemController::class, 'logStore'])->name('maintenance.log');
 });

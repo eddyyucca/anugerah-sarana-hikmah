@@ -7,7 +7,7 @@
     $activeSection = '';
     if (request()->routeIs('operators.*') || request()->routeIs('p2h.*') || request()->routeIs('fit-to-work.*') || request()->routeIs('timesheets.*')) $activeSection = 'operasi';
     elseif (request()->routeIs('operasi.*')) $activeSection = 'operasi-log';
-    elseif (request()->routeIs('work-orders.*') || request()->routeIs('downtime.*')) $activeSection = 'pemeliharaan';
+    elseif (request()->routeIs('work-orders.*') || request()->routeIs('downtime.*') || request()->routeIs('odometer.*') || request()->routeIs('tires.*') || request()->routeIs('maintenance.*')) $activeSection = 'pemeliharaan';
     elseif (request()->routeIs('purchase-requests.*') || request()->routeIs('consumable-pr.*') || request()->routeIs('purchase-orders.*')) $activeSection = 'pengadaan';
     elseif (request()->routeIs('goods-receipts.*') || request()->routeIs('goods-issues.*') || request()->routeIs('stock-opname.*')) $activeSection = 'gudang';
     elseif (request()->routeIs('units.*') || request()->routeIs('spareparts.*') || request()->routeIs('suppliers.*') || request()->routeIs('technicians.*')) $activeSection = 'master';
@@ -94,12 +94,18 @@
     @endif
 
     {{-- Pemeliharaan --}}
-    @if($can('work-orders') || $can('downtime'))
-    @php $open = $activeSection === 'pemeliharaan'; @endphp
+    @if($can('work-orders') || $can('downtime') || $can('odometer') || $can('tires') || $can('maintenance'))
+    @php
+        $open = $activeSection === 'pemeliharaan';
+        $odoAlertCount = \App\Services\OdometerService::countAlerts();
+    @endphp
     <div class="sidebar-group">
         <div class="sidebar-group-toggle {{ $open ? '' : 'collapsed' }}" data-sidebar-toggle>
             <span>Pemeliharaan</span>
-            <i class="bi bi-chevron-down sidebar-chevron"></i>
+            @if($odoAlertCount > 0)
+                <span class="badge bg-danger ms-1" style="font-size:0.65rem;">{{ $odoAlertCount }}</span>
+            @endif
+            <i class="bi bi-chevron-down sidebar-chevron ms-auto"></i>
         </div>
         <div class="sidebar-collapse-content {{ $open ? '' : 'closed' }}">
             @if($can('work-orders'))
@@ -110,10 +116,27 @@
             @endif
             @if($can('downtime'))
             <a href="{{ route('downtime.index') }}" class="sidebar-link {{ request()->routeIs('downtime.*') ? 'active' : '' }}">
-                <span class="sidebar-link-icon"><i class="bi bi-speedometer2"></i></span>
+                <span class="sidebar-link-icon"><i class="bi bi-graph-down"></i></span>
                 <span class="sidebar-link-text">Analisis Downtime</span>
             </a>
             @endif
+            <a href="{{ route('odometer.index') }}" class="sidebar-link {{ request()->routeIs('odometer.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-speedometer2"></i></span>
+                <span class="sidebar-link-text">Odometer Unit</span>
+            </a>
+            <a href="{{ route('tires.index') }}" class="sidebar-link {{ request()->routeIs('tires.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-circle"></i></span>
+                <span class="sidebar-link-text">Manajemen Ban</span>
+            </a>
+            <a href="{{ route('maintenance.index') }}" class="sidebar-link {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-wrench-adjustable"></i></span>
+                <span class="sidebar-link-text">
+                    Maintenance KM
+                    @if($odoAlertCount > 0)
+                        <span class="badge bg-danger ms-1" style="font-size:0.65rem;">{{ $odoAlertCount }}</span>
+                    @endif
+                </span>
+            </a>
         </div>
     </div>
     @endif

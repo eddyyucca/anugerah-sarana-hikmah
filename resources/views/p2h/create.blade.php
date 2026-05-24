@@ -21,7 +21,7 @@
                     <select name="unit_id" class="form-select tom-select @error('unit_id') is-invalid @enderror" required id="unitSelect">
                         <option value="">-- Select Unit --</option>
                         @foreach($units as $u)
-                        <option value="{{ $u->id }}" data-hm="{{ $u->hour_meter }}">{{ $u->unit_code }} - {{ $u->unit_model }}</option>
+                        <option value="{{ $u->id }}" data-hm="{{ $u->hour_meter }}" data-odo="{{ $u->current_odometer }}">{{ $u->unit_code }} - {{ $u->unit_model }}</option>
                         @endforeach
                     </select>
                     @error('unit_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -61,8 +61,11 @@
                 </x-form-group>
             </div>
             <div class="col-md-2">
-                <x-form-group label="KM Start">
-                    <input type="number" step="0.1" name="km_start" class="form-control" value="0">
+                <x-form-group label="Odometer (KM)">
+                    <input type="number" step="0.1" name="km_start" id="kmInput" class="form-control @error('km_start') is-invalid @enderror"
+                        value="{{ old('km_start', 0) }}" min="0" style="border-color:#3b82f6;">
+                    <small id="odoHint" class="text-primary" style="font-size:.78rem;font-weight:600;"></small>
+                    @error('km_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </x-form-group>
             </div>
             <div class="col-md-8">
@@ -130,25 +133,49 @@
 <script>
 document.getElementById('unitSelect').addEventListener('change', function() {
     const opt = this.selectedOptions[0];
-    const hmInput = document.getElementById('hmInput');
-    const hmHint = document.getElementById('hmHint');
-    if (opt && opt.dataset.hm !== undefined) {
-        const minHm = parseFloat(opt.dataset.hm) || 0;
+    const hmInput  = document.getElementById('hmInput');
+    const hmHint   = document.getElementById('hmHint');
+    const kmInput  = document.getElementById('kmInput');
+    const odoHint  = document.getElementById('odoHint');
+
+    if (opt && opt.value) {
+        const minHm  = parseFloat(opt.dataset.hm)  || 0;
+        const minOdo = parseFloat(opt.dataset.odo)  || 0;
+
         hmInput.value = minHm;
-        hmInput.min = minHm;
-        hmHint.textContent = 'HM saat ini: ' + minHm + ' (tidak boleh lebih kecil)';
+        hmInput.min   = minHm;
+        hmHint.textContent = 'HM saat ini: ' + minHm.toLocaleString('id-ID');
+
+        kmInput.value = minOdo;
+        kmInput.min   = minOdo;
+        odoHint.textContent = 'ODO saat ini: ' + minOdo.toLocaleString('id-ID') + ' km';
     } else {
         hmInput.min = 0;
         hmHint.textContent = '';
+        kmInput.min = 0;
+        odoHint.textContent = '';
     }
 });
 
 document.getElementById('hmInput').addEventListener('input', function() {
     const opt = document.getElementById('unitSelect').selectedOptions[0];
-    if (!opt || opt.dataset.hm === undefined) return;
+    if (!opt || !opt.dataset.hm) return;
     const minHm = parseFloat(opt.dataset.hm) || 0;
     if (parseFloat(this.value) < minHm) {
         this.setCustomValidity('HM tidak boleh kurang dari ' + minHm);
+        this.classList.add('is-invalid');
+    } else {
+        this.setCustomValidity('');
+        this.classList.remove('is-invalid');
+    }
+});
+
+document.getElementById('kmInput').addEventListener('input', function() {
+    const opt = document.getElementById('unitSelect').selectedOptions[0];
+    if (!opt || !opt.dataset.odo) return;
+    const minOdo = parseFloat(opt.dataset.odo) || 0;
+    if (parseFloat(this.value) < minOdo) {
+        this.setCustomValidity('Odometer tidak boleh kurang dari ' + minOdo.toLocaleString('id-ID') + ' km');
         this.classList.add('is-invalid');
     } else {
         this.setCustomValidity('');

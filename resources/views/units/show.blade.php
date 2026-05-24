@@ -89,5 +89,135 @@
             </div>
         </x-card>
     </div>
+
+    {{-- Panel Ban Unit --}}
+    <div class="col-12">
+        <div class="erp-card">
+            <div class="erp-card-header d-flex justify-content-between align-items-center">
+                <div class="section-title">
+                    <i class="bi bi-circle me-2 text-danger"></i>
+                    Ban — {{ $unit->unit_code }}
+                    <small class="text-muted fw-normal ms-1">({{ $unit->wheel_count ?? 8 }} roda | ODO: {{ number_format($unit->current_odometer, 0, ',', '.') }} km)</small>
+                </div>
+                <a href="{{ route('tires.install-form', $unit) }}" class="btn btn-sm btn-danger" style="border-radius:10px;">
+                    <i class="bi bi-plus-lg me-1"></i>Pasang Ban
+                </a>
+            </div>
+            <div class="erp-card-body p-0">
+                @php $tiresByPos = $unit->tires->keyBy('position_number'); @endphp
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead>
+                            <tr>
+                                <th>Posisi</th>
+                                <th>Ban (Sparepart)</th>
+                                <th>Total KM</th>
+                                <th>Batas KM</th>
+                                <th>Progress</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($unit->wheel_position_labels as $pos => $label)
+                            @php $tire = $tiresByPos->get($pos); @endphp
+                            <tr>
+                                <td><span class="badge bg-secondary">#{{ $pos }}</span> {{ $label }}</td>
+                                @if($tire)
+                                @php
+                                    $pct = $tire->usage_percent;
+                                    $bar = $pct >= 100 ? 'danger' : ($pct >= 85 ? 'warning' : ($pct >= 60 ? 'info' : 'success'));
+                                @endphp
+                                <td>
+                                    <a href="{{ route('tires.show', $tire) }}" class="text-decoration-none">
+                                        {{ $tire->sparepart->part_name ?? '-' }}
+                                    </a>
+                                </td>
+                                <td><strong>{{ number_format($tire->current_km, 0, ',', '.') }} km</strong></td>
+                                <td class="text-muted">{{ number_format($tire->km_limit, 0, ',', '.') }} km</td>
+                                <td style="min-width:130px;">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <div class="progress flex-grow-1" style="height:8px;border-radius:4px;">
+                                            <div class="progress-bar bg-{{ $bar }}" style="width:{{ min(100,$pct) }}%"></div>
+                                        </div>
+                                        <small class="text-{{ $bar }}">{{ $pct }}%</small>
+                                    </div>
+                                    @if($tire->remaining_km <= 2000)
+                                    <small class="text-{{ $bar }}">Sisa {{ number_format($tire->remaining_km, 0, ',', '.') }} km</small>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('tires.move-form', $tire) }}" class="btn btn-xs btn-outline-secondary me-1" title="Pindah">
+                                        <i class="bi bi-arrow-left-right"></i>
+                                    </a>
+                                    <button class="btn btn-xs btn-outline-danger" title="Lepas"
+                                        onclick="confirmRemove({{ $tire->id }}, '{{ $tire->sparepart->part_name ?? '-' }}', '{{ $label }}')">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </button>
+                                </td>
+                                @else
+                                <td colspan="4" class="text-muted" style="font-size:.85rem;"><i class="bi bi-dash"></i> Kosong</td>
+                                <td>
+                                    <a href="{{ route('tires.install-form', $unit) }}?pos={{ $pos }}" class="btn btn-xs btn-outline-success" title="Pasang ban">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </a>
+                                </td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+{{-- Modal Lepas Ban --}}
+<div class="modal fade" id="removeModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <form id="removeForm" method="POST">
+                @csrf
+                <div class="modal-header py-2">
+                    <h6 class="modal-title">Lepas Ban</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="removeDesc" class="small text-muted mb-3"></p>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Tanggal Dilepas</label>
+                        <input type="date" name="removed_at" class="form-control form-control-sm" value="{{ date('Y-m-d') }}" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Alasan</label>
+                        <select name="removed_reason" class="form-select form-select-sm" required>
+                            <option value="aus">Aus / habis masa pakai</option>
+                            <option value="rotasi">Rotasi ban</option>
+                            <option value="rusak">Rusak</option>
+                            <option value="servis">Dibawa servis</option>
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="return_to_stock" value="1" id="returnStock">
+                        <label class="form-check-label small" for="returnStock">Kembalikan ke stok inventory</label>
+                    </div>
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-sm btn-danger">Lepas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function confirmRemove(tireId, partName, posLabel) {
+    document.getElementById('removeForm').action = `/tires/${tireId}/remove`;
+    document.getElementById('removeDesc').textContent = `${partName} — ${posLabel}`;
+    new bootstrap.Modal(document.getElementById('removeModal')).show();
+}
+</script>
+@endpush
 @endsection
