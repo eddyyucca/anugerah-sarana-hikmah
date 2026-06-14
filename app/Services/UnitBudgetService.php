@@ -112,6 +112,56 @@ class UnitBudgetService
     }
 
     /**
+     * Tambahkan km ke record bulanan dan cek budget km
+     */
+    public static function addKm(Unit $unit, float $deltaKm, ?string $yearMonth = null): void
+    {
+        if ($deltaKm <= 0) return;
+
+        $yearMonth ??= self::getYearMonth();
+        $monthly = self::getMonthlyRecord($unit->id, $yearMonth);
+        $kmLimit = (float)$unit->monthly_km_budget;
+
+        $newTotalKm    = (float)$monthly->total_km + $deltaKm;
+        $wasOver       = $monthly->is_over_km_budget;
+        $isNowOver     = $kmLimit > 0 && $newTotalKm > $kmLimit;
+
+        $monthly->update([
+            'total_km'          => $newTotalKm,
+            'is_over_km_budget' => $isNowOver,
+            'km_exceeded_at'    => (!$wasOver && $isNowOver) ? now() : $monthly->km_exceeded_at,
+        ]);
+    }
+
+    /**
+     * Status budget km untuk ditampilkan di view
+     */
+    public static function getKmStatus(Unit $unit): array
+    {
+        $limit = (float)$unit->monthly_km_budget;
+
+        if (!$limit) {
+            return ['has_limit' => false];
+        }
+
+        $monthly   = self::getMonthlyRecord($unit->id);
+        $used      = (float)$monthly->total_km;
+        $remaining = max(0.0, $limit - $used);
+        $pct       = $limit > 0 ? min(100, (int)round(($used / $limit) * 100)) : 0;
+
+        return [
+            'has_limit'         => true,
+            'limit'             => $limit,
+            'used'              => $used,
+            'remaining'         => $remaining,
+            'percentage'        => $pct,
+            'is_over_km_budget' => (bool)$monthly->is_over_km_budget,
+            'km_exceeded_at'    => $monthly->km_exceeded_at,
+            'year_month'        => self::getYearMonth(),
+        ];
+    }
+
+    /**
      * Catat pelanggaran performa operator ketika budget terlampaui
      */
     public static function recordExceedance(WorkOrder $workOrder, UnitMonthlyCost $monthly, Unit $unit): void

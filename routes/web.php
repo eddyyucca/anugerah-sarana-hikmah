@@ -32,6 +32,9 @@ use App\Http\Controllers\CompanyProfileController;
 use App\Http\Controllers\OdometerController;
 use App\Http\Controllers\TireController;
 use App\Http\Controllers\MaintenanceItemController;
+use App\Http\Controllers\SupplierReturnController;
+use App\Http\Controllers\TireDamageReportController;
+use App\Http\Controllers\OperatorWarningLetterController;
 
 // Company Profile (public)
 Route::get('/', [CompanyProfileController::class, 'index'])->name('company.profile');
@@ -165,6 +168,9 @@ Route::middleware('auth')->group(function () {
     Route::get('print/gr/{goods_receipt}', [PrintController::class, 'gr'])->name('print.gr');
     Route::get('print/gi/{goods_issue}', [PrintController::class, 'gi'])->name('print.gi');
     Route::get('print/wo/{work_order}', [PrintController::class, 'wo'])->name('print.wo');
+    Route::get('print/sr/{supplier_return}', [PrintController::class, 'supplierReturn'])->name('print.supplier-return');
+    Route::get('print/ba/{tire_damage_report}', [PrintController::class, 'baDamage'])->name('print.ba-damage');
+    Route::get('print/sk/{operator_warning_letter}', [PrintController::class, 'warningLetter'])->name('print.warning-letter');
 
     // Settings
     Route::get('settings/approval', [ApprovalSettingController::class, 'index'])->name('approval-settings.index');
@@ -182,8 +188,25 @@ Route::middleware('auth')->group(function () {
     Route::post('odometer', [OdometerController::class, 'store'])->name('odometer.store');
     Route::get('odometer/{unit}/history', [OdometerController::class, 'history'])->name('odometer.history');
 
+    // ── Surat Peringatan Operator ─────────────────────────────────────────────
+    Route::get('operator-warning-letters', [OperatorWarningLetterController::class, 'index'])->name('operator-warning-letters.index');
+    Route::post('operator-warning-letters', [OperatorWarningLetterController::class, 'store'])->name('operator-warning-letters.store');
+    Route::get('operator-warning-letters/{operatorWarningLetter}', [OperatorWarningLetterController::class, 'show'])->name('operator-warning-letters.show');
+    Route::post('operator-warning-letters/{operatorWarningLetter}/acknowledge', [OperatorWarningLetterController::class, 'acknowledge'])->name('operator-warning-letters.acknowledge');
+
+    // ── BA Kerusakan Ban ─────────────────────────────────────────────────────
+    Route::resource('tire-damage-reports', TireDamageReportController::class)->only(['index','create','store','show']);
+    Route::post('tire-damage-reports/{tireDamageReport}/approve', [TireDamageReportController::class, 'approve'])->name('tire-damage-reports.approve');
+
+    // ── Return ke Supplier ────────────────────────────────────────────────────
+    Route::resource('supplier-returns', SupplierReturnController::class)->only(['index','create','store','show']);
+    Route::post('supplier-returns/{supplierReturn}/confirm', [SupplierReturnController::class, 'confirm'])->name('supplier-returns.confirm');
+    Route::post('supplier-returns/{supplierReturn}/send', [SupplierReturnController::class, 'send'])->name('supplier-returns.send');
+
     // ── Ban (dari unit) ───────────────────────────────────────────────────────
     Route::get('tires', [TireController::class, 'index'])->name('tires.index');
+    Route::get('tires-analytics', [TireController::class, 'analytics'])->name('tires.analytics');
+    Route::post('tires-analytics/set-limit', [TireController::class, 'setKmLimitFromAnalytics'])->name('tires.set-km-limit');
     Route::get('tires/{tire}', [TireController::class, 'show'])->name('tires.show');
     Route::get('units/{unit}/tires/install', [TireController::class, 'installForm'])->name('tires.install-form');
     Route::post('units/{unit}/tires/install', [TireController::class, 'install'])->name('tires.install');

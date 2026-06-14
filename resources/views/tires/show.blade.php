@@ -35,6 +35,10 @@
                 </div>
 
                 <table class="table table-sm table-borderless mb-0">
+                    @if($tire->serial_number)
+                    <tr><td class="text-muted">No. Seri</td>
+                        <td><code>{{ $tire->serial_number }}</code></td></tr>
+                    @endif
                     <tr><td class="text-muted">Sisa KM</td>
                         <td><strong class="text-{{ $bar }}">{{ number_format($tire->remaining_km, 0, ',', '.') }} km</strong></td></tr>
                     <tr><td class="text-muted">Status</td>
@@ -50,6 +54,13 @@
                 @if($tire->notes)
                 <div class="alert alert-light py-2 mt-2"><small>{{ $tire->notes }}</small></div>
                 @endif
+
+                <div class="mt-3 d-flex flex-column gap-2">
+                    <a href="{{ route('tire-damage-reports.create', ['unit_tire_id' => $tire->id]) }}"
+                       class="btn btn-sm btn-outline-danger" style="border-radius:10px;">
+                        <i class="bi bi-file-earmark-text me-1"></i>Buat BA Kerusakan
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -71,7 +82,7 @@
                                 <td><strong>{{ $h->unit->unit_code }}</strong></td>
                                 <td>{{ $h->position_label }}</td>
                                 <td>{{ $h->installed_at->format('d/m/Y') }}</td>
-                                <td>{{ $h->removed_at?->format('d/m/Y') ?? '<span class="text-success">Aktif</span>' }}</td>
+                                <td>{!! $h->removed_at?->format('d/m/Y') ?? '<span class="text-success">Aktif</span>' !!}</td>
                                 <td>{{ number_format($h->km_used, 0, ',', '.') }} km</td>
                                 <td class="text-muted">{{ $h->removed_reason ?? '-' }}</td>
                             </tr>

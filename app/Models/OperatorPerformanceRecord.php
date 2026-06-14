@@ -37,6 +37,11 @@ class OperatorPerformanceRecord extends Model
         return $this->belongsTo(WorkOrder::class);
     }
 
+    public function warningLetter()
+    {
+        return $this->hasOne(\App\Models\OperatorWarningLetter::class);
+    }
+
     public function scopeForOperator($query, int $operatorId)
     {
         return $query->where('operator_id', $operatorId);

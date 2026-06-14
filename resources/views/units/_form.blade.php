@@ -30,4 +30,19 @@
             <div class="form-text">Jika biaya perbaikan unit melebihi batas ini dalam 1 bulan, WO baru membutuhkan persetujuan level tertinggi.</div>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="mb-3">
+            <label class="form-label">Budget Jarak / Bulan <span class="text-muted" style="font-size:.82rem;">(opsional)</span></label>
+            <div class="input-group">
+                <input type="number" step="100" min="0" name="monthly_km_budget"
+                    class="form-control @error('monthly_km_budget') is-invalid @enderror"
+                    style="border-radius:10px 0 0 10px;"
+                    value="{{ old('monthly_km_budget', $unit->monthly_km_budget ?? '') }}"
+                    placeholder="Kosongkan jika tidak ada batas">
+                <span class="input-group-text" style="border-radius:0 10px 10px 0;">km</span>
+                @error('monthly_km_budget')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="form-text">Batas odometer km per bulan. Alert muncul jika unit melampaui jarak ini.</div>
+        </div>
+    </div>
 </x-form-row>

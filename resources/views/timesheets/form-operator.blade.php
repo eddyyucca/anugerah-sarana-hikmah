@@ -172,7 +172,7 @@
                 @foreach($p2hList as $p2h)
                 <label class="p2h-option-card" onclick="selectP2H(this)">
                     <input type="radio" name="p2h_check_id" value="{{ $p2h->id }}"
-                        data-hm="{{ $p2h->hour_meter_start }}"
+                        data-km="{{ $p2h->km_start }}"
                         data-unit="{{ $p2h->unit->unit_code }} — {{ $p2h->unit->unit_model }}"
                         data-operator="{{ $p2h->operator->operator_name }}"
                         data-date="{{ $p2h->check_date->format('d/m/Y') }}"
@@ -190,7 +190,9 @@
                         <div style="font-size:.78rem;color:#6b7280;margin-top:.2rem;">
                             {{ $p2h->unit->unit_code }} &bull; {{ $p2h->operator->operator_name }} &bull; {{ $p2h->check_date->format('d/m/Y') }}
                         </div>
-                        <div style="font-size:.78rem;color:#7c3aed;font-weight:600;">HM Awal: {{ number_format($p2h->hour_meter_start, 1) }}</div>
+                        <div style="font-size:.78rem;color:#3b82f6;font-weight:600;">
+                            <i class="bi bi-speedometer2 me-1"></i>ODO Awal: {{ number_format($p2h->km_start, 0, ',', '.') }} km
+                        </div>
                     </div>
                 </label>
                 @endforeach
@@ -213,8 +215,8 @@
                                 <div id="infoOperator" class="fw-semibold" style="font-size:.85rem;"></div>
                             </div>
                             <div class="col-4">
-                                <div style="font-size:.72rem;color:#6b7280;">HM Awal</div>
-                                <div id="infoHmStart" class="fw-bold" style="font-size:1rem;color:#7c3aed;"></div>
+                                <div style="font-size:.72rem;color:#6b7280;"><i class="bi bi-speedometer2"></i> ODO Awal</div>
+                                <div id="infoKmStart" class="fw-bold" style="font-size:1rem;color:#3b82f6;"></div>
                             </div>
                         </div>
                     </div>
@@ -227,14 +229,27 @@
                 <div class="ts-card-body">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label fw-bold">HM Akhir Shift <span class="text-danger">*</span></label>
-                            <input type="number" step="0.1" name="hour_meter_end" id="hmEndInput"
-                                class="form-control @error('hour_meter_end') is-invalid @enderror"
-                                value="{{ old('hour_meter_end', 0) }}" min="0" required
-                                style="padding:.8rem;border-radius:12px;font-size:1.1rem;font-weight:700;"
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-speedometer2 me-1 text-primary"></i>Odometer Akhir Shift (KM) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" step="0.1" name="km_end" id="kmEndInput"
+                                class="form-control @error('km_end') is-invalid @enderror"
+                                value="{{ old('km_end', 0) }}" min="0" required
+                                style="padding:.8rem;border-radius:12px;font-size:1.1rem;font-weight:700;border-color:#3b82f6;"
                                 oninput="updateCalc()">
-                            <small id="hmEndHint" class="text-muted"></small>
-                            @error('hour_meter_end')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <small id="kmEndHint" class="text-muted"></small>
+                            @error('km_end')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Jam Kerja Shift <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" step="0.5" name="working_hours" id="workingHoursInput"
+                                    class="form-control @error('working_hours') is-invalid @enderror"
+                                    value="{{ old('working_hours', 8) }}" min="0" max="24" required
+                                    style="padding:.8rem;border-radius:12px 0 0 12px;font-size:1rem;font-weight:600;">
+                                <span class="input-group-text">jam</span>
+                            </div>
+                            @error('working_hours')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
                         {{-- Preview kalkulasi --}}
@@ -242,8 +257,8 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="stat-box">
-                                        <div class="stat-val" id="workHoursDisp">0.0</div>
-                                        <div class="stat-label">Jam Kerja (otomatis)</div>
+                                        <div class="stat-val" id="kmTraveledDisp" style="color:#3b82f6;">0</div>
+                                        <div class="stat-label">KM Ditempuh (otomatis)</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -288,18 +303,18 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
-let hmStart = 0;
+let kmStart = 0;
 
 function onP2HChange(radio) {
-    hmStart = parseFloat(radio.dataset.hm) || 0;
+    kmStart = parseFloat(radio.dataset.km) || 0;
     document.getElementById('infoUnit').textContent     = radio.dataset.unit;
     document.getElementById('infoOperator').textContent = radio.dataset.operator;
-    document.getElementById('infoHmStart').textContent  = hmStart.toFixed(1);
+    document.getElementById('infoKmStart').textContent  = kmStart.toLocaleString('id-ID') + ' km';
 
-    const hmInput = document.getElementById('hmEndInput');
-    hmInput.min   = hmStart;
-    document.getElementById('hmEndHint').textContent = 'Minimal: ' + hmStart.toFixed(1);
-    if (parseFloat(hmInput.value) < hmStart) hmInput.value = hmStart;
+    const kmInput = document.getElementById('kmEndInput');
+    kmInput.min   = kmStart;
+    document.getElementById('kmEndHint').textContent = 'Minimal: ' + kmStart.toLocaleString('id-ID') + ' km';
+    if (parseFloat(kmInput.value) < kmStart) kmInput.value = kmStart;
     updateCalc();
 
     document.getElementById('p2hInfoBox').style.display = 'block';
@@ -307,13 +322,13 @@ function onP2HChange(radio) {
 }
 
 function updateCalc() {
-    const hmEnd  = parseFloat(document.getElementById('hmEndInput').value) || 0;
-    const hours  = Math.max(0, hmEnd - hmStart);
-    document.getElementById('workHoursDisp').textContent = hours.toFixed(1);
+    const kmEnd     = parseFloat(document.getElementById('kmEndInput').value) || 0;
+    const traveled  = Math.max(0, kmEnd - kmStart);
+    document.getElementById('kmTraveledDisp').textContent = traveled.toLocaleString('id-ID') + ' km';
 
-    const input = document.getElementById('hmEndInput');
-    if (hmEnd < hmStart) {
-        input.setCustomValidity('HM akhir tidak boleh kurang dari ' + hmStart);
+    const input = document.getElementById('kmEndInput');
+    if (kmEnd < kmStart) {
+        input.setCustomValidity('Odometer akhir tidak boleh kurang dari ' + kmStart);
         input.classList.add('is-invalid');
     } else {
         input.setCustomValidity('');
@@ -321,7 +336,6 @@ function updateCalc() {
     }
 }
 
-// Restore jika ada old value
 window.addEventListener('DOMContentLoaded', () => {
     const checked = document.querySelector('input[name=p2h_check_id]:checked');
     if (checked) onP2HChange(checked);

@@ -55,6 +55,13 @@
                 @endif
                 @error('sparepart_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nomor Seri Ban</label>
+                <input type="text" name="serial_number" class="form-control @error('serial_number') is-invalid @enderror"
+                    value="{{ old('serial_number') }}" placeholder="Opsional — contoh: DOT2024A12345">
+                @error('serial_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <small class="text-muted">Nomor seri unik yang tercetak pada ban fisik</small>
+            </div>
             <div class="row g-2">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Batas KM <span class="text-danger">*</span></label>

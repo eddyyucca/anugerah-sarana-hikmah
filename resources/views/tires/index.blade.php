@@ -6,6 +6,9 @@
 <div class="erp-card">
     <div class="erp-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="section-title"><i class="bi bi-circle me-2 text-danger"></i>Semua Ban Terlacak</div>
+        <a href="{{ route('tires.analytics') }}" class="btn btn-sm btn-outline-primary" style="border-radius:10px;">
+            <i class="bi bi-graph-up me-1"></i>Analitik Lifetime
+        </a>
     </div>
     <div class="erp-card-body">
         @if(session('success'))<div class="alert alert-success alert-dismissible fade show py-2">{{ session('success') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>@endif

@@ -8,6 +8,7 @@ use App\Models\UnitTireHistory;
 use App\Models\UnitOdometerReading;
 use App\Models\MaintenanceItem;
 use App\Models\MaintenanceLog;
+use App\Services\UnitBudgetService;
 use Illuminate\Support\Facades\DB;
 
 class OdometerService
@@ -34,6 +35,8 @@ class OdometerService
             // Update total_km semua ban yang terpasang di unit ini
             if ($deltaKm > 0) {
                 UnitTire::where('unit_id', $unit->id)->increment('total_km', $deltaKm);
+                // Akumulasi km ke budget bulanan
+                UnitBudgetService::addKm($unit, $deltaKm, substr($date, 0, 7));
             }
 
             $unit->update(['current_odometer' => $newKm]);

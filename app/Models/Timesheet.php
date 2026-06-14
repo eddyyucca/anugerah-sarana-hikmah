@@ -9,7 +9,7 @@ class Timesheet extends Model
     protected $fillable = [
         'ts_number', 'p2h_check_id', 'unit_id', 'operator_id',
         'shift_date', 'shift', 'hour_meter_start', 'hour_meter_end',
-        'working_hours', 'retase', 'notes', 'submitted_by',
+        'km_end', 'km_traveled', 'working_hours', 'retase', 'notes', 'submitted_by',
     ];
 
     protected function casts(): array
@@ -18,6 +18,8 @@ class Timesheet extends Model
             'shift_date'        => 'date',
             'hour_meter_start'  => 'decimal:2',
             'hour_meter_end'    => 'decimal:2',
+            'km_end'            => 'decimal:2',
+            'km_traveled'       => 'decimal:2',
             'working_hours'     => 'decimal:2',
             'retase'            => 'integer',
         ];

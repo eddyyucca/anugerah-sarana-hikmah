@@ -192,15 +192,8 @@
                             <option value="night" {{ old('shift')=='night'?'selected':'' }}>Shift Malam</option>
                         </select>
                     </div>
-                    <div class="col-6">
-                        <label class="form-label fw-bold">Hour Meter</label>
-                        <input type="number" step="0.1" name="hour_meter_start" id="hmInput"
-                            class="form-control @error('hour_meter_start') is-invalid @enderror"
-                            value="{{ old('hour_meter_start', 0) }}" min="0" style="padding:.7rem;">
-                        <small id="hmHint" class="text-muted" style="font-size:.78rem;"></small>
-                        @error('hour_meter_start')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-6">
+                    <input type="hidden" name="hour_meter_start" id="hmInput" value="0">
+                    <div class="col-12">
                         <label class="form-label fw-bold">
                             Odometer (KM) <span class="text-danger">*</span>
                             <i class="bi bi-speedometer2 ms-1 text-primary"></i>

@@ -59,6 +59,30 @@
             </div>
             @endif
 
+            {{-- KM Budget Status --}}
+            @if($kmBudgetStatus['has_limit'])
+            @php $kmSt = $kmBudgetStatus; @endphp
+            <div class="mt-2 p-3 rounded-3" style="background:{{ $kmSt['is_over_km_budget'] ? 'rgba(220,38,38,.08)' : 'rgba(59,130,246,.08)' }};border:1px solid {{ $kmSt['is_over_km_budget'] ? 'rgba(220,38,38,.2)' : 'rgba(59,130,246,.2)' }};">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span style="font-size:.82rem;font-weight:600;"><i class="bi bi-speedometer2 me-1 text-primary"></i>Budget KM Bulan Ini</span>
+                    @if($kmSt['is_over_km_budget'])
+                        <span class="badge bg-danger" style="border-radius:999px;font-size:.72rem;"><i class="bi bi-exclamation-triangle-fill me-1"></i>Over KM</span>
+                    @else
+                        <span class="badge bg-primary" style="border-radius:999px;font-size:.72rem;"><i class="bi bi-check-circle me-1"></i>Normal</span>
+                    @endif
+                </div>
+                <div class="progress mb-1" style="height:8px;border-radius:999px;">
+                    <div class="progress-bar {{ $kmSt['is_over_km_budget'] ? 'bg-danger' : ($kmSt['percentage'] >= 80 ? 'bg-warning' : 'bg-primary') }}"
+                         style="width:{{ $kmSt['percentage'] }}%;border-radius:999px;"></div>
+                </div>
+                <div class="d-flex justify-content-between" style="font-size:.78rem;color:#6b7280;">
+                    <span>Tempuh: <strong>{{ number_format($kmSt['used'], 0, ',', '.') }} km</strong></span>
+                    <span>{{ $kmSt['percentage'] }}%</span>
+                    <span>Sisa: <strong>{{ number_format($kmSt['remaining'], 0, ',', '.') }} km</strong></span>
+                </div>
+            </div>
+            @endif
+
             <div class="mt-3">
                 <a href="{{ route('units.edit', $unit) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i>Edit</a>
                 @if($budgetStatus['has_limit'])
@@ -131,6 +155,9 @@
                                     <a href="{{ route('tires.show', $tire) }}" class="text-decoration-none">
                                         {{ $tire->sparepart->part_name ?? '-' }}
                                     </a>
+                                    @if($tire->serial_number)
+                                    <br><small class="text-muted"><code>{{ $tire->serial_number }}</code></small>
+                                    @endif
                                 </td>
                                 <td><strong>{{ number_format($tire->current_km, 0, ',', '.') }} km</strong></td>
                                 <td class="text-muted">{{ number_format($tire->km_limit, 0, ',', '.') }} km</td>

@@ -12,6 +12,9 @@ use App\Models\StockOpname;
 use App\Models\WarehouseTransfer;
 use App\Models\FitToWork;
 use App\Models\Timesheet;
+use App\Models\SupplierReturn;
+use App\Models\TireDamageReport;
+use App\Models\OperatorWarningLetter;
 
 class DocumentNumberService
 {
@@ -63,6 +66,21 @@ class DocumentNumberService
     public static function generateTS(): string
     {
         return self::generate('TS', Timesheet::class, 'ts_number');
+    }
+
+    public static function generateSR(): string
+    {
+        return self::generate('SR', SupplierReturn::class, 'return_no');
+    }
+
+    public static function generateBA(): string
+    {
+        return self::generate('BA', TireDamageReport::class, 'report_no');
+    }
+
+    public static function generateSK(): string
+    {
+        return self::generate('SK', OperatorWarningLetter::class, 'letter_no');
     }
 
     private static function generate(string $prefix, string $model, string $column): string

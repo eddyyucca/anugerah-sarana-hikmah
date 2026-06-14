@@ -14,7 +14,8 @@ class OperatorPerformanceController extends Controller
         $query = OperatorPerformanceRecord::with(
             'operator:id,operator_code,operator_name',
             'unit:id,unit_code,unit_model',
-            'workOrder:id,wo_number'
+            'workOrder:id,wo_number',
+            'warningLetter:id,operator_performance_record_id,letter_no'
         );
 
         if ($request->filled('operator_id')) {

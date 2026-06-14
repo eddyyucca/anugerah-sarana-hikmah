@@ -48,6 +48,7 @@ class UnitController extends Controller
             'current_status'       => 'required|in:available,under_repair,standby',
             'hour_meter'           => 'nullable|numeric|min:0',
             'monthly_budget_limit' => 'nullable|numeric|min:0',
+            'monthly_km_budget'    => 'nullable|numeric|min:0',
         ]);
 
         Unit::create($validated);
@@ -57,8 +58,9 @@ class UnitController extends Controller
     public function show(Unit $unit)
     {
         $unit->load('category', 'workOrders.technician', 'repairCosts', 'tires.sparepart');
-        $budgetStatus = UnitBudgetService::getStatus($unit);
-        return view('units.show', compact('unit', 'budgetStatus'));
+        $budgetStatus   = UnitBudgetService::getStatus($unit);
+        $kmBudgetStatus = UnitBudgetService::getKmStatus($unit);
+        return view('units.show', compact('unit', 'budgetStatus', 'kmBudgetStatus'));
     }
 
     public function edit(Unit $unit)
@@ -78,6 +80,7 @@ class UnitController extends Controller
             'current_status'       => 'required|in:available,under_repair,standby',
             'hour_meter'           => 'nullable|numeric|min:0',
             'monthly_budget_limit' => 'nullable|numeric|min:0',
+            'monthly_km_budget'    => 'nullable|numeric|min:0',
         ]);
 
         $unit->update($validated);

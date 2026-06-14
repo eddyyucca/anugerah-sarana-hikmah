@@ -9,14 +9,18 @@ class UnitMonthlyCost extends Model
     protected $fillable = [
         'unit_id', 'year_month', 'total_cost', 'work_order_count',
         'is_over_budget', 'exceeded_at',
+        'total_km', 'is_over_km_budget', 'km_exceeded_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'total_cost' => 'decimal:2',
-            'is_over_budget' => 'boolean',
-            'exceeded_at' => 'datetime',
+            'total_cost'        => 'decimal:2',
+            'is_over_budget'    => 'boolean',
+            'exceeded_at'       => 'datetime',
+            'total_km'          => 'decimal:2',
+            'is_over_km_budget' => 'boolean',
+            'km_exceeded_at'    => 'datetime',
         ];
     }
 

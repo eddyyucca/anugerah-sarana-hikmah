@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class UnitTire extends Model
 {
     protected $fillable = [
-        'sparepart_id', 'unit_id', 'position_number', 'position_label',
+        'sparepart_id', 'serial_number', 'unit_id', 'position_number', 'position_label',
         'total_km', 'km_limit', 'odo_when_installed', 'installed_at', 'notes',
     ];
 

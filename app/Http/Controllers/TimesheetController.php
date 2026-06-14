@@ -7,6 +7,7 @@ use App\Models\P2hCheck;
 use App\Models\Unit;
 use App\Models\Operator;
 use App\Services\DocumentNumberService;
+use App\Services\OdometerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -124,22 +125,24 @@ class TimesheetController extends Controller
 
     public function storeOperator(Request $request)
     {
-        $p2h = P2hCheck::findOrFail($request->p2h_check_id);
+        $p2h    = P2hCheck::with('unit')->findOrFail($request->p2h_check_id);
+        $kmStart = (float) $p2h->km_start;
         $hmStart = (float) $p2h->hour_meter_start;
 
         $request->validate([
-            'p2h_check_id'   => 'required|exists:p2h_checks,id|unique:timesheets,p2h_check_id',
-            'hour_meter_end' => "required|numeric|min:{$hmStart}",
-            'retase'         => 'required|integer|min:0',
-            'notes'          => 'nullable|string',
+            'p2h_check_id'  => 'required|exists:p2h_checks,id|unique:timesheets,p2h_check_id',
+            'km_end'        => "required|numeric|min:{$kmStart}",
+            'working_hours' => 'required|numeric|min:0|max:24',
+            'retase'        => 'required|integer|min:0',
+            'notes'         => 'nullable|string',
         ], [
-            'p2h_check_id.unique'   => 'P2H ini sudah memiliki timesheet.',
-            'hour_meter_end.min'    => "HM akhir tidak boleh kurang dari HM awal ({$hmStart}).",
+            'p2h_check_id.unique' => 'P2H ini sudah memiliki timesheet.',
+            'km_end.min'          => "Odometer akhir tidak boleh kurang dari awal ({$kmStart} km).",
         ]);
 
-        DB::transaction(function () use ($request, $p2h, $hmStart) {
-            $hmEnd        = (float) $request->hour_meter_end;
-            $workingHours = round($hmEnd - $hmStart, 2);
+        DB::transaction(function () use ($request, $p2h, $kmStart, $hmStart) {
+            $kmEnd      = (float) $request->km_end;
+            $kmTraveled = round(max(0, $kmEnd - $kmStart), 2);
 
             Timesheet::create([
                 'ts_number'        => DocumentNumberService::generateTS(),
@@ -149,16 +152,26 @@ class TimesheetController extends Controller
                 'shift_date'       => $p2h->check_date,
                 'shift'            => $p2h->shift,
                 'hour_meter_start' => $hmStart,
-                'hour_meter_end'   => $hmEnd,
-                'working_hours'    => $workingHours,
+                'hour_meter_end'   => $hmStart, // tidak diinput operator, biarkan sama dengan awal
+                'km_end'           => $kmEnd,
+                'km_traveled'      => $kmTraveled,
+                'working_hours'    => $request->working_hours,
                 'retase'           => $request->retase,
                 'notes'            => $request->notes,
                 'submitted_by'     => null,
             ]);
 
+            // Record odometer reading ke sistem
             $unit = $p2h->unit;
-            if ($hmEnd > (float) $unit->hour_meter) {
-                $unit->update(['hour_meter' => $hmEnd]);
+            if ($kmEnd > (float) $unit->current_odometer) {
+                OdometerService::recordReading(
+                    $unit,
+                    $kmEnd,
+                    $p2h->check_date->format('Y-m-d'),
+                    $p2h->operator->operator_name ?? 'operator',
+                    'timesheet',
+                    "Odometer akhir shift dari TS operator"
+                );
             }
         });
 

@@ -90,6 +90,7 @@
                         <th class="text-end">Total Biaya</th>
                         <th class="text-end">Kelebihan</th>
                         <th>Tercatat</th>
+                        <th>Surat</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,17 +122,30 @@
                             <span class="badge badge-soft-danger" style="border-radius:999px;">+IDR {{ number_format($rec->excess_amount, 0, ',', '.') }}</span>
                         </td>
                         <td style="font-size:.82rem;">{{ $rec->recorded_at?->format('d M Y H:i') ?? '-' }}</td>
+                        <td>
+                            @php $letter = $rec->warningLetter ?? null; @endphp
+                            @if($letter)
+                            <a href="{{ route('operator-warning-letters.show', $letter) }}" class="btn btn-xs btn-outline-warning">
+                                <i class="bi bi-envelope me-1"></i>{{ $letter->letter_no }}
+                            </a>
+                            @else
+                            <button type="button" class="btn btn-xs btn-outline-danger"
+                                onclick="showLetterModal({{ $rec->id }}, '{{ addslashes($rec->notes ?? '') }}')">
+                                <i class="bi bi-envelope-plus"></i> Buat
+                            </button>
+                            @endif
+                        </td>
                     </tr>
                     @if($rec->notes)
                     <tr class="table-light">
-                        <td colspan="8" style="font-size:.8rem;color:#6b7280;padding:.3rem .75rem;">
+                        <td colspan="9" style="font-size:.8rem;color:#6b7280;padding:.3rem .75rem;">
                             <i class="bi bi-info-circle me-1"></i>{{ $rec->notes }}
                         </td>
                     </tr>
                     @endif
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">
+                        <td colspan="9" class="text-center text-muted py-4">
                             <i class="bi bi-check-circle-fill text-success me-2"></i>
                             Tidak ada catatan pelanggaran budget.
                         </td>
@@ -143,4 +157,43 @@
         <div class="mt-3">{{ $records->links() }}</div>
     </div>
 </div>
+
+{{-- Modal Buat Surat Peringatan --}}
+<div class="modal fade" id="letterModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('operator-warning-letters.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="operator_performance_record_id" id="modalRecordId">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-envelope-plus me-2"></i>Buat Surat Peringatan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Isi Pelanggaran / Deskripsi <span class="text-danger">*</span></label>
+                        <textarea name="violation_description" class="form-control" rows="4" id="modalDesc" required
+                            placeholder="Jelaskan pelanggaran yang dilakukan operator..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-save me-1"></i>Buat Surat
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function showLetterModal(recordId, defaultDesc) {
+    document.getElementById('modalRecordId').value = recordId;
+    document.getElementById('modalDesc').value = defaultDesc;
+    new bootstrap.Modal(document.getElementById('letterModal')).show();
+}
+</script>
+@endpush
 @endsection

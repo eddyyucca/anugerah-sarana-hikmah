@@ -12,7 +12,7 @@ class Unit extends Model
     protected $fillable = [
         'unit_code', 'unit_model', 'unit_type', 'category_id',
         'department', 'current_status', 'hour_meter', 'is_active',
-        'monthly_budget_limit', 'current_odometer', 'wheel_count',
+        'monthly_budget_limit', 'monthly_km_budget', 'current_odometer', 'wheel_count',
     ];
 
     protected function casts(): array
@@ -21,6 +21,7 @@ class Unit extends Model
             'hour_meter'          => 'decimal:2',
             'is_active'           => 'boolean',
             'monthly_budget_limit'=> 'decimal:2',
+            'monthly_km_budget'   => 'decimal:2',
             'current_odometer'    => 'decimal:2',
             'wheel_count'         => 'integer',
         ];

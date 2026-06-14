@@ -7,6 +7,9 @@ use App\Models\PurchaseRequest;
 use App\Models\GoodsReceipt;
 use App\Models\GoodsIssue;
 use App\Models\WorkOrder;
+use App\Models\SupplierReturn;
+use App\Models\TireDamageReport;
+use App\Models\OperatorWarningLetter;
 
 class PrintController extends Controller
 {
@@ -38,5 +41,23 @@ class PrintController extends Controller
     {
         $workOrder->load('unit', 'technician', 'goodsIssues.items.sparepart', 'costSummary', 'logs.creator');
         return view('print.wo', compact('workOrder'));
+    }
+
+    public function supplierReturn(SupplierReturn $supplierReturn)
+    {
+        $supplierReturn->load('supplier', 'items.sparepart', 'goodsReceipt');
+        return view('print.supplier-return', compact('supplierReturn'));
+    }
+
+    public function baDamage(TireDamageReport $tireDamageReport)
+    {
+        $tireDamageReport->load('unitTire.sparepart', 'unit');
+        return view('print.ba-kerusakan', compact('tireDamageReport'));
+    }
+
+    public function warningLetter(OperatorWarningLetter $operatorWarningLetter)
+    {
+        $operatorWarningLetter->load('operator', 'unit', 'workOrder');
+        return view('print.warning-letter', compact('operatorWarningLetter'));
     }
 }

@@ -12,6 +12,8 @@ use App\Models\GoodsIssue;
 use App\Models\WorkOrder;
 use App\Models\RepairCostSummary;
 use App\Models\UnitAvailabilityLog;
+use App\Models\UnitMonthlyCost;
+use App\Models\UnitTire;
 use App\Models\P2hCheck;
 use App\Models\ComplaintType;
 use Illuminate\Support\Facades\DB;
@@ -136,12 +138,14 @@ class DashboardController extends Controller
                                         ->latest()->limit(10)->get(),
         ];
 
+        $budgetAlerts = $this->budgetAlerts();
+
         return view('dashboard.index', compact(
             'totalUnits', 'available', 'underRepair', 'standby',
             'openPR', 'openPO', 'openWO', 'completedWO',
             'lowStockCount', 'totalSpareparts', 'totalRepairCostAll',
             'unitsAttention', 'lowStockParts', 'woByType',
-            'daily', 'weekly', 'monthly'
+            'daily', 'weekly', 'monthly', 'budgetAlerts'
         ));
     }
 
