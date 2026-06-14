@@ -59,6 +59,35 @@
 
     /* ── summary-highlight ── */
     .summary-highlight { border-left: 3px solid #c0392b; }
+
+    /* ── Budget Alert Widget ── */
+    .alert-widget { border-radius: 14px; border: 1.5px solid #e5e7eb; background: #fff; margin-bottom: 1.25rem; overflow: hidden; }
+    .alert-widget-header { padding: .65rem 1rem; background: #fafafa; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+    .alert-pill { font-size: .7rem; font-weight: 700; padding: 2px 9px; border-radius: 99px; display: inline-flex; align-items: center; gap: 4px; }
+    .alert-pill.red    { background: #fee2e2; color: #991b1b; }
+    .alert-pill.orange { background: #ffedd5; color: #9a3412; }
+    .alert-pill.yellow { background: #fef9c3; color: #854d0e; }
+    .alert-pill.green  { background: #d1fae5; color: #065f46; }
+
+    .alert-bar-wrap { height: 6px; background: #f0f0f0; border-radius: 99px; overflow: hidden; }
+    .alert-bar { height: 100%; border-radius: 99px; transition: width .4s; }
+    .alert-bar.bar-success { background: #10b981; }
+    .alert-bar.bar-warning { background: #f59e0b; }
+    .alert-bar.bar-orange  { background: #f97316; }
+    .alert-bar.bar-danger  { background: #ef4444; }
+
+    .alert-row { display: flex; align-items: center; gap: .75rem; padding: .45rem .85rem; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: background .1s; text-decoration: none; color: inherit; }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-row:hover { background: #fafafa; }
+    .alert-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .alert-dot.dot-success { background: #10b981; }
+    .alert-dot.dot-warning { background: #f59e0b; }
+    .alert-dot.dot-orange  { background: #f97316; }
+    .alert-dot.dot-danger  { background: #ef4444; }
+    .alert-type-badge { font-size: .65rem; font-weight: 700; padding: 1px 7px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
+    .badge-cost { background: #dbeafe; color: #1d4ed8; }
+    .badge-km   { background: #f0fdf4; color: #15803d; }
+    .badge-tire { background: #fdf4ff; color: #7e22ce; }
 </style>
 @endpush
 
@@ -68,6 +97,126 @@
 @endphp
 
 @section('content')
+
+{{-- ══════════ BUDGET & LIMIT ALERTS ══════════ --}}
+@php
+    $alertItems   = $budgetAlerts['items'];
+    $alertRed     = $budgetAlerts['red'];
+    $alertOrange  = $budgetAlerts['orange'];
+    $alertYellow  = $budgetAlerts['yellow'];
+    $alertGreen   = $budgetAlerts['green'];
+    $alertTotal   = $alertItems->count();
+    // only show if there are yellow/orange/red items
+    $alertVisible = ($alertRed + $alertOrange + $alertYellow) > 0;
+@endphp
+@if($alertTotal > 0)
+<div class="alert-widget mb-4" id="alertWidget">
+    <div class="alert-widget-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-bell-fill text-warning" style="font-size:1rem;"></i>
+            <span style="font-size:.85rem;font-weight:700;color:#1a1a2e;">Peringatan Budget & Limit</span>
+            <span style="font-size:.75rem;color:#aaa;">{{ now()->format('M Y') }}</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            @if($alertRed > 0)
+            <span class="alert-pill red"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>{{ $alertRed }} Melewati Batas</span>
+            @endif
+            @if($alertOrange > 0)
+            <span class="alert-pill orange"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>{{ $alertOrange }} Kritis (≥80%)</span>
+            @endif
+            @if($alertYellow > 0)
+            <span class="alert-pill yellow"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>{{ $alertYellow }} Waspada (≥50%)</span>
+            @endif
+            @if($alertGreen > 0)
+            <span class="alert-pill green"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>{{ $alertGreen }} Aman</span>
+            @endif
+            <button class="btn btn-xs btn-light" style="font-size:.72rem;border-radius:8px;padding:2px 10px;"
+                onclick="toggleAlertList()" id="alertToggleBtn">
+                <i class="bi bi-chevron-up" id="alertChevron"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="alertList">
+        {{-- Filter tabs --}}
+        <div class="px-3 pt-2 pb-1 d-flex align-items-center gap-2 border-bottom" style="background:#fafafa;">
+            <span style="font-size:.72rem;color:#aaa;font-weight:600;">Filter:</span>
+            <button class="btn btn-xs alert-filter-btn active" data-filter="all"
+                style="font-size:.72rem;border-radius:8px;padding:2px 10px;background:#1a1a2e;color:#fff;border:none;">
+                Semua ({{ $alertTotal }})
+            </button>
+            @if($alertRed > 0)
+            <button class="btn btn-xs alert-filter-btn" data-filter="danger"
+                style="font-size:.72rem;border-radius:8px;padding:2px 10px;background:#fee2e2;color:#991b1b;border:none;">
+                Merah ({{ $alertRed }})
+            </button>
+            @endif
+            @if($alertOrange > 0)
+            <button class="btn btn-xs alert-filter-btn" data-filter="orange"
+                style="font-size:.72rem;border-radius:8px;padding:2px 10px;background:#ffedd5;color:#9a3412;border:none;">
+                Orange ({{ $alertOrange }})
+            </button>
+            @endif
+            @if($alertYellow > 0)
+            <button class="btn btn-xs alert-filter-btn" data-filter="warning"
+                style="font-size:.72rem;border-radius:8px;padding:2px 10px;background:#fef9c3;color:#854d0e;border:none;">
+                Kuning ({{ $alertYellow }})
+            </button>
+            @endif
+            @if($alertGreen > 0)
+            <button class="btn btn-xs alert-filter-btn" data-filter="success"
+                style="font-size:.72rem;border-radius:8px;padding:2px 10px;background:#d1fae5;color:#065f46;border:none;">
+                Hijau ({{ $alertGreen }})
+            </button>
+            @endif
+        </div>
+
+        <div id="alertRows" style="max-height: 280px; overflow-y: auto;">
+            @foreach($alertItems as $item)
+            @php
+                $barClass = match($item['color']) {
+                    'danger'  => 'bar-danger',
+                    'orange'  => 'bar-orange',
+                    'warning' => 'bar-warning',
+                    default   => 'bar-success',
+                };
+                $dotClass = match($item['color']) {
+                    'danger'  => 'dot-danger',
+                    'orange'  => 'dot-orange',
+                    'warning' => 'dot-warning',
+                    default   => 'dot-success',
+                };
+                $badgeClass = match($item['type']) {
+                    'cost'  => 'badge-cost',
+                    'km'    => 'badge-km',
+                    default => 'badge-tire',
+                };
+                $valStr = $item['type'] === 'cost'
+                    ? 'IDR ' . number_format($item['used'], 0, ',', '.') . ' / IDR ' . number_format($item['limit'], 0, ',', '.')
+                    : number_format($item['used'], 0, ',', '.') . ' / ' . number_format($item['limit'], 0, ',', '.') . ' km';
+            @endphp
+            <a href="{{ $item['link'] }}" class="alert-row" data-color="{{ $item['color'] }}">
+                <div class="alert-dot {{ $dotClass }}"></div>
+                <div class="alert-type-badge {{ $badgeClass }}">{{ $item['label'] }}</div>
+                <div style="min-width:60px;">
+                    <div style="font-size:.78rem;font-weight:700;line-height:1.2;">{{ $item['unit_code'] }}</div>
+                    <div style="font-size:.68rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">{{ $item['unit_model'] }}</div>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="alert-bar-wrap">
+                        <div class="alert-bar {{ $barClass }}" style="width:{{ $item['pct'] }}%;"></div>
+                    </div>
+                </div>
+                <div style="font-size:.72rem;color:#666;white-space:nowrap;min-width:90px;text-align:right;">{{ $valStr }}</div>
+                <div style="font-size:.75rem;font-weight:800;min-width:40px;text-align:right;color:{{ $item['color'] === 'danger' ? '#dc2626' : ($item['color'] === 'orange' ? '#ea580c' : ($item['color'] === 'warning' ? '#ca8a04' : '#059669')) }};">
+                    {{ $item['pct'] }}%
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
 
 {{-- ══════════ PERIOD TABS ══════════ --}}
 <div class="d-flex align-items-center justify-content-between flex-wrap mb-4">
@@ -1038,6 +1187,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+});
+
+// ── Budget Alert Widget ──────────────────────────
+function toggleAlertList() {
+    const list    = document.getElementById('alertList');
+    const chevron = document.getElementById('alertChevron');
+    if (!list) return;
+    const hidden = list.style.display === 'none';
+    list.style.display = hidden ? '' : 'none';
+    chevron.className = hidden ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
+}
+
+document.querySelectorAll('.alert-filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.alert-filter-btn').forEach(b => {
+            b.style.background = '';
+            b.style.color = '';
+            b.classList.remove('active');
+        });
+        this.classList.add('active');
+        this.style.background = '#1a1a2e';
+        this.style.color = '#fff';
+
+        const filter = this.dataset.filter;
+        document.querySelectorAll('#alertRows .alert-row').forEach(function(row) {
+            row.style.display = (filter === 'all' || row.dataset.color === filter) ? '' : 'none';
+        });
+    });
 });
 </script>
 @endpush

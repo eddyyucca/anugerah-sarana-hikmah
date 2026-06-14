@@ -264,4 +264,94 @@ class DashboardController extends Controller
             ->with('complaintType:id,name,color')
             ->get();
     }
+
+    private function budgetAlerts(): array
+    {
+        $yearMonth = now()->format('Y-m');
+
+        // ── 1. Unit Cost Budget ───────────────────────────────────────────────
+        $costMonthly = UnitMonthlyCost::where('year_month', $yearMonth)
+            ->with('unit:id,unit_code,unit_model,monthly_budget_limit')
+            ->get()
+            ->filter(fn($m) => ($m->unit->monthly_budget_limit ?? 0) > 0)
+            ->map(function ($m) {
+                $limit = (float) $m->unit->monthly_budget_limit;
+                $used  = (float) $m->total_cost;
+                $pct   = $limit > 0 ? min(100, round(($used / $limit) * 100, 1)) : 0;
+                return [
+                    'type'      => 'cost',
+                    'label'     => 'Budget Biaya',
+                    'unit_code' => $m->unit->unit_code,
+                    'unit_model'=> $m->unit->unit_model,
+                    'unit_id'   => $m->unit_id,
+                    'used'      => $used,
+                    'limit'     => $limit,
+                    'pct'       => $pct,
+                    'link'      => route('units.show', $m->unit_id),
+                ];
+            });
+
+        // ── 2. Unit KM Budget ─────────────────────────────────────────────────
+        $kmMonthly = UnitMonthlyCost::where('year_month', $yearMonth)
+            ->with('unit:id,unit_code,unit_model,monthly_km_budget')
+            ->get()
+            ->filter(fn($m) => ($m->unit->monthly_km_budget ?? 0) > 0)
+            ->map(function ($m) {
+                $limit = (float) $m->unit->monthly_km_budget;
+                $used  = (float) $m->total_km;
+                $pct   = $limit > 0 ? min(100, round(($used / $limit) * 100, 1)) : 0;
+                return [
+                    'type'      => 'km',
+                    'label'     => 'Budget KM',
+                    'unit_code' => $m->unit->unit_code,
+                    'unit_model'=> $m->unit->unit_model,
+                    'unit_id'   => $m->unit_id,
+                    'used'      => $used,
+                    'limit'     => $limit,
+                    'pct'       => $pct,
+                    'link'      => route('units.show', $m->unit_id),
+                ];
+            });
+
+        // ── 3. Tire KM ────────────────────────────────────────────────────────
+        $tireAlerts = UnitTire::whereNotNull('unit_id')
+            ->where('km_limit', '>', 0)
+            ->with('unit:id,unit_code', 'sparepart:id,part_name')
+            ->get()
+            ->map(function ($t) {
+                $pct = $t->km_limit > 0
+                    ? min(100, round(($t->total_km / $t->km_limit) * 100, 1))
+                    : 0;
+                return [
+                    'type'       => 'tire',
+                    'label'      => 'Limit Ban',
+                    'unit_code'  => $t->unit->unit_code ?? '-',
+                    'unit_model' => ($t->sparepart->part_name ?? 'Ban') . ' [' . ($t->position_label ?? $t->position_number) . ']',
+                    'unit_id'    => $t->unit_id,
+                    'used'       => (float) $t->total_km,
+                    'limit'      => (float) $t->km_limit,
+                    'pct'        => $pct,
+                    'link'       => route('tires.show', $t->id),
+                ];
+            });
+
+        // ── Merge, assign severity, sort ─────────────────────────────────────
+        $all = $costMonthly->concat($kmMonthly)->concat($tireAlerts)
+            ->map(function ($item) {
+                $p = $item['pct'];
+                $item['severity'] = $p >= 100 ? 4 : ($p >= 80 ? 3 : ($p >= 50 ? 2 : 1));
+                $item['color']    = $p >= 100 ? 'danger' : ($p >= 80 ? 'orange' : ($p >= 50 ? 'warning' : 'success'));
+                return $item;
+            })
+            ->sortByDesc('severity')
+            ->values();
+
+        return [
+            'items'    => $all,
+            'red'      => $all->where('severity', 4)->count(),
+            'orange'   => $all->where('severity', 3)->count(),
+            'yellow'   => $all->where('severity', 2)->count(),
+            'green'    => $all->where('severity', 1)->count(),
+        ];
+    }
 }

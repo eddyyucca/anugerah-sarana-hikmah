@@ -28,6 +28,29 @@
             {{-- Kanan: notifikasi + user --}}
             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                 @auth
+                {{-- Budget Alert Indicator --}}
+                @php
+                    $yearMonthNow = now()->format('Y-m');
+                    $overBudgetCount = \App\Models\UnitMonthlyCost::where('year_month', $yearMonthNow)
+                        ->where(fn($q) => $q->where('is_over_budget', true)->orWhere('is_over_km_budget', true))
+                        ->count();
+                    // Tires over km_limit
+                    $tireCriticalCount = \App\Models\UnitTire::whereNotNull('unit_id')
+                        ->where('km_limit', '>', 0)
+                        ->whereColumn('total_km', '>=', 'km_limit')
+                        ->count();
+                    $totalCritical = $overBudgetCount + $tireCriticalCount;
+                @endphp
+                <a href="{{ route('dashboard') }}#alertWidget"
+                   class="topbar-btn position-relative"
+                   title="{{ $totalCritical > 0 ? $totalCritical.' item melewati batas budget/limit' : 'Budget & Limit Status' }}"
+                   style="text-decoration:none;">
+                    <i class="bi bi-speedometer2 fs-5" style="{{ $totalCritical > 0 ? 'color:#ef4444;' : '' }}"></i>
+                    @if($totalCritical > 0)
+                    <span class="notif-badge" style="background:#ef4444;">{{ $totalCritical > 99 ? '99+' : $totalCritical }}</span>
+                    @endif
+                </a>
+
                 {{-- Notifikasi --}}
                 <div class="dropdown">
                     <button class="topbar-btn position-relative" type="button" data-bs-toggle="dropdown">

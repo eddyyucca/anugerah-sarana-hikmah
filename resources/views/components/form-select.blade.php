@@ -16,25 +16,25 @@
         @if($required) required @endif
         @if($disabled) disabled @endif
     >
-        <option value="">{{ $placeholder }}</option>
-
-        @if(is_array($options) || $options instanceof Illuminate\Support\Collection)
-            @foreach($options as $optValue => $optLabel)
-                @if(is_array($optLabel))
-                    {{-- Optgroup support --}}
-                    <optgroup label="{{ $optValue }}">
-                        @foreach($optLabel as $val => $label)
-                            <option value="{{ $val }}" @if(old($name, $value) == $val) selected @endif>
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </optgroup>
-                @else
-                    <option value="{{ $optValue }}" @if(old($name, $value) == $optValue) selected @endif>
-                        {{ $optLabel }}
-                    </option>
-                @endif
-            @endforeach
+        @if($slot->isEmpty())
+            {{-- Props-based options --}}
+            <option value="">{{ $placeholder }}</option>
+            @if(is_array($options) || $options instanceof Illuminate\Support\Collection)
+                @foreach($options as $optValue => $optLabel)
+                    @if(is_array($optLabel))
+                        <optgroup label="{{ $optValue }}">
+                            @foreach($optLabel as $val => $lbl)
+                                <option value="{{ $val }}" @if(old($name, $value) == $val) selected @endif>{{ $lbl }}</option>
+                            @endforeach
+                        </optgroup>
+                    @else
+                        <option value="{{ $optValue }}" @if(old($name, $value) == $optValue) selected @endif>{{ $optLabel }}</option>
+                    @endif
+                @endforeach
+            @endif
+        @else
+            {{-- Slot-based options (children passed as <option> tags) --}}
+            {{ $slot }}
         @endif
     </select>
 
