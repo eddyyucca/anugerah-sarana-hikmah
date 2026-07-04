@@ -10,18 +10,21 @@ class Timesheet extends Model
         'ts_number', 'p2h_check_id', 'unit_id', 'operator_id',
         'shift_date', 'shift', 'hour_meter_start', 'hour_meter_end',
         'km_end', 'km_traveled', 'working_hours', 'retase', 'notes', 'submitted_by',
+        'odo_end_photo', 'km_per_ritase', 'odo_discrepancy_flag',
     ];
 
     protected function casts(): array
     {
         return [
-            'shift_date'        => 'date',
-            'hour_meter_start'  => 'decimal:2',
-            'hour_meter_end'    => 'decimal:2',
-            'km_end'            => 'decimal:2',
-            'km_traveled'       => 'decimal:2',
-            'working_hours'     => 'decimal:2',
-            'retase'            => 'integer',
+            'shift_date'            => 'date',
+            'hour_meter_start'      => 'decimal:2',
+            'hour_meter_end'        => 'decimal:2',
+            'km_end'                => 'decimal:2',
+            'km_traveled'           => 'decimal:2',
+            'working_hours'         => 'decimal:2',
+            'retase'                => 'integer',
+            'km_per_ritase'         => 'decimal:2',
+            'odo_discrepancy_flag'  => 'integer',
         ];
     }
 

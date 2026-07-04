@@ -31,8 +31,8 @@ class SupplierReturnController extends Controller
     {
         $suppliers    = Supplier::active()->orderBy('supplier_name')->get();
         $spareparts   = Sparepart::where('is_active', true)->orderBy('part_name')->get(['id', 'part_name', 'part_number', 'uom']);
-        $goodsReceipts = GoodsReceipt::with('supplier:id,supplier_name')
-            ->latest('gr_date')->limit(50)->get(['id', 'gr_number', 'gr_date', 'supplier_id']);
+        $goodsReceipts = GoodsReceipt::with('purchaseOrder.supplier')
+            ->latest('receipt_date')->limit(50)->get(['id', 'gr_number', 'receipt_date', 'purchase_order_id']);
 
         return view('supplier-returns.create', compact('suppliers', 'spareparts', 'goodsReceipts'));
     }

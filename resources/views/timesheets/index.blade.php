@@ -65,6 +65,7 @@
                     <th>HM Akhir</th>
                     <th class="text-center">Jam Kerja</th>
                     <th class="text-center">Retase</th>
+                    <th class="text-center">KM/Ritase</th>
                     <th>P2H</th>
                     <th></th>
                 </tr>
@@ -90,6 +91,18 @@
                     <td class="text-center">
                         <span class="badge bg-primary fs-6 px-3">{{ $ts->retase }}</span>
                     </td>
+                    <td class="text-center">
+                        @if($ts->km_per_ritase)
+                            <span class="badge {{ $ts->odo_discrepancy_flag ? 'bg-warning text-dark' : 'bg-success' }}">
+                                {{ number_format($ts->km_per_ritase, 1) }} km
+                            </span>
+                            @if($ts->odo_discrepancy_flag)
+                                <br><small class="text-danger" title="Anomali ODO"><i class="bi bi-exclamation-triangle-fill"></i> Anomali</small>
+                            @endif
+                        @else
+                            <span class="text-muted">&mdash;</span>
+                        @endif
+                    </td>
                     <td>
                         <a href="{{ route('p2h.show', $ts->p2h_check_id) }}" class="text-decoration-none" style="font-size:.8rem;">
                             {{ $ts->p2h->p2h_number }}
@@ -108,10 +121,10 @@
             @if($timesheets->count())
             <tfoot class="table-light">
                 <tr>
-                    <td colspan="7" class="text-end fw-semibold">Total halaman ini:</td>
+                    <td colspan="8" class="text-end fw-semibold">Total halaman ini:</td>
                     <td class="text-center fw-bold">{{ number_format($timesheets->sum('working_hours'), 1) }} jam</td>
                     <td class="text-center fw-bold">{{ $timesheets->sum('retase') }}</td>
-                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                 </tr>
             </tfoot>
             @endif

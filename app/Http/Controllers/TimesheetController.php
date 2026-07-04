@@ -130,35 +130,62 @@ class TimesheetController extends Controller
         $hmStart = (float) $p2h->hour_meter_start;
 
         $request->validate([
-            'p2h_check_id'  => 'required|exists:p2h_checks,id|unique:timesheets,p2h_check_id',
-            'km_end'        => "required|numeric|min:{$kmStart}",
-            'working_hours' => 'required|numeric|min:0|max:24',
-            'retase'        => 'required|integer|min:0',
-            'notes'         => 'nullable|string',
+            'p2h_check_id'    => 'required|exists:p2h_checks,id|unique:timesheets,p2h_check_id',
+            'km_end'          => "required|numeric|min:{$kmStart}",
+            'working_hours'   => 'required|numeric|min:0|max:24',
+            'retase'          => 'required|integer|min:0',
+            'notes'           => 'nullable|string',
+            'odo_end_photo'   => 'nullable|image|max:5120',
         ], [
             'p2h_check_id.unique' => 'P2H ini sudah memiliki timesheet.',
             'km_end.min'          => "Odometer akhir tidak boleh kurang dari awal ({$kmStart} km).",
+            'odo_end_photo.image'   => 'File foto ODO akhir harus berupa gambar.',
         ]);
 
         DB::transaction(function () use ($request, $p2h, $kmStart, $hmStart) {
             $kmEnd      = (float) $request->km_end;
             $kmTraveled = round(max(0, $kmEnd - $kmStart), 2);
+            $retase     = (int) $request->retase;
+
+            // Hitung km per ritase & deteksi anomali
+            $kmPerRitase = null;
+            $discrepancyFlag = 0;
+            if ($retase > 0 && $kmTraveled > 0) {
+                $kmPerRitase = round($kmTraveled / $retase, 2);
+                // Flag anomali jika km/ritase < 1 km atau > 100 km (tidak wajar)
+                if ($kmPerRitase < 1 || $kmPerRitase > 100) {
+                    $discrepancyFlag = 1;
+                }
+            } elseif ($kmTraveled > 5 && $retase === 0) {
+                // ODO bergerak tapi ritase 0 — anomali
+                $discrepancyFlag = 1;
+            }
+
+            // Upload foto ODO akhir
+            $endPhotoPath = null;
+            if ($request->hasFile('odo_end_photo')) {
+                $endPhotoPath = $request->file('odo_end_photo')
+                    ->store('odometer-photos', 'public');
+            }
 
             Timesheet::create([
-                'ts_number'        => DocumentNumberService::generateTS(),
-                'p2h_check_id'     => $p2h->id,
-                'unit_id'          => $p2h->unit_id,
-                'operator_id'      => $p2h->operator_id,
-                'shift_date'       => $p2h->check_date,
-                'shift'            => $p2h->shift,
-                'hour_meter_start' => $hmStart,
-                'hour_meter_end'   => $hmStart, // tidak diinput operator, biarkan sama dengan awal
-                'km_end'           => $kmEnd,
-                'km_traveled'      => $kmTraveled,
-                'working_hours'    => $request->working_hours,
-                'retase'           => $request->retase,
-                'notes'            => $request->notes,
-                'submitted_by'     => null,
+                'ts_number'           => DocumentNumberService::generateTS(),
+                'p2h_check_id'        => $p2h->id,
+                'unit_id'             => $p2h->unit_id,
+                'operator_id'         => $p2h->operator_id,
+                'shift_date'          => $p2h->check_date,
+                'shift'               => $p2h->shift,
+                'hour_meter_start'    => $hmStart,
+                'hour_meter_end'      => $hmStart,
+                'km_end'              => $kmEnd,
+                'km_traveled'         => $kmTraveled,
+                'working_hours'       => $request->working_hours,
+                'retase'              => $retase,
+                'notes'               => $request->notes,
+                'submitted_by'        => null,
+                'odo_end_photo'       => $endPhotoPath,
+                'km_per_ritase'       => $kmPerRitase,
+                'odo_discrepancy_flag'=> $discrepancyFlag,
             ]);
 
             // Record odometer reading ke sistem

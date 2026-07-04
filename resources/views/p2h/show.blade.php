@@ -38,6 +38,16 @@
             @endif
         </x-card>
 
+        @if($p2h->odo_photo)
+        <x-card class="p-3 mb-3">
+            <div class="section-title mb-2"><i class="bi bi-camera me-2"></i>Foto Odometer</div>
+            <a href="{{ asset('storage/' . $p2h->odo_photo) }}" target="_blank">
+                <img src="{{ asset('storage/' . $p2h->odo_photo) }}" alt="Foto Odometer"
+                    class="img-fluid rounded border" style="max-height:240px;object-fit:cover;width:100%;cursor:zoom-in;">
+            </a>
+        </x-card>
+        @endif
+
         {{-- Score Summary --}}
         <x-card class="p-3">
             <div class="section-title mb-3"><i class="bi bi-speedometer2 me-2"></i>Inspection Score</div>

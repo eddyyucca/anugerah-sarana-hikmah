@@ -37,9 +37,12 @@ class MenuPermission extends Model
             'dashboard', 'units', 'spareparts', 'suppliers', 'technicians',
             'purchase-requests', 'consumable-pr', 'purchase-orders',
             'goods-receipts', 'goods-issues', 'warehouse-transfer', 'stock-opname',
-            'work-orders', 'downtime',
+            'stock-adjustments', 'stock-inventory',
+            'work-orders', 'downtime', 'odometer', 'tires', 'maintenance',
             'operators', 'fit-to-work', 'p2h', 'p2h-summary', 'timesheets',
             'operasi-log', 'operasi-laporan',
+            'operator-performance', 'operator-warning-letters',
+            'supplier-returns', 'tire-damage-reports',
             'users', 'reports', 'approval-settings', 'menu-settings',
         ];
     }

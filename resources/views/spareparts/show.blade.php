@@ -17,6 +17,16 @@
         <tr><td class="text-muted">Stock</td><td>{{ $sparepart->stock_on_hand }} @if($sparepart->isLowStock())<span class="badge badge-soft-danger">Low Stock</span>@endif</td></tr>
         <tr><td class="text-muted">Minimum Stock</td><td>{{ $sparepart->minimum_stock }}</td></tr>
     </table>
-    <a href="{{ route('spareparts.edit', $sparepart) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i>Edit</a>
+    <div class="d-flex gap-2 flex-wrap mt-3">
+        <a href="{{ route('spareparts.edit', $sparepart) }}" class="btn btn-sm btn-outline-secondary" style="border-radius:10px;">
+            <i class="bi bi-pencil me-1"></i>Edit
+        </a>
+        <a href="{{ route('purchase-requests.create') }}" class="btn btn-sm btn-outline-danger" style="border-radius:10px;">
+            <i class="bi bi-file-earmark-plus me-1"></i>Buat PR
+        </a>
+        <a href="{{ route('stock-adjustments.create') }}" class="btn btn-sm btn-outline-primary" style="border-radius:10px;">
+            <i class="bi bi-sliders2-vertical me-1"></i>Sesuaikan Stok
+        </a>
+    </div>
 </x-card>
 @endsection

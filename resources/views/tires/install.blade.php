@@ -58,10 +58,20 @@
             <div class="mb-3">
                 <label class="form-label fw-semibold">Nomor Seri Ban</label>
                 <input type="text" name="serial_number" class="form-control @error('serial_number') is-invalid @enderror"
-                    value="{{ old('serial_number') }}" placeholder="Opsional — contoh: DOT2024A12345">
+                    value="{{ old('serial_number') }}"
+                    placeholder="Kosong jika belum diisi saat GR"
+                    list="serial_suggestions">
+                <datalist id="serial_suggestions">
+                    {{-- Jika diisi dari GR, akan muncul sebagai suggestion --}}
+                </datalist>
                 @error('serial_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                <small class="text-muted">Nomor seri unik yang tercetak pada ban fisik</small>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Nomor seri sebaiknya diinput saat <strong>Goods Receipt (GR)</strong> diterima.
+                    Jika sudah diinput saat GR, pilih ban dari inventory yang sudah memiliki nomor seri.
+                </small>
             </div>
+
             <div class="row g-2">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Batas KM <span class="text-danger">*</span></label>

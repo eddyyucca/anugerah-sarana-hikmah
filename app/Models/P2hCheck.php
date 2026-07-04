@@ -8,7 +8,7 @@ class P2hCheck extends Model
 {
     protected $fillable = [
         'p2h_number', 'unit_id', 'operator_id', 'check_date', 'shift',
-        'hour_meter_start', 'km_start', 'overall_status',
+        'hour_meter_start', 'km_start', 'odo_photo', 'overall_status',
         'general_notes', 'reviewed_by', 'reviewed_at',
     ];
 

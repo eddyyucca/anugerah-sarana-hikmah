@@ -15,6 +15,7 @@ use App\Models\Timesheet;
 use App\Models\SupplierReturn;
 use App\Models\TireDamageReport;
 use App\Models\OperatorWarningLetter;
+use Illuminate\Support\Facades\DB;
 
 class DocumentNumberService
 {
@@ -86,9 +87,27 @@ class DocumentNumberService
     private static function generate(string $prefix, string $model, string $column): string
     {
         $full = $prefix . '-' . date('Ym');
-        $last = $model::where($column, 'like', $full . '%')
-            ->orderByDesc($column)->value($column);
-        $seq = $last ? (int) substr($last, -4) + 1 : 1;
-        return $full . str_pad($seq, 4, '0', STR_PAD_LEFT);
+
+        return DB::transaction(function () use ($full, $model, $column) {
+            // Row-level (gap) lock on this key serializes concurrent requests for the
+            // same prefix/month, preventing two requests from computing the same number.
+            $row = DB::table('document_number_sequences')->where('key', $full)->lockForUpdate()->first();
+
+            if ($row) {
+                $seq = $row->seq + 1;
+                DB::table('document_number_sequences')->where('key', $full)->update(['seq' => $seq]);
+            } else {
+                // Take the true numeric max of the trailing 4 digits across ALL matching rows,
+                // not the string-max row — mixed-format legacy/seeded numbers make ORDER BY ... DESC
+                // on the string unreliable and can yield a seq that's already taken.
+                $maxSeq = $model::where($column, 'like', $full . '%')
+                    ->selectRaw("MAX(CAST(RIGHT($column, 4) AS UNSIGNED)) as max_seq")
+                    ->value('max_seq');
+                $seq = $maxSeq ? (int) $maxSeq + 1 : 1;
+                DB::table('document_number_sequences')->insert(['key' => $full, 'seq' => $seq, 'created_at' => now(), 'updated_at' => now()]);
+            }
+
+            return $full . str_pad($seq, 4, '0', STR_PAD_LEFT);
+        });
     }
 }

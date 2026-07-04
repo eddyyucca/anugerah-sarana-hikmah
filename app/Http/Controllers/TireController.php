@@ -127,6 +127,12 @@ class TireController extends Controller
     // Analitik rata-rata lifetime (km) ban per sparepart
     public function analytics()
     {
+        // Hitung jumlah ban aktif (terpasang) per sparepart
+        $activeCounts = UnitTire::whereNotNull('unit_id')
+            ->selectRaw('sparepart_id, COUNT(*) as active_count')
+            ->groupBy('sparepart_id')
+            ->pluck('active_count', 'sparepart_id');
+
         $stats = UnitTireHistory::query()
             ->whereNotNull('removed_at')
             ->where('km_used', '>', 0)
@@ -145,9 +151,10 @@ class TireController extends Controller
             ->groupBy('spareparts.id', 'spareparts.part_name', 'spareparts.part_number')
             ->orderByDesc('sample_count')
             ->get()
-            ->map(function ($row) {
+            ->map(function ($row) use ($activeCounts) {
                 $rec = max(0, round($row->avg_km - $row->stddev_km, -2));
                 $row->recommended_km_limit = $rec > 0 ? $rec : round($row->avg_km * 0.9, -2);
+                $row->active_tires_count   = $activeCounts[$row->sparepart_id] ?? 0;
                 return $row;
             });
 

@@ -24,8 +24,9 @@
 
                 <div class="alert alert-info py-2 mb-3">
                     <i class="bi bi-info-circle me-1"></i>
-                    Data berdasarkan riwayat pelepasan ban yang sudah selesai. Hanya ban dengan <strong>km_used > 0</strong> yang dihitung.
-                    Rekomendasi KM Limit = <code>AVG - STDDEV</code> (dibulatkan ke ratusan terdekat).
+                    Data berdasarkan riwayat pelepasan ban yang sudah selesai. Hanya ban dengan <strong>km_used &gt; 0</strong> yang dihitung.<br>
+                    <strong>Formula Rekomendasi:</strong> <code>AVG &minus; STDDEV</code> (dibulatkan ke ratusan terdekat).
+                    Anda dapat mengubah nilai KM Limit sebelum menerapkan.
                 </div>
 
                 @if($stats->isEmpty())
@@ -45,8 +46,9 @@
                                 <th class="text-end">Avg KM</th>
                                 <th class="text-end">Min KM</th>
                                 <th class="text-end">Max KM</th>
-                                <th class="text-end text-primary">Rekomendasi KM Limit</th>
-                                <th class="text-center">Terapkan</th>
+                                <th class="text-end text-primary">Rekomendasi</th>
+                                <th class="text-center">Ban Aktif</th>
+                                <th style="min-width:200px;">Terapkan KM Limit</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,13 +77,32 @@
                                     <strong class="text-primary">{{ number_format($row->recommended_km_limit, 0, ',', '.') }} km</strong>
                                 </td>
                                 <td class="text-center">
-                                    <form action="{{ route('tires.set-km-limit') }}" method="POST" class="d-inline">
+                                    @if($row->active_tires_count > 0)
+                                        <span class="badge bg-success" title="Ban terpasang di unit">
+                                            <i class="bi bi-check-circle me-1"></i>{{ $row->active_tires_count }} ban
+                                        </span>
+                                    @else
+                                        <span class="text-muted">&mdash;</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <form action="{{ route('tires.set-km-limit') }}" method="POST" class="d-flex align-items-center gap-1">
                                         @csrf
                                         <input type="hidden" name="sparepart_id" value="{{ $row->sparepart_id }}">
-                                        <input type="hidden" name="km_limit" value="{{ $row->recommended_km_limit }}">
+                                        <div class="input-group input-group-sm" style="max-width:160px;">
+                                            <input type="number"
+                                                name="km_limit"
+                                                class="form-control form-control-sm text-center"
+                                                value="{{ $row->recommended_km_limit }}"
+                                                min="1000" step="500"
+                                                title="Nilai default = rekomendasi. Ubah sesuai kebutuhan."
+                                                style="border-radius:8px 0 0 8px; font-weight:600;">
+                                            <span class="input-group-text" style="font-size:.75rem;">km</span>
+                                        </div>
                                         <button type="submit" class="btn btn-xs btn-outline-primary"
-                                            onclick="return confirm('Terapkan {{ number_format($row->recommended_km_limit, 0) }} km limit ke semua ban {{ $row->part_name }} yang belum banyak terpakai?')"
-                                            title="Terapkan rekomendasi km limit ke ban yang baru dipasang">
+                                            onclick="return confirm('Terapkan KM limit ini ke ban {{ $row->part_name }} yang masih baru (total_km < 1.000 km)?')"
+                                            title="Terapkan ke ban baru yang belum banyak terpakai"
+                                            style="white-space:nowrap;">
                                             <i class="bi bi-check-lg"></i> Terapkan
                                         </button>
                                     </form>
@@ -94,8 +115,13 @@
 
                 <div class="mt-3" style="font-size:.8rem;color:#6b7280;">
                     <i class="bi bi-lightbulb me-1 text-warning"></i>
-                    <strong>Cara baca:</strong> Tombol "Terapkan" akan mengubah km_limit pada ban dengan merek/tipe ini yang baru dipasang (total_km &lt; 1.000 km).
-                    Ban yang sudah banyak terpakai tidak akan terpengaruh.
+                    <strong>Cara baca:</strong>
+                    <ul class="mb-0 ps-3 mt-1">
+                        <li>Kolom <strong>Rekomendasi</strong> = AVG &minus; STDDEV (batas konservatif aman).</li>
+                        <li>Ubah nilai di kolom <strong>Terapkan KM Limit</strong> jika ingin menetapkan batas custom.</li>
+                        <li>Tombol <strong>Terapkan</strong> mengubah km_limit pada ban merek ini yang baru dipasang (total_km &lt; 1.000 km). Ban yang sudah banyak terpakai tidak akan terpengaruh.</li>
+                        <li>Kolom <strong>Ban Aktif</strong> = jumlah ban merek ini yang sedang terpasang di unit.</li>
+                    </ul>
                 </div>
                 @endif
             </div>

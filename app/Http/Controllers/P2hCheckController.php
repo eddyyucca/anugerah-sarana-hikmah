@@ -120,6 +120,7 @@ class P2hCheckController extends Controller
             'hour_meter_start'     => "nullable|numeric|min:{$currentHm}",
             'km_start'             => "nullable|numeric|min:{$currentOdo}",
             'general_notes'        => 'nullable|string',
+            'odo_photo'            => 'nullable|image|max:5120',
             'items'                => 'required|array|min:1',
             'items.*.category'     => 'required|string|max:50',
             'items.*.check_item'   => 'required|string|max:150',
@@ -128,6 +129,7 @@ class P2hCheckController extends Controller
         ], [
             'hour_meter_start.min' => "HM tidak boleh kurang dari nilai saat ini ({$currentHm}).",
             'km_start.min'         => "Odometer tidak boleh kurang dari nilai saat ini ({$currentOdo} km).",
+            'odo_photo.image'      => 'File foto odometer harus berupa gambar.',
         ]);
 
         DB::transaction(function () use ($request, $unit) {
@@ -146,6 +148,7 @@ class P2hCheckController extends Controller
                 'shift'            => $request->shift,
                 'hour_meter_start' => $hmValue,
                 'km_start'         => $kmValue ?? $unit->current_odometer,
+                'odo_photo'        => $request->hasFile('odo_photo') ? $request->file('odo_photo')->store('p2h-odo-photos', 'public') : null,
                 'overall_status'   => $overall,
                 'general_notes'    => $request->general_notes,
             ]);
@@ -195,6 +198,7 @@ class P2hCheckController extends Controller
             'hour_meter_start'     => "nullable|numeric|min:{$currentHm}",
             'km_start'             => "required|numeric|min:{$currentOdo}",
             'general_notes'        => 'nullable|string',
+            'odo_photo'            => 'required|image|max:5120',
             'items'                => 'required|array|min:1',
             'items.*.category'     => 'required|string|max:50',
             'items.*.check_item'   => 'required|string|max:150',
@@ -204,6 +208,8 @@ class P2hCheckController extends Controller
             'hour_meter_start.min' => "HM tidak boleh kurang dari nilai saat ini ({$currentHm}).",
             'km_start.required'    => 'Odometer (KM) wajib diisi setiap P2H.',
             'km_start.min'         => "Odometer tidak boleh kurang dari nilai saat ini ({$currentOdo} km).",
+            'odo_photo.required'   => 'Foto odometer wajib diunggah.',
+            'odo_photo.image'      => 'File foto odometer harus berupa gambar.',
         ]);
 
         DB::transaction(function () use ($request, $unit) {
@@ -222,6 +228,7 @@ class P2hCheckController extends Controller
                 'shift'            => $request->shift,
                 'hour_meter_start' => $hmValue,
                 'km_start'         => $kmValue,
+                'odo_photo'        => $request->file('odo_photo')->store('p2h-odo-photos', 'public'),
                 'overall_status'   => $overall,
                 'general_notes'    => $request->general_notes,
             ]);

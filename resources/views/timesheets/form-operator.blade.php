@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timesheet Akhir Shift - APEX ERP</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
     @include('operator.pwa-head')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -106,6 +107,47 @@
             padding: 2rem;
             color: #9ca3af;
         }
+
+        /* Foto ODO */
+        .foto-upload-wrap {
+            border: 2px dashed #c4b5fd;
+            border-radius: 14px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            background: #faf5ff;
+            position: relative;
+        }
+        .foto-upload-wrap:hover { border-color: #7c3aed; background: #f5f3ff; }
+        .foto-upload-wrap input[type=file] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        }
+        .foto-preview {
+            width: 100%; max-height: 200px; object-fit: contain;
+            border-radius: 10px; margin-top: .6rem; display: none;
+        }
+        .foto-upload-label { font-size: .82rem; color: #7c3aed; font-weight: 600; pointer-events: none; }
+
+        /* Warning anomali */
+        .anomali-warning {
+            background: #fff7ed;
+            border: 1.5px solid #f97316;
+            border-radius: 12px;
+            padding: .7rem 1rem;
+            font-size: .82rem;
+            color: #9a3412;
+            display: none;
+        }
+        .anomali-ok {
+            background: #f0fdf4;
+            border: 1.5px solid #22c55e;
+            border-radius: 12px;
+            padding: .7rem 1rem;
+            font-size: .82rem;
+            color: #14532d;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -162,7 +204,7 @@
         </div>
     </div>
     @else
-    <form action="{{ route('operator.ts-store') }}" method="POST" id="tsForm">
+    <form action="{{ route('operator.ts-store') }}" method="POST" id="tsForm" enctype="multipart/form-data">
         @csrf
 
         {{-- Pilih P2H --}}
@@ -255,25 +297,60 @@
                         {{-- Preview kalkulasi --}}
                         <div class="col-12">
                             <div class="row g-2">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="stat-box">
                                         <div class="stat-val" id="kmTraveledDisp" style="color:#3b82f6;">0</div>
-                                        <div class="stat-label">KM Ditempuh (otomatis)</div>
+                                        <div class="stat-label">KM Ditempuh</div>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="stat-box">
                                         <div>
                                             <input type="number" name="retase" id="retaseInput"
                                                 class="form-control @error('retase') is-invalid @enderror text-center"
                                                 value="{{ old('retase', 0) }}" min="0" required
+                                                oninput="updateCalc()"
                                                 style="font-weight:700;font-size:1.4rem;color:#7c3aed;border:none;background:transparent;padding:0;text-align:center;width:100%;">
                                         </div>
-                                        <div class="stat-label">Jumlah Retase (Trip)</div>
+                                        <div class="stat-label">Ritase (Trip)</div>
                                         @error('retase')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
+                                <div class="col-4">
+                                    <div class="stat-box">
+                                        <div class="stat-val" id="kmPerRitaseDisp" style="color:#059669;">—</div>
+                                        <div class="stat-label">KM/Ritase</div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+
+                        {{-- Indikator validasi ODO vs Ritase --}}
+                        <div class="col-12">
+                            <div class="anomali-warning" id="anomaliWarning">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                <strong>Peringatan Anomali ODO!</strong>
+                                <span id="anomaliMsg"></span>
+                                <br><small>Mohon periksa kembali data odometer dan jumlah ritase Anda.</small>
+                            </div>
+                            <div class="anomali-ok" id="anomaliOk">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Data ODO dan ritase <strong>tampak normal</strong>.
+                                <span id="anomaliOkMsg"></span>
+                            </div>
+                        </div>
+
+                        {{-- Foto ODO Akhir --}}
+                        <div class="col-12">
+                            <label class="form-label fw-bold"><i class="bi bi-camera me-1"></i>Foto Odometer Akhir Shift</label>
+                            <div class="foto-upload-wrap" onclick="triggerFile('odo_end_photo')">
+                                <input type="file" name="odo_end_photo" id="odo_end_photo" accept="image/*" capture="environment"
+                                    onchange="previewFoto(this, 'previewAkhir', 'fotoAkhirLabel')">
+                                <i class="bi bi-camera-fill" style="font-size:2rem;color:#c4b5fd;"></i>
+                                <div class="foto-upload-label mt-1" id="fotoAkhirLabel">Tap untuk ambil / pilih foto ODO akhir</div>
+                                <img id="previewAkhir" class="foto-preview" alt="Preview ODO Akhir">
+                            </div>
+                            <small class="text-muted d-block mt-1">Foto odometer setelah unit selesai beroperasi (opsional, maks 5MB)</small>
                         </div>
 
                         <div class="col-12">
@@ -304,6 +381,28 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
 let kmStart = 0;
+// Batas wajar km/ritase untuk peringatan
+const KM_PER_RITASE_MIN = 1;    // < 1 km/ritase = anomali
+const KM_PER_RITASE_MAX = 100;  // > 100 km/ritase = anomali
+
+function triggerFile(id) {
+    // Klik input file (bisa ambil foto langsung di mobile)
+    document.getElementById(id).click();
+}
+
+function previewFoto(input, previewId, labelId) {
+    const preview = document.getElementById(previewId);
+    const label   = document.getElementById(labelId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            label.textContent = input.files[0].name;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 
 function onP2HChange(radio) {
     kmStart = parseFloat(radio.dataset.km) || 0;
@@ -322,10 +421,45 @@ function onP2HChange(radio) {
 }
 
 function updateCalc() {
-    const kmEnd     = parseFloat(document.getElementById('kmEndInput').value) || 0;
-    const traveled  = Math.max(0, kmEnd - kmStart);
+    const kmEnd    = parseFloat(document.getElementById('kmEndInput').value) || 0;
+    const retase   = parseInt(document.getElementById('retaseInput').value) || 0;
+    const traveled = Math.max(0, kmEnd - kmStart);
+
     document.getElementById('kmTraveledDisp').textContent = traveled.toLocaleString('id-ID') + ' km';
 
+    // Kalkulasi km per ritase
+    const kprEl  = document.getElementById('kmPerRitaseDisp');
+    const warnEl = document.getElementById('anomaliWarning');
+    const okEl   = document.getElementById('anomaliOk');
+    const msgEl  = document.getElementById('anomaliMsg');
+    const okMsg  = document.getElementById('anomaliOkMsg');
+
+    if (retase > 0 && traveled > 0) {
+        const kpr = traveled / retase;
+        kprEl.textContent = kpr.toFixed(1) + ' km';
+
+        if (kpr < KM_PER_RITASE_MIN) {
+            // Terlalu kecil
+            warnEl.style.display = 'block'; okEl.style.display = 'none';
+            msgEl.textContent = ` Jarak rata-rata per ritase terlalu kecil (${kpr.toFixed(1)} km/ritase). Mungkin ada kesalahan input.`;
+        } else if (kpr > KM_PER_RITASE_MAX) {
+            // Terlalu besar
+            warnEl.style.display = 'block'; okEl.style.display = 'none';
+            msgEl.textContent = ` Jarak rata-rata per ritase sangat besar (${kpr.toFixed(1)} km/ritase). Mohon periksa kembali.`;
+        } else {
+            warnEl.style.display = 'none'; okEl.style.display = 'block';
+            okMsg.textContent = ` (${kpr.toFixed(1)} km/ritase)`;
+        }
+    } else if (traveled > 5 && retase === 0) {
+        kprEl.textContent = '—';
+        warnEl.style.display = 'block'; okEl.style.display = 'none';
+        msgEl.textContent = ` ODO bergerak ${traveled.toLocaleString('id-ID')} km tetapi ritase = 0. Apakah ritase sudah benar?`;
+    } else {
+        kprEl.textContent = '—';
+        warnEl.style.display = 'none'; okEl.style.display = 'none';
+    }
+
+    // Validasi input km_end
     const input = document.getElementById('kmEndInput');
     if (kmEnd < kmStart) {
         input.setCustomValidity('Odometer akhir tidak boleh kurang dari ' + kmStart);

@@ -68,6 +68,10 @@
         .check-btns { display: flex; gap: 4px; flex-shrink: 0; }
         .check-btns .btn { font-size: .72rem; padding: .3rem .55rem; border-radius: 8px; }
         .check-notes { width: 100%; margin-top: .3rem; }
+        .odo-photo-row { display: flex; align-items: center; gap: .6rem; margin-top: .6rem; }
+        .btn-photo { font-size: .8rem; padding: .55rem 1rem; border-radius: 10px; flex-shrink: 0; }
+        .photo-thumb { height: 50px; width: 50px; object-fit: cover; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .photo-filename { font-size: .78rem; color: #16a34a; overflow: hidden; text-overflow: ellipsis; }
 
         .btn-submit-p2h {
             background: linear-gradient(135deg, var(--primary), #ef4444);
@@ -146,7 +150,7 @@
     </div>
     @endif
 
-    <form action="{{ route('p2h.store-operator') }}" method="POST" id="p2hForm">
+    <form action="{{ route('p2h.store-operator') }}" method="POST" id="p2hForm" enctype="multipart/form-data">
         @csrf
 
         {{-- Unit & Operator Selection --}}
@@ -215,6 +219,20 @@
                                 <div style="font-size:.72rem;color:#3b82f6;">Isi dengan pembacaan odometer unit sekarang. Data ini otomatis update sistem.</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Foto Odometer <span class="text-danger">*</span></label>
+                        <input type="file" name="odo_photo" id="odoPhotoInput" accept="image/*" capture="environment" class="d-none"
+                            onchange="onOdoPhotoChange(this)" required>
+                        <div class="odo-photo-row">
+                            <button type="button" class="btn btn-outline-primary btn-photo" onclick="document.getElementById('odoPhotoInput').click()">
+                                <i class="bi bi-camera-fill"></i> Ambil Foto Odometer
+                            </button>
+                            <img id="odoPhotoPreview" class="photo-thumb d-none">
+                            <span id="odoPhotoName" class="photo-filename"></span>
+                        </div>
+                        @error('odo_photo')<div class="text-danger mt-1" style="font-size:.78rem;">{{ $message }}</div>@enderror
                     </div>
                 </div>
             </div>
@@ -299,10 +317,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+function onOdoPhotoChange(input) {
+    const preview = document.getElementById('odoPhotoPreview');
+    const name = document.getElementById('odoPhotoName');
+    const file = input.files[0];
+    if (!file) {
+        preview.classList.add('d-none');
+        name.textContent = '';
+        return;
+    }
+    preview.src = URL.createObjectURL(file);
+    preview.classList.remove('d-none');
+    name.textContent = file.name;
+}
+
 function onUnitChange(sel) {
     const opt = sel.selectedOptions[0];
     const hmInput  = document.getElementById('hmInput');
-    const hmHint   = document.getElementById('hmHint');
     const kmInput  = document.getElementById('kmInput');
     const odoHint  = document.getElementById('odoHint');
     const infoBox  = document.getElementById('odoInfoBox');
@@ -315,7 +346,6 @@ function onUnitChange(sel) {
         // Hour meter
         hmInput.value = minHm;
         hmInput.min   = minHm;
-        hmHint.textContent = 'HM saat ini: ' + minHm.toLocaleString('id-ID') + ' (tidak boleh lebih kecil)';
 
         // Odometer
         kmInput.value = minOdo;
@@ -327,7 +357,6 @@ function onUnitChange(sel) {
         infoBox.style.display = 'block';
     } else {
         hmInput.min = 0;
-        hmHint.textContent = '';
         kmInput.min = 0;
         odoHint.textContent = '';
         infoBox.style.display = 'none';

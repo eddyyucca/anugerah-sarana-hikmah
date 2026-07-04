@@ -73,7 +73,7 @@
                 <div class="section-title"><i class="bi bi-bar-chart me-2"></i>Hasil Shift</div>
             </x-slot:header>
 
-            <div class="text-center py-2">
+                <div class="text-center py-2">
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="p-3 rounded" style="background:#f0fdf4;">
@@ -99,8 +99,36 @@
                             <div class="text-muted small">HM Akhir</div>
                         </div>
                     </div>
+                    @if($timesheet->km_end)
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#fdf4ff;">
+                            <div class="fw-semibold text-purple">{{ number_format($timesheet->km_traveled, 1) }} km</div>
+                            <div class="text-muted small">KM Ditempuh</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded {{ $timesheet->odo_discrepancy_flag ? 'border border-warning' : '' }}" style="background:#fdf4ff;">
+                            @if($timesheet->km_per_ritase)
+                                <div class="fw-semibold {{ $timesheet->odo_discrepancy_flag ? 'text-warning' : 'text-success' }}">
+                                    {{ number_format($timesheet->km_per_ritase, 1) }} km
+                                </div>
+                            @else
+                                <div class="fw-semibold text-muted">&mdash;</div>
+                            @endif
+                            <div class="text-muted small">KM/Ritase</div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
-            </div>
+                </div>
+
+                {{-- Badge anomali ODO --}}
+                @if($timesheet->odo_discrepancy_flag)
+                <div class="alert alert-warning d-flex align-items-center gap-2 py-2 mt-2 mb-0">
+                    <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                    <small><strong>Anomali ODO:</strong> Selisih odometer tidak sesuai dengan jumlah ritase. Mohon verifikasi.</small>
+                </div>
+                @endif
         </x-card>
 
         @if($timesheet->notes)
@@ -109,6 +137,21 @@
                 <div class="section-title"><i class="bi bi-chat-text me-2"></i>Catatan</div>
             </x-slot:header>
             <p class="mb-0">{{ $timesheet->notes }}</p>
+        </x-card>
+        @endif
+
+        {{-- Foto Odometer --}}
+        @if($timesheet->odo_end_photo)
+        <x-card class="mt-3">
+            <x-slot:header>
+                <div class="section-title"><i class="bi bi-camera me-2"></i>Foto Odometer Akhir Shift</div>
+            </x-slot:header>
+            <a href="{{ asset('storage/' . $timesheet->odo_end_photo) }}" target="_blank">
+                <img src="{{ asset('storage/' . $timesheet->odo_end_photo) }}"
+                    alt="Foto ODO Akhir"
+                    class="img-fluid rounded border"
+                    style="max-height:240px;object-fit:cover;width:100%;cursor:zoom-in;">
+            </a>
         </x-card>
         @endif
     </div>

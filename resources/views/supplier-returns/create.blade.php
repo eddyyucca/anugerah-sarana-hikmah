@@ -45,7 +45,7 @@
                         <option value="">-- Tanpa referensi GR --</option>
                         @foreach($goodsReceipts as $gr)
                         <option value="{{ $gr->id }}" {{ old('goods_receipt_id') == $gr->id ? 'selected' : '' }}>
-                            {{ $gr->gr_number }} — {{ $gr->gr_date->format('d/m/Y') }} ({{ $gr->supplier->supplier_name ?? '-' }})
+                            {{ $gr->gr_number }} — {{ \Carbon\Carbon::parse($gr->receipt_date)->format('d/m/Y') }} ({{ $gr->purchaseOrder->supplier->supplier_name ?? '-' }})
                         </option>
                         @endforeach
                     </select>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GoodsReceipt;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
+use App\Models\UnitTire;
 use App\Models\WarehouseLocation;
 use App\Services\DocumentNumberService;
 use App\Services\StockService;
@@ -59,6 +60,8 @@ class GoodsReceiptController extends Controller
             'items.*.po_item_id' => 'nullable|exists:purchase_order_items,id',
             'items.*.warehouse_location_id' => 'nullable|exists:warehouse_locations,id',
             'items.*.qty_received' => 'required|integer|min:1',
+            'items.*.serial_numbers' => 'nullable|array',
+            'items.*.serial_numbers.*' => 'nullable|string|max:191',
         ]);
 
         // Validate qty doesn't exceed outstanding
@@ -87,10 +90,15 @@ class GoodsReceiptController extends Controller
 
             foreach ($request->items as $item) {
                 if ($item['qty_received'] > 0) {
+                    // Field SN opsional per unit; buang yang kosong
+                    $serials = array_values(array_filter(array_map('trim', $item['serial_numbers'] ?? [])));
+                    $serialsArray = count($serials) > 0 ? $serials : null;
+
                     $gr->items()->create([
                         'sparepart_id' => $item['sparepart_id'],
                         'warehouse_location_id' => $item['warehouse_location_id'] ?? null,
                         'qty_received' => $item['qty_received'],
+                        'serial_numbers' => $serialsArray ? json_encode($serialsArray) : null,
                     ]);
                 }
             }
@@ -98,6 +106,7 @@ class GoodsReceiptController extends Controller
 
         return redirect()->route('goods-receipts.index')->with('success', 'Goods Receipt created.');
     }
+
 
     public function show(GoodsReceipt $goodsReceipt)
     {
@@ -130,6 +139,30 @@ class GoodsReceiptController extends Controller
                     $poItem->qty_received += $item->qty_received;
                     $poItem->qty_outstanding = max(0, $poItem->qty - $poItem->qty_received);
                     $poItem->save();
+                }
+
+                // Buat UnitTire dari GR untuk item ban (identifikasi dari nama sparepart)
+                $sparepart = $item->sparepart;
+                $isTire = $sparepart && (
+                    stripos($sparepart->part_name, 'ban') !== false ||
+                    stripos($sparepart->part_name, 'tire') !== false ||
+                    stripos($sparepart->part_name, 'tyre') !== false
+                );
+
+                if ($isTire) {
+                    $serialNumbers = $item->serial_numbers ?? [];
+                    for ($idx = 0; $idx < $item->qty_received; $idx++) {
+                        $serial = $serialNumbers[$idx] ?? null;
+                        // Skip jika serial_number sudah ada (hindari duplikat)
+                        if ($serial && UnitTire::where('serial_number', $serial)->exists()) {
+                            continue;
+                        }
+                        UnitTire::create([
+                            'sparepart_id'  => $item->sparepart_id,
+                            'serial_number' => $serial,
+                            'km_limit'      => 40000, // default; bisa di-update dari analytics
+                        ]);
+                    }
                 }
             }
 

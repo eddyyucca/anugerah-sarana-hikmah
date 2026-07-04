@@ -3,7 +3,7 @@
 @section('breadcrumb')<li class="breadcrumb-item"><a href="{{ route('p2h.index') }}">P2H Check</a></li><li class="breadcrumb-item active">Create</li>@endsection
 
 @section('content')
-<form action="{{ route('p2h.store') }}" method="POST" id="p2hForm">
+<form action="{{ route('p2h.store') }}" method="POST" id="p2hForm" enctype="multipart/form-data">
     @csrf
     {{-- Header --}}
     <x-card class="mb-3">
@@ -73,6 +73,21 @@
                     <input type="text" name="general_notes" class="form-control" placeholder="Catatan umum...">
                 </x-form-group>
             </div>
+            <div class="col-12" id="odoInfoBox" style="display:none;">
+                <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;">
+                    <i class="bi bi-speedometer2 text-primary" style="font-size:1.4rem;"></i>
+                    <div>
+                        <div style="font-size:.78rem;color:#1d4ed8;font-weight:600;">ODOMETER UNIT TERAKHIR</div>
+                        <div style="font-size:1.1rem;font-weight:700;color:#1e3a8a;" id="currentOdoValue">0 km</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <x-form-group label="Foto Odometer">
+                    <input type="file" name="odo_photo" class="form-control @error('odo_photo') is-invalid @enderror" accept="image/*">
+                    @error('odo_photo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </x-form-group>
+            </div>
         </div>
     </x-card>
 
@@ -137,6 +152,8 @@ document.getElementById('unitSelect').addEventListener('change', function() {
     const hmHint   = document.getElementById('hmHint');
     const kmInput  = document.getElementById('kmInput');
     const odoHint  = document.getElementById('odoHint');
+    const infoBox  = document.getElementById('odoInfoBox');
+    const odoValue = document.getElementById('currentOdoValue');
 
     if (opt && opt.value) {
         const minHm  = parseFloat(opt.dataset.hm)  || 0;
@@ -149,11 +166,15 @@ document.getElementById('unitSelect').addEventListener('change', function() {
         kmInput.value = minOdo;
         kmInput.min   = minOdo;
         odoHint.textContent = 'ODO saat ini: ' + minOdo.toLocaleString('id-ID') + ' km';
+
+        odoValue.textContent = minOdo.toLocaleString('id-ID') + ' km';
+        infoBox.style.display = 'flex';
     } else {
         hmInput.min = 0;
         hmHint.textContent = '';
         kmInput.min = 0;
         odoHint.textContent = '';
+        infoBox.style.display = 'none';
     }
 });
 

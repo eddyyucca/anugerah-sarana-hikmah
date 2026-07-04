@@ -5,11 +5,11 @@
 
     // Auto-expand section berdasarkan halaman aktif
     $activeSection = '';
-    if (request()->routeIs('operators.*') || request()->routeIs('p2h.*') || request()->routeIs('fit-to-work.*') || request()->routeIs('timesheets.*')) $activeSection = 'operasi';
+    if (request()->routeIs('operators.*') || request()->routeIs('p2h.*') || request()->routeIs('fit-to-work.*') || request()->routeIs('timesheets.*') || request()->routeIs('operator-performance.*') || request()->routeIs('operator-warning-letters.*')) $activeSection = 'operasi';
     elseif (request()->routeIs('operasi.*')) $activeSection = 'operasi-log';
-    elseif (request()->routeIs('work-orders.*') || request()->routeIs('downtime.*') || request()->routeIs('odometer.*') || request()->routeIs('tires.*') || request()->routeIs('maintenance.*')) $activeSection = 'pemeliharaan';
+    elseif (request()->routeIs('work-orders.*') || request()->routeIs('downtime.*') || request()->routeIs('odometer.*') || request()->routeIs('tires.*') || request()->routeIs('maintenance.*') || request()->routeIs('tire-damage-reports.*')) $activeSection = 'pemeliharaan';
     elseif (request()->routeIs('purchase-requests.*') || request()->routeIs('consumable-pr.*') || request()->routeIs('purchase-orders.*')) $activeSection = 'pengadaan';
-    elseif (request()->routeIs('goods-receipts.*') || request()->routeIs('goods-issues.*') || request()->routeIs('stock-opname.*')) $activeSection = 'gudang';
+    elseif (request()->routeIs('goods-receipts.*') || request()->routeIs('goods-issues.*') || request()->routeIs('stock-opname.*') || request()->routeIs('stock-adjustments.*') || request()->routeIs('stock-inventory.*') || request()->routeIs('supplier-returns.*')) $activeSection = 'gudang';
     elseif (request()->routeIs('units.*') || request()->routeIs('spareparts.*') || request()->routeIs('suppliers.*') || request()->routeIs('technicians.*')) $activeSection = 'master';
     elseif (request()->routeIs('reports.*')) $activeSection = 'laporan';
     elseif (request()->routeIs('approval-settings.*') || request()->routeIs('menu-settings.*') || request()->routeIs('users.*')) $activeSection = 'pengaturan';
@@ -26,7 +26,7 @@
     @endif
 
     {{-- Operasi --}}
-    @if($can('operators') || $can('p2h') || $can('p2h-summary') || $can('fit-to-work') || $can('timesheets'))
+    @if($can('operators') || $can('p2h') || $can('p2h-summary') || $can('fit-to-work') || $can('timesheets') || $can('operator-performance') || $can('operator-warning-letters'))
     @php $open = $activeSection === 'operasi'; @endphp
     <div class="sidebar-group mt-2">
         <div class="sidebar-group-toggle {{ $open ? '' : 'collapsed' }}" data-sidebar-toggle>
@@ -64,6 +64,18 @@
                 <span class="sidebar-link-text">Ringkasan P2H</span>
             </a>
             @endif
+            @if($can('operator-performance'))
+            <a href="{{ route('operator-performance.index') }}" class="sidebar-link {{ request()->routeIs('operator-performance.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-person-exclamation"></i></span>
+                <span class="sidebar-link-text">Performa Operator</span>
+            </a>
+            @endif
+            @if($can('operator-warning-letters'))
+            <a href="{{ route('operator-warning-letters.index') }}" class="sidebar-link {{ request()->routeIs('operator-warning-letters.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-envelope-exclamation"></i></span>
+                <span class="sidebar-link-text">Surat Peringatan</span>
+            </a>
+            @endif
         </div>
     </div>
     @endif
@@ -94,7 +106,7 @@
     @endif
 
     {{-- Pemeliharaan --}}
-    @if($can('work-orders') || $can('downtime') || $can('odometer') || $can('tires') || $can('maintenance'))
+    @if($can('work-orders') || $can('downtime') || $can('odometer') || $can('tires') || $can('maintenance') || $can('tire-damage-reports'))
     @php
         $open = $activeSection === 'pemeliharaan';
         $odoAlertCount = \App\Services\OdometerService::countAlerts();
@@ -137,6 +149,12 @@
                     @endif
                 </span>
             </a>
+            @if($can('tire-damage-reports'))
+            <a href="{{ route('tire-damage-reports.index') }}" class="sidebar-link {{ request()->routeIs('tire-damage-reports.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-file-earmark-x"></i></span>
+                <span class="sidebar-link-text">BA Kerusakan Ban</span>
+            </a>
+            @endif
         </div>
     </div>
     @endif
@@ -173,7 +191,7 @@
     @endif
 
     {{-- Gudang --}}
-    @if($can('goods-receipts') || $can('goods-issues') || $can('stock-opname'))
+    @if($can('goods-receipts') || $can('goods-issues') || $can('stock-opname') || $can('stock-adjustments') || $can('stock-inventory') || $can('supplier-returns'))
     @php $open = $activeSection === 'gudang'; @endphp
     <div class="sidebar-group">
         <div class="sidebar-group-toggle {{ $open ? '' : 'collapsed' }}" data-sidebar-toggle>
@@ -181,6 +199,12 @@
             <i class="bi bi-chevron-down sidebar-chevron"></i>
         </div>
         <div class="sidebar-collapse-content {{ $open ? '' : 'closed' }}">
+            @if($can('stock-inventory'))
+            <a href="{{ route('stock-inventory.index') }}" class="sidebar-link {{ request()->routeIs('stock-inventory.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-boxes"></i></span>
+                <span class="sidebar-link-text">Cek Stok</span>
+            </a>
+            @endif
             @if($can('goods-receipts'))
             <a href="{{ route('goods-receipts.index') }}" class="sidebar-link {{ request()->routeIs('goods-receipts.*') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="bi bi-box-arrow-in-down"></i></span>
@@ -197,6 +221,18 @@
             <a href="{{ route('stock-opname.index') }}" class="sidebar-link {{ request()->routeIs('stock-opname.*') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="bi bi-clipboard2-data"></i></span>
                 <span class="sidebar-link-text">Opname Stok</span>
+            </a>
+            @endif
+            @if($can('stock-adjustments'))
+            <a href="{{ route('stock-adjustments.index') }}" class="sidebar-link {{ request()->routeIs('stock-adjustments.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-sliders2-vertical"></i></span>
+                <span class="sidebar-link-text">Penyesuaian Stok</span>
+            </a>
+            @endif
+            @if($can('supplier-returns'))
+            <a href="{{ route('supplier-returns.index') }}" class="sidebar-link {{ request()->routeIs('supplier-returns.*') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="bi bi-arrow-return-left"></i></span>
+                <span class="sidebar-link-text">Return ke Supplier</span>
             </a>
             @endif
         </div>

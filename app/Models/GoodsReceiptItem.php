@@ -9,8 +9,13 @@ class GoodsReceiptItem extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'goods_receipt_id', 'sparepart_id', 'warehouse_location_id', 'qty_received',
+        'goods_receipt_id', 'sparepart_id', 'warehouse_location_id', 'qty_received', 'serial_numbers',
     ];
+
+    protected $casts = [
+        'serial_numbers' => 'array',
+    ];
+
 
     public function goodsReceipt()
     {

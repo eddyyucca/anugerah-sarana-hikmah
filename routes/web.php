@@ -35,6 +35,8 @@ use App\Http\Controllers\MaintenanceItemController;
 use App\Http\Controllers\SupplierReturnController;
 use App\Http\Controllers\TireDamageReportController;
 use App\Http\Controllers\OperatorWarningLetterController;
+use App\Http\Controllers\StockAdjustmentController;
+use App\Http\Controllers\StockInventoryController;
 
 // Company Profile (public)
 Route::get('/', [CompanyProfileController::class, 'index'])->name('company.profile');
@@ -107,6 +109,11 @@ Route::middleware('auth')->group(function () {
     Route::post('warehouse-transfer/{warehouse_transfer}/receive', [WarehouseTransferController::class, 'receive'])->name('warehouse-transfer.receive');
 
     // Stock Opname
+    Route::resource('stock-adjustments', StockAdjustmentController::class)->only(['index', 'create', 'store']);
+
+    Route::get('stock-inventory', [StockInventoryController::class, 'index'])->name('stock-inventory.index');
+    Route::get('stock-inventory/movements', [StockInventoryController::class, 'movements'])->name('stock-inventory.movements');
+
     Route::resource('stock-opname', StockOpnameController::class)->only(['index', 'create', 'store', 'show']);
     Route::post('stock-opname/{stock_opname}/count', [StockOpnameController::class, 'count'])->name('stock-opname.count');
     Route::post('stock-opname/{stock_opname}/submit', [StockOpnameController::class, 'submit'])->name('stock-opname.submit');
